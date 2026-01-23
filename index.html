@@ -31,6 +31,10 @@
         .word { padding: 8px 12px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); -webkit-tap-highlight-color: transparent; }
         .guide-text { font-size: 0.75rem; color: #999; text-align: center; margin-bottom: 10px; line-height: 1.3; }
 
+        /* 進度條樣式 / Progress Bar */
+        .progress-container { width: 100%; height: 10px; background: #eee; border-radius: 5px; margin-top: 15px; overflow: hidden; flex-shrink: 0; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--p2), #55efc4); transition: width 0.4s ease; }
+
         .note-area { background: #fff9db; padding: 12px; border-radius: 10px; border-left: 5px solid var(--p3); font-size: 0.85rem; line-height: 1.5; margin-bottom: 12px; overflow-y: auto; }
 
         .btn-action { width: 100%; padding: 15px; border: none; border-radius: 12px; margin-top: 10px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
@@ -88,6 +92,7 @@
         <div id="level-indicator" class="level-indicator"></div>
     </div>
     <div id="main-content" class="content"></div>
+    <div class="progress-container"><div id="progress-bar" class="progress-bar"></div></div>
 </div>
 
 <div class="overlay" id="overlay"></div>
@@ -99,7 +104,7 @@
 </div>
 
 <script>
-    let currentTask = 1, currentL = 1, currentStep = 0, currentQ = null, isMicOn = false;
+    let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0, currentQ = null, isMicOn = false;
 
     const tasksData = {
         1: {
@@ -153,10 +158,14 @@
     }
 
     function startL(l) {
-        currentL = l; currentStep = 0; currentQ = null;
+        currentL = l; currentStep = 0; qCount = 0; currentQ = null;
         document.getElementById('page-levels').classList.remove('active');
         document.getElementById('page-practice').classList.add('active');
         render();
+    }
+
+    function updateProgress(val, total) {
+        document.getElementById('progress-bar').style.width = (val / total * 100) + "%";
     }
 
     function render() {
@@ -165,50 +174,44 @@
         const data = tasksData[currentTask];
 
         if (currentL === 1) {
+            updateProgress(currentStep, 3);
             ind.innerHTML = `Level 1<br>Sentence Building`;
             const d = data.steps[currentStep]; 
             m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.9rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz"></div><div class="word-pool" id="pool"></div><div class="guide-text">點選單字即可加入，再次點選則可移除。<br>Tap once to add, tap again to remove.</div><button class="btn-action btn-record" onclick="checkL1()">Check / 檢查</button>`;
             
             const dz = document.getElementById('dz');
             const pool = document.getElementById('pool');
-
             [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
-                const s = document.createElement('span');
-                s.className = 'word';
-                s.innerText = w;
-                s.onclick = () => {
-                    if (s.parentNode === pool) {
-                        dz.appendChild(s);
-                    } else {
-                        pool.appendChild(s);
-                    }
-                };
+                const s = document.createElement('span'); s.className = 'word'; s.innerText = w;
+                s.onclick = () => { if (s.parentNode === pool) dz.appendChild(s); else pool.appendChild(s); };
                 pool.appendChild(s);
             });
         } else if (currentL === 2) {
+            updateProgress(currentStep, 3);
             ind.innerHTML = `Level 2<br>Listen & Repeat`;
             const d = data.steps[currentStep]; 
             m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.9rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--p1); text-align:center; font-size:1.1rem; margin:10px 0;">${d.correct}</p><button class="btn-action btn-listen" onclick="speak('${d.correct}')">🔊 Listen / 聽示範</button><button id="rec-btn" class="btn-action btn-record" onclick="rec('${d.correct}', this)">🎤 Record / 錄音</button><button class="btn-action" style="background:#eee; color:#333;" onclick="nextStep()">Next / 下一步</button>`;
         } else if (currentL === 3) {
+            updateProgress(qCount, 4);
             ind.innerHTML = `Level 3<br>疑難排解`;
             if (!currentQ) currentQ = data.trouble[Math.floor(Math.random() * data.trouble.length)];
             m.innerHTML = `<div class="img-box" style="background:var(--dark); cursor:pointer; height:90px;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center; font-size:0.9rem;"><span style="font-size:1.5rem;">🎧</span><br>Listen to customer / 聽提問</div></div><div class="note-area"><strong>疑難排解 (Troubleshooting):</strong><br>${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" style="margin-top:0;" onclick="rec(currentQ.a, this, true)">🎤 Answer / 回答問題</button><button class="btn-action" style="background:#eee; color:#333; padding:10px;" onclick="randomQ()">Next Question / 下一題</button>`;
         }
     }
 
-    function randomQ() { currentQ = null; render(); }
-
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.word')).map(e => e.innerText).join(" ");
         if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
             showPop("✅ Correct!", "🌟", `<strong>${d.correct}</strong><br><br>${d.chi}`);
-            currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; }
+            currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; updateProgress(3,3); }
             render();
         } else { showPop("❌ Incorrect / 錯誤", "😕", "Please check the words or the order.<br>請檢查單字或順序是否正確。"); }
     }
 
     function nextStep() { currentStep++; if(currentStep > 2) { currentStep = 0; startL(3); } else render(); }
+    
+    function randomQ() { currentQ = null; qCount++; if(qCount >= 4) { updateProgress(4,4); showPop("🎉 Well Done!", "🏆", "You have finished all tasks!<br>你已完成所有練習！"); backToLevels(); } else render(); }
 
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); }
 
