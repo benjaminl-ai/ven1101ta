@@ -14,26 +14,30 @@
         .home-screen { display: flex; flex-direction: column; justify-content: flex-start; height: 100%; text-align: center; padding-top: 40px; }
         .menu-grid { display: flex; flex-direction: column; gap: 12px; padding: 0 10px; }
         .menu-card { background: white; padding: 18px; border-radius: 14px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); cursor: pointer; border: 2px solid transparent; }
-        .menu-card h2 { margin: 0; font-size: 1.2rem; line-height: 1.4; }
-        .menu-card span { display: block; font-size: 1rem; color: #666; font-weight: normal; margin-top: 5px; }
-
-        .level-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        
+        .level-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
         .btn-exit { background: none; border: none; color: var(--p1); font-weight: bold; cursor: pointer; font-size: 1rem; }
         .level-indicator { font-size: 0.9rem; font-weight: bold; color: var(--p1); background: #eef2ff; padding: 6px 14px; border-radius: 15px; text-align: right; line-height: 1.3; }
 
-        .content { background: white; padding: 18px; border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .img-box { width: 100%; height: 140px; background: #eee; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .content { background: white; padding: 15px; border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; justify-content: space-between; }
+        
+        /* 縮小圖片高度以騰出空間給單字框 */
+        .img-box { width: 100%; height: 120px; background: #eee; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
-        .dropzone { border-bottom: 3px solid var(--p1); min-height: 50px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; background: #f0f7ff; border-radius: 10px; font-size: 1rem; color: #888; align-items: center; }
-        .word-pool { display: flex; flex-wrap: wrap; gap: 8px; overflow-y: auto; max-height: 100px; padding: 5px; margin-bottom: 5px; }
+        .dropzone { border-bottom: 3px solid var(--p1); min-height: 50px; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: #f0f7ff; border-radius: 10px; align-items: center; }
+        .word-pool { display: flex; flex-wrap: wrap; gap: 6px; overflow-y: auto; flex-grow: 1; padding: 5px; align-content: flex-start; }
         
-        .word { padding: 8px 12px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); -webkit-tap-highlight-color: transparent; }
-        .guide-text { font-size: 0.75rem; color: #999; text-align: center; margin-bottom: 10px; line-height: 1.3; }
+        .word { padding: 8px 10px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-size: 0.95rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); -webkit-tap-highlight-color: transparent; }
+        .guide-text { font-size: 0.75rem; color: #999; text-align: center; margin-top: 5px; line-height: 1.3; flex-shrink: 0; }
 
-        .note-area { background: #fff9db; padding: 12px; border-radius: 10px; border-left: 5px solid var(--p3); font-size: 0.85rem; line-height: 1.5; margin-bottom: 12px; overflow-y: auto; }
+        /* 進度條樣式 (Progress Bar) */
+        .progress-container { width: 100%; height: 10px; background: #e0e0e0; border-radius: 5px; margin-top: 10px; overflow: hidden; flex-shrink: 0; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--p2), #55efc4); transition: width 0.4s ease; }
 
-        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 12px; margin-top: 10px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+        .note-area { background: #fff9db; padding: 12px; border-radius: 10px; border-left: 5px solid var(--p3); font-size: 0.85rem; line-height: 1.5; margin-bottom: 10px; overflow-y: auto; flex-grow: 1; }
+
+        .btn-action { width: 100%; padding: 14px; border: none; border-radius: 12px; margin-top: 8px; font-weight: bold; cursor: pointer; font-size: 1.1rem; flex-shrink: 0; }
         .btn-record { background: var(--p1); color: white; }
         .btn-listen { background: #eef2ff; color: var(--p1); }
         .recording { background: #d63031 !important; animation: pulse 1.5s infinite; }
@@ -53,12 +57,12 @@
         <p style="font-size: 1rem; color: #888; margin-bottom: 20px;">Select a Task / 選擇練習項目</p>
         <div class="menu-grid">
             <div class="menu-card" onclick="selectTask(1)">
-                <h2>Task 1: Removing a light switch</h2>
-                <span>拆卸電燈開關</span>
+                <h2 style="margin:0">Task 1: Removing a light switch</h2>
+                <span style="display:block; font-size:1rem; color:#666; margin-top:5px">拆卸電燈開關</span>
             </div>
             <div class="menu-card" onclick="selectTask(2)">
-                <h2>Task 2: Drilling holes on a steel box</h2>
-                <span>在鋼箱上鑽孔</span>
+                <h2 style="margin:0">Task 2: Drilling holes on a steel box</h2>
+                <span style="display:block; font-size:1rem; color:#666; margin-top:5px">在鋼箱上鑽孔</span>
             </div>
         </div>
     </div>
@@ -70,13 +74,16 @@
         <h2 id="task-title" style="color:var(--p1); font-size: 1.4rem; margin-bottom: 20px;"></h2>
         <div class="menu-grid">
             <div class="menu-card" onclick="startL(1)">
-                <h2>🧩 Level 1<span>Sentence Building / 句子重組</span></h2>
+                <h2 style="margin:0">🧩 Level 1</h2>
+                <span style="display:block; font-size:1rem; color:#666; margin-top:5px">Sentence Building / 句子重組</span>
             </div>
             <div class="menu-card" onclick="startL(2)">
-                <h2>🗣️ Level 2<span>Listen & Repeat / 聽說練習</span></h2>
+                <h2 style="margin:0">🗣️ Level 2</h2>
+                <span style="display:block; font-size:1rem; color:#666; margin-top:5px">Listen & Repeat / 聽說練習</span>
             </div>
             <div class="menu-card" onclick="startL(3)">
-                <h2>❓ Level 3<span>Troubleshooting / 疑難排解</span></h2>
+                <h2 style="margin:0">❓ Level 3</h2>
+                <span style="display:block; font-size:1rem; color:#666; margin-top:5px">疑難排解 / Troubleshooting</span>
             </div>
         </div>
     </div>
@@ -88,6 +95,7 @@
         <div id="level-indicator" class="level-indicator"></div>
     </div>
     <div id="main-content" class="content"></div>
+    <div class="progress-container"><div id="progress-bar" class="progress-bar"></div></div>
 </div>
 
 <div class="overlay" id="overlay"></div>
@@ -99,7 +107,8 @@
 </div>
 
 <script>
-    let currentTask = 1, currentL = 1, currentStep = 0, currentQ = null, isMicOn = false;
+    let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0;
+    let currentQ = null, isMicOn = false;
 
     const tasksData = {
         1: {
@@ -153,10 +162,14 @@
     }
 
     function startL(l) {
-        currentL = l; currentStep = 0; currentQ = null;
+        currentL = l; currentStep = 0; currentQ = null; qCount = 0;
         document.getElementById('page-levels').classList.remove('active');
         document.getElementById('page-practice').classList.add('active');
         render();
+    }
+
+    function updateProgress(val, total) {
+        document.getElementById('progress-bar').style.width = (val / total * 100) + "%";
     }
 
     function render() {
@@ -165,56 +178,48 @@
         const data = tasksData[currentTask];
 
         if (currentL === 1) {
+            updateProgress(currentStep, 3);
             ind.innerHTML = `Level 1<br>Sentence Building`;
             const d = data.steps[currentStep]; 
-            m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.9rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz">Tap words below to build</div><div class="word-pool" id="pool"></div><div class="guide-text">Tap once to add, tap again to remove.<br>撳一下單字彈上去，再撳一下彈返落嚟。</div><button class="btn-action btn-record" onclick="checkL1()">Check / 檢查</button>`;
+            m.innerHTML = `<p style="margin:0; font-size:0.85rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz"></div><div class="word-pool" id="pool"></div><div class="guide-text">點選單字即可加入，再次點選則可移除。<br>Tap once to add, tap again to remove.</div><button class="btn-action btn-record" onclick="checkL1()">Check / 檢查</button>`;
             
             const dz = document.getElementById('dz');
             const pool = document.getElementById('pool');
-
             [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
-                const s = document.createElement('span');
-                s.className = 'word';
-                s.innerText = w;
-                s.onclick = () => {
-                    if (s.parentNode === pool) {
-                        if (dz.innerText.includes("Tap")) dz.innerText = "";
-                        dz.appendChild(s);
-                    } else {
-                        pool.appendChild(s);
-                        if (dz.children.length === 0) dz.innerText = "Tap words below to build";
-                    }
-                };
+                const s = document.createElement('span'); s.className = 'word'; s.innerText = w;
+                s.onclick = () => { if (s.parentNode === pool) { dz.appendChild(s); } else { pool.appendChild(s); } };
                 pool.appendChild(s);
             });
         } else if (currentL === 2) {
+            updateProgress(currentStep, 3);
             ind.innerHTML = `Level 2<br>Listen & Repeat`;
             const d = data.steps[currentStep]; 
-            m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.9rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--p1); text-align:center; font-size:1.1rem; margin:10px 0;">${d.correct}</p><button class="btn-action btn-listen" onclick="speak('${d.correct}')">🔊 Listen / 聽示範</button><button id="rec-btn" class="btn-action btn-record" onclick="rec('${d.correct}', this)">🎤 Record / 錄音</button><button class="btn-action" style="background:#eee; color:#333;" onclick="nextStep()">Next / 下一步</button>`;
+            m.innerHTML = `<p style="margin:0; font-size:0.85rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--p1); text-align:center; font-size:1.1rem; margin:10px 0;">${d.correct}</p><button class="btn-action btn-listen" onclick="speak('${d.correct}')">🔊 Listen / 聽示範</button><button id="rec-btn" class="btn-action btn-record" onclick="rec('${d.correct}', this)">🎤 Record / 錄音</button><button class="btn-action" style="background:#eee; color:#333;" onclick="nextStep()">Next / 下一步</button>`;
         } else if (currentL === 3) {
+            updateProgress(qCount, 4);
             ind.innerHTML = `Level 3<br>疑難排解`;
             if (!currentQ) currentQ = data.trouble[Math.floor(Math.random() * data.trouble.length)];
-            m.innerHTML = `<div class="img-box" style="background:var(--dark); cursor:pointer; height:90px;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center; font-size:0.9rem;"><span style="font-size:1.5rem;">🎧</span><br>Listen to customer / 聽提問</div></div><div class="note-area"><strong>疑難排解 (Troubleshooting):</strong><br>${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" style="margin-top:0;" onclick="rec(currentQ.a, this, true)">🎤 Answer / 回答問題</button><button class="btn-action" style="background:#eee; color:#333; padding:10px;" onclick="randomQ()">Next Question / 下一題</button>`;
+            m.innerHTML = `<div class="img-box" style="background:var(--dark); cursor:pointer; height:80px;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center; font-size:0.9rem;"><span style="font-size:1.5rem;">🎧</span><br>Listen to customer / 聽提問</div></div><div class="note-area"><strong>疑難排解 (Troubleshooting):</strong><br>${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" style="margin-top:0;" onclick="rec(currentQ.a, this, true)">🎤 Answer / 回答問題</button><button class="btn-action" style="background:#eee; color:#333; padding:10px;" onclick="randomQ()">Next Question / 下一題</button>`;
         }
     }
-
-    function randomQ() { currentQ = null; render(); }
 
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.word')).map(e => e.innerText).join(" ");
         if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
             showPop("✅ Correct!", "🌟", `<strong>${d.correct}</strong><br><br>${d.chi}`);
-            currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; }
+            currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; updateProgress(3,3); }
             render();
         } else { showPop("❌ Incorrect / 錯誤", "😕", "Please check the words or the order.<br>請檢查單字或順序是否正確。"); }
     }
 
     function nextStep() { currentStep++; if(currentStep > 2) { currentStep = 0; startL(3); } else render(); }
 
+    function randomQ() { currentQ = null; qCount++; if(qCount >= 4) { showPop("🎉 Well Done!", "🏆", "You have finished all tasks!<br>你已完成所有練習！"); backToLevels(); } else render(); }
+
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); }
 
-    const SpeechRecognition = window.webkitSpeechRecognition || window.Recognition;
+    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
     if (recognition) { recognition.lang = 'en-US'; recognition.continuous = false; }
 
@@ -229,6 +234,7 @@
             let isCorrect = res.includes(cleanTarget) || cleanTarget.includes(res);
             const fb = isL3 ? `<strong>Q:</strong> "${currentQ.q}"<br><br><strong>You:</strong> "${res}"<br><br><strong>Correct:</strong> "${currentQ.full}"` : `<strong>You:</strong> "${res}"<br><strong>Target:</strong> "${target}"`;
             showPop(isCorrect ? "✅ Good!" : "❌ Try Again", isCorrect ? "🏆" : "💪", fb);
+            if(isL3 && isCorrect) { /* 可加入 L3 成功邏輯 */ }
         };
         recognition.onspeechend = () => { stopMic(); };
         recognition.onerror = () => { stopMic(); };
