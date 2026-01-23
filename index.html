@@ -22,8 +22,7 @@
         .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .dropzone { border-bottom: 2px solid var(--p1); min-height: 40px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; background: #f0f7ff; border-radius: 8px; font-size: 0.9rem; color: #888; }
         .word-pool { display: flex; flex-wrap: wrap; gap: 6px; overflow-y: auto; max-height: 100px; padding: 5px; }
-        .word { padding: 6px 10px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; font-size: 0.9rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: 0.2s; }
-        .word:active { transform: scale(0.95); background: #f0f0f0; }
+        .word { padding: 6px 10px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; font-size: 0.9rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .note-area { background: #fff9db; padding: 10px; border-radius: 8px; border-left: 4px solid var(--p3); font-size: 0.75rem; line-height: 1.4; margin-bottom: 10px; overflow-y: auto; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; }
         .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 20px; text-align: center; width: 85%; max-width: 350px; z-index: 101; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
@@ -72,11 +71,14 @@
 
 <script>
     let currentL = 1, currentStep = 0, currentQ = null;
+    let isMicOn = false;
+
     const l1Data = [
         { img: "lightswitch1.jpg", words: ["First,", "switch off", "the", "main power."], correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["turn on", "open", "First,", "switch off", "the", "main power.", "connect"] },
         { img: "lightswitch2.jpg", words: ["Next,", "remove", "the screws", "with", "a screwdriver."], correct: "Next, remove the screws with a screwdriver.", chi: "接著，用螺絲批拆除螺絲。", pool: ["Next,", "remove", "the screws", "with", "a screwdriver.", "install", "fix", "pull", "cut"] },
         { img: "lightswitch3.jpg", words: ["Finally,", "remove", "the light switch", "from", "the wall."], correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall.", "put", "paint", "clean"] }
     ];
+
     const l3Questions = [
         { q: "What should I do if the screwdriver is rusted?", a: "remove the rust", full: "You should remove the rust with sandpaper." },
         { q: "What should I do if the screwdriver bit doesn't fit?", a: "use another one", full: "You should use another one." },
@@ -91,37 +93,37 @@
         render();
     }
 
-    function goHome() { window.speechSynthesis.cancel(); document.getElementById('page-practice').classList.remove('active'); document.getElementById('page-home').classList.add('active'); }
+    function goHome() { 
+        if(window.speechSynthesis) window.speechSynthesis.cancel();
+        stopMic(); // 強制關閉麥克風
+        document.getElementById('page-practice').classList.remove('active'); 
+        document.getElementById('page-home').classList.add('active'); 
+    }
 
     function render() {
         const m = document.getElementById('main-content');
         const ind = document.getElementById('level-indicator');
         if (currentL === 1) {
             ind.innerHTML = `Level 1<br>Sentence Building / 句子重組`;
-            const d = l1Data[currentStep]; m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.8rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz">Tap to add / Tap words above to remove</div><div class="word-pool" id="pool"></div><button class="btn-action btn-record" onclick="checkL1()">Check / 檢查</button>`;
+            const d = l1Data[currentStep]; m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.8rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz">Tap words below...</div><div class="word-pool" id="pool"></div><button class="btn-action btn-record" onclick="checkL1()">Check / 檢查</button>`;
             const dz = document.getElementById('dz');
             const pool = document.getElementById('pool');
             [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
-                const s = document.createElement('span'); s.className = 'word'; s.innerText = w.toLowerCase(); 
+                const s = document.createElement('span'); s.className = 'word'; s.innerText = w.toLowerCase();
                 if(w.includes(",")) s.innerText = w;
                 s.onclick = () => { 
-                    if(dz.innerText.includes("Tap to")) dz.innerText = "";
-                    dz.appendChild(s); 
-                    s.onclick = () => { // 再次點擊上面的字會回到下面 / Click word above to return below
-                        pool.appendChild(s);
-                        s.onclick = () => { if(dz.innerText.includes("Tap to")) dz.innerText = ""; dz.appendChild(s); s.onclick = arguments.callee; };
-                        if(dz.children.length === 0) dz.innerText = "Tap words below / 依序點擊單字...";
-                    };
+                    if(dz.innerText.includes("Tap")) dz.innerText = "";
+                    if(s.parentNode === pool) { dz.appendChild(s); } else { pool.appendChild(s); if(dz.children.length === 0) dz.innerText = "Tap words below..."; }
                 };
                 pool.appendChild(s);
             });
         } else if (currentL === 2) {
             ind.innerHTML = `Level 2<br>Listen & Repeat / 聽說練習`;
-            const d = l1Data[currentStep]; m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.8rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--p1); text-align:center; font-size:0.95rem; margin:10px 0;">${d.correct}</p><button class="btn-action btn-listen" onclick="speak('${d.correct}')">🔊 Listen / 聽示範</button><button class="btn-action btn-record" onclick="rec('${d.correct}', this)">🎤 Record / 錄音</button><button class="btn-action" style="background:#eee; color:#333;" onclick="nextStep()">Next / 下一步</button>`;
+            const d = l1Data[currentStep]; m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.8rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--p1); text-align:center; font-size:0.95rem; margin:10px 0;">${d.correct}</p><button class="btn-action btn-listen" onclick="speak('${d.correct}')">🔊 Listen / 聽示範</button><button id="rec-btn" class="btn-action btn-record" onclick="rec('${d.correct}', this)">🎤 Record / 錄音</button><button class="btn-action" style="background:#eee; color:#333;" onclick="nextStep()">Next / 下一步</button>`;
         } else if (currentL === 3) {
             ind.innerHTML = `Level 3<br>Troubleshooting / 故障排除`;
             if (!currentQ) currentQ = l3Questions[Math.floor(Math.random() * l3Questions.length)];
-            m.innerHTML = `<div class="img-box" style="background:var(--dark); cursor:pointer; height:100px;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center; font-size:0.8rem;"><span style="font-size:1.5rem;">🎧</span><br>Listen to customer / 聽取問題</div></div><div class="note-area"><strong>Troubleshooting:</strong><br>1. If screwdriver is rusted, remove rust with sandpaper.<br>2. If bit doesn’t fit, use another one.<br>3. If screws are bent, use new ones.<br>4. If switch is damaged, replace it.</div><button class="btn-action btn-record" style="margin-top:0;" onclick="rec(currentQ.a, this, true)">🎤 Answer / 回答問題</button><button class="btn-action" style="background:#eee; color:#333; padding:8px;" onclick="randomQ()">Next Question / 隨機下一題</button>`;
+            m.innerHTML = `<div class="img-box" style="background:var(--dark); cursor:pointer; height:100px;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center; font-size:0.8rem;"><span style="font-size:1.5rem;">🎧</span><br>Listen to customer / 聽取問題</div></div><div class="note-area"><strong>Troubleshooting:</strong><br>1. If screwdriver is rusted, remove rust with sandpaper.<br>2. If bit doesn’t fit, use another one.<br>3. If screws are bent, use new ones.<br>4. If switch is damaged, replace it.</div><button id="rec-btn" class="btn-action btn-record" style="margin-top:0;" onclick="rec(currentQ.a, this, true)">🎤 Answer / 回答問題</button><button class="btn-action" style="background:#eee; color:#333; padding:8px;" onclick="randomQ()">Next Question / 隨機下一題</button>`;
         }
     }
 
@@ -143,15 +145,21 @@
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
-    if (recognition) { recognition.lang = 'en-US'; recognition.interimResults = false; }
+    if (recognition) { 
+        recognition.lang = 'en-US'; 
+        recognition.continuous = false; 
+        recognition.interimResults = false;
+    }
 
     function rec(target, btn, isL3 = false) {
-        if(!recognition) return;
+        if(!recognition || isMicOn) return;
+        isMicOn = true;
         btn.innerText = "Listening..."; btn.classList.add('recording');
         recognition.start();
+
         recognition.onresult = (e) => {
             const res = e.results[0][0].transcript.toLowerCase();
-            btn.innerText = "🎤 Record"; btn.classList.remove('recording');
+            stopMic();
             let cleanTarget = target.toLowerCase().replace(/[.,!]/g, '');
             let isCorrect = res.includes(cleanTarget) || cleanTarget.includes(res);
             const fb = isL3 ? 
@@ -159,7 +167,22 @@
                 `<strong>You said / 你說了:</strong><br>"${res}"<br><br><strong>Target / 目標:</strong><br>"${target}"`;
             showPop(isCorrect ? "✅ Good Job! / 做得好！" : "❌ Keep Practicing / 繼續練習", isCorrect ? "🏆" : "💪", fb);
         };
-        recognition.onerror = () => { btn.innerText = "🎤 Record"; btn.classList.remove('recording'); };
+
+        recognition.onspeechend = () => { stopMic(); };
+        recognition.onerror = () => { stopMic(); };
+    }
+
+    function stopMic() {
+        if (recognition) {
+            recognition.stop();
+            recognition.abort(); // 強制終止
+        }
+        isMicOn = false;
+        const btn = document.getElementById('rec-btn');
+        if (btn) {
+            btn.innerText = (currentL === 3) ? "🎤 Answer / 回答問題" : "🎤 Record / 錄音";
+            btn.classList.remove('recording');
+        }
     }
 
     function showPop(title, icon, text) {
