@@ -3,61 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VEN1101 Instruction Trainer</title>
+    <title>VEN1101 Step-by-Step Trainer</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; text-align: center; }
-        .step-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
-        .step-card { background: white; padding: 15px; border-radius: 10px; width: 30%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .step-card img { width: 100%; border-radius: 5px; }
-        .btn { background: #0984e3; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
-        .trouble-section { background: #ffeaa7; padding: 20px; border-radius: 15px; border: 2px dashed #fab1a0; display: none; }
-        .hint { color: #636e72; font-style: italic; font-size: 0.9rem; margin-top: 5px; }
+        :root {
+            --stage1: #74b9ff; --stage2: #55efc4; --stage3: #fab1a0;
+            --dark: #2d3436; --bg: #f9f9f9;
+        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--dark); }
+        .container { max-width: 600px; margin: auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        
+        /* 階段選擇器 */
+        .stage-nav { display: flex; gap: 10px; margin-bottom: 20px; }
+        .nav-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: #ddd; }
+        .nav-btn.active { color: white; }
+        #btn1.active { background: var(--stage1); }
+        #btn2.active { background: var(--stage2); }
+        #btn3.active { background: var(--stage3); }
+
+        .content-box { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); min-height: 300px; }
+        
+        /* 階段 1: 組句 */
+        .word-chip { display: inline-block; padding: 8px 15px; background: #eee; margin: 5px; border-radius: 20px; cursor: pointer; }
+        
+        /* 階段 2: 流程 */
+        .step-img-placeholder { width: 100%; height: 150px; background: #f0f0f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; font-weight: bold; color: #aaa; border: 2px dashed #ccc; }
+        
+        /* 階段 3: Troubleshooting */
+        .bubble { background: #fff4e6; padding: 15px; border-radius: 15px; border-left: 5px solid #ff9f43; margin-bottom: 20px; }
+        
+        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 12px; background: var(--dark); color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .feedback { margin-top: 15px; font-weight: bold; text-align: center; }
     </style>
 </head>
 <body>
 
-    <h1>VEN1101: How to remove a light switch</h1>
-    <p>點擊圖片練習說出指令 (Click to practice instructions)</p>
-
-    <div class="step-container">
-        <div class="step-card">
-            <strong>Step 1</strong>
-            <div class="hint">"First, turn off..."</div>
-            <button class="btn" onclick="speak('First, switch off the main power.')">🔊 Listen</button>
-        </div>
-        <div class="step-card">
-            <strong>Step 2</strong>
-            <div class="hint">"Next, remove..."</div>
-            <button class="btn" onclick="speak('Next, remove the screws with a screwdriver.')">🔊 Listen</button>
-        </div>
-        <div class="step-card">
-            <strong>Step 3</strong>
-            <div class="hint">"Finally, remove..."</div>
-            <button class="btn" onclick="speak('Finally, remove the light switch from the wall.')">🔊 Listen</button>
-        </div>
+<div class="container">
+    <div class="header">
+        <h1>VEN1101 Trainer 🛠️</h1>
+        <p>Master the Light Switch Task / 掌握電燈開關任務</p>
     </div>
 
-    <button class="btn" style="background: #d63031;" onclick="showTrouble()">模擬突發問題 (Simulate a Problem)</button>
-
-    <div id="trouble-box" class="trouble-section" style="margin-top:20px;">
-        <h3>❓ Customer Question:</h3>
-        <p id="question-text">"What should I do if the screwdriver bit doesn't fit?"</p>
-        <div style="background: white; padding: 10px; border-radius: 10px; display: inline-block;">
-            <strong>Your Answer:</strong><br>
-            "You should <u>use another one</u>."
-        </div>
+    <div class="stage-nav">
+        <button id="btn1" class="nav-btn active" onclick="showStage(1)">Level 1<br>Sentence</button>
+        <button id="btn2" class="nav-btn" onclick="showStage(2)">Level 2<br>Sequence</button>
+        <button id="btn3" class="nav-btn" onclick="showStage(3)">Level 3<br>Trouble</button>
     </div>
 
-    <script>
-        function speak(text) {
-            const msg = new SpeechSynthesisUtterance(text);
-            msg.lang = 'en-US';
-            window.speechSynthesis.speak(msg);
+    <div class="content-box" id="content">
+        </div>
+</div>
+
+<script>
+    let currentStage = 1;
+
+    function showStage(s) {
+        currentStage = s;
+        document.querySelectorAll('.nav-btn').forEach((b, i) => b.classList.toggle('active', i + 1 === s));
+        render();
+    }
+
+    function render() {
+        const box = document.getElementById('content');
+        if (currentStage === 1) {
+            box.innerHTML = `
+                <h3>Level 1: Sentence Building / 組句練習</h3>
+                <p style="color: #666;">Drag the words in order / 按順序排列：</p>
+                <div style="border-bottom: 2px solid #eee; padding: 20px; margin-bottom: 20px; font-size: 1.2rem;" id="dropzone">...</div>
+                <div id="wordpool">
+                    <span class="word-chip" onclick="addWord('First,')">First,</span>
+                    <span class="word-chip" onclick="addWord('switch off')">switch off</span>
+                    <span class="word-chip" onclick="addWord('the')">the</span>
+                    <span class="word-chip" onclick="addWord('main power.')">main power.</span>
+                </div>
+                <button class="btn-action" onclick="checkL1()">Check Answer / 檢查</button>
+                <div id="fb" class="feedback"></div>
+            `;
+        } else if (currentStage === 2) {
+            box.innerHTML = `
+                <h3>Level 2: Steps & Flow / 流程與指令</h3>
+                <div class="step-img-placeholder">IMAGE 1: Main Power</div>
+                <button class="btn-action" style="background:var(--stage2)" onclick="speak('First, switch off the main power.')">🔊 Step 1: First, switch off...</button>
+                <div class="step-img-placeholder" style="margin-top:20px">IMAGE 2: Screwdriver</div>
+                <button class="btn-action" style="background:var(--stage2)" onclick="speak('Next, remove the screws with a screwdriver.')">🔊 Step 2: Next, remove...</button>
+                <div class="step-img-placeholder" style="margin-top:20px">IMAGE 3: Wall</div>
+                <button class="btn-action" style="background:var(--stage2)" onclick="speak('Finally, remove the light switch from the wall.')">🔊 Step 3: Finally, remove...</button>
+            `;
+        } else if (currentStage === 3) {
+            box.innerHTML = `
+                <h3>Level 3: Troubleshooting / 故障排除</h3>
+                <div class="bubble">
+                    <strong>Customer asks:</strong><br>
+                    "What should I do if the screwdriver bit doesn't fit?"
+                </div>
+                <p>Choose the best response / 選擇最合適的回答：</p>
+                <button class="btn-action" style="background:white; color:black; border:1px solid #ddd;" onclick="checkL3(false)">A. You should remove it with your hand.</button>
+                <button class="btn-action" style="background:white; color:black; border:1px solid #ddd;" onclick="checkL3(true)">B. You should use another one.</button>
+                <div id="fb" class="feedback"></div>
+            `;
         }
-        function showTrouble() {
-            document.getElementById('trouble-box').style.display = 'block';
-            speak("What should I do if the screwdriver bit doesn't fit?");
+    }
+
+    let userWords = [];
+    function addWord(w) {
+        userWords.push(w);
+        document.getElementById('dropzone').innerText = userWords.join(" ");
+    }
+    function checkL1() {
+        const ans = "First, switch off the the main power.";
+        if (userWords.join(" ") === "First, switch off the main power.") {
+            document.getElementById('fb').innerHTML = "✅ Excellent!";
+        } else {
+            document.getElementById('fb').innerHTML = "❌ Try again! (Click to reset)";
+            userWords = [];
         }
-    </script>
+    }
+    function checkL3(isCorrect) {
+        document.getElementById('fb').innerHTML = isCorrect ? "✅ Correct! If it doesn't fit, use another one." : "❌ Not quite. Safety first!";
+    }
+    function speak(t) {
+        const m = new SpeechSynthesisUtterance(t);
+        m.lang = 'en-US';
+        window.speechSynthesis.speak(m);
+    }
+
+    render();
+</script>
+
 </body>
 </html>
