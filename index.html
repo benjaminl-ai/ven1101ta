@@ -174,7 +174,7 @@
             updateProgress(qCount / 4 * 100);
             ind.innerHTML = `Level 3<br>Troubleshooting`;
             if (!currentQ) currentQ = data.trouble[qCount % data.trouble.length];
-            m.innerHTML = `<div class="img-box" style="background:var(--dark); cursor:pointer; height:90px;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center;"><span style="font-size:1.5rem;">🎧</span><br>Listen to customer / 聽提問</div></div><div class="note-area"><strong>Troubleshooting:</strong><br>${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" onclick="rec(currentQ.a, this, true)">🎤 Answer / 回告</button><button class="btn-action" style="background:#eee; margin-top:5px;" onclick="randomQ()">Skip / 跳過</button>`;
+            m.innerHTML = `<div class="img-box" style="background:var(--dark); cursor:pointer; height:90px;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center;"><span style="font-size:1.5rem;">🎧</span><br>Listen to customer / 聽提問</div></div><div class="note-area"><strong>Troubleshooting:</strong><br>${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" onclick="rec(currentQ.a, this, true)">🎤 Answer / 回應</button><button class="btn-action" style="background:#eee; margin-top:5px;" onclick="randomQ()">Skip / 跳過</button>`;
         }
     }
 
