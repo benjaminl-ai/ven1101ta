@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VEN1101 Instruction Trainer</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; text-align: center; }
+        .step-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .step-card { background: white; padding: 15px; border-radius: 10px; width: 30%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .step-card img { width: 100%; border-radius: 5px; }
+        .btn { background: #0984e3; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .trouble-section { background: #ffeaa7; padding: 20px; border-radius: 15px; border: 2px dashed #fab1a0; display: none; }
+        .hint { color: #636e72; font-style: italic; font-size: 0.9rem; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>VEN1101: How to remove a light switch</h1>
+    <p>點擊圖片練習說出指令 (Click to practice instructions)</p>
+
+    <div class="step-container">
+        <div class="step-card">
+            <strong>Step 1</strong>
+            <div class="hint">"First, turn off..."</div>
+            <button class="btn" onclick="speak('First, switch off the main power.')">🔊 Listen</button>
+        </div>
+        <div class="step-card">
+            <strong>Step 2</strong>
+            <div class="hint">"Next, remove..."</div>
+            <button class="btn" onclick="speak('Next, remove the screws with a screwdriver.')">🔊 Listen</button>
+        </div>
+        <div class="step-card">
+            <strong>Step 3</strong>
+            <div class="hint">"Finally, remove..."</div>
+            <button class="btn" onclick="speak('Finally, remove the light switch from the wall.')">🔊 Listen</button>
+        </div>
+    </div>
+
+    <button class="btn" style="background: #d63031;" onclick="showTrouble()">模擬突發問題 (Simulate a Problem)</button>
+
+    <div id="trouble-box" class="trouble-section" style="margin-top:20px;">
+        <h3>❓ Customer Question:</h3>
+        <p id="question-text">"What should I do if the screwdriver bit doesn't fit?"</p>
+        <div style="background: white; padding: 10px; border-radius: 10px; display: inline-block;">
+            <strong>Your Answer:</strong><br>
+            "You should <u>use another one</u>."
+        </div>
+    </div>
+
+    <script>
+        function speak(text) {
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'en-US';
+            window.speechSynthesis.speak(msg);
+        }
+        function showTrouble() {
+            document.getElementById('trouble-box').style.display = 'block';
+            speak("What should I do if the screwdriver bit doesn't fit?");
+        }
+    </script>
+</body>
+</html>
