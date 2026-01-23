@@ -3,35 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VEN1101 Assessment Pro</title>
+    <title>VEN1101 Assessment Pro V5</title>
     <style>
         :root { --p1: #4a90e2; --p2: #00b894; --p3: #f39c12; --bg: #f8f9fa; --dark: #2d3436; }
         body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); }
-        
         .page { display: none; padding: 20px; animation: fadeIn 0.4s; }
         .page.active { display: block; }
-
         .home-screen { text-align: center; padding: 40px 20px; }
         .menu-grid { display: grid; gap: 15px; margin-top: 30px; }
         .menu-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
         .menu-card:hover { border-color: var(--p1); transform: translateY(-3px); }
-
         .content { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 600px; margin: auto; }
         .img-box { width: 100%; height: 200px; background: #eee; border-radius: 15px; margin-bottom: 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; position: relative; }
         .img-box img { width: 100%; height: 100%; object-fit: contain; }
-        
         .dropzone { border-bottom: 3px solid var(--p1); min-height: 50px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; background: #f0f7ff; border-radius: 10px; }
         .word-pool { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; background: #fff; border: 1px dashed #ccc; border-radius: 10px; }
         .word { padding: 8px 12px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; font-size: 0.95rem; }
-
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; }
         .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 25px; text-align: center; width: 85%; max-width: 420px; z-index: 101; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        
         .btn-action { width: 100%; padding: 15px; border: none; border-radius: 12px; margin-top: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
         .btn-record { background: var(--p1); color: white; }
         .btn-listen { background: #eef2ff; color: var(--p1); }
         .recording { background: #d63031 !important; animation: pulse 1.5s infinite; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     </style>
@@ -41,19 +34,19 @@
 <div id="page-home" class="page active">
     <div class="home-screen">
         <h1 style="color:var(--p1); margin-bottom:10px;">🛠️ VEN1101 Assessment</h1>
-        <p>Training Simulator / 模擬訓練器</p>
+        <p>Reliable Training Tool / 穩定版訓練工具</p>
         <div class="menu-grid">
             <div class="menu-card" onclick="startL(1)">
                 <h3>Level 1: Sentence Building</h3>
-                <p>Drag words with images & Chinese translation.<br>根據圖片拖放單字並查看中文解釋。</p>
+                <p>Drag and drop words. / 拖放單字組句。</p>
             </div>
             <div class="menu-card" onclick="startL(2)">
                 <h3>Level 2: Listen & Repeat</h3>
-                <p>Improve speaking fluency.<br>練習口說流暢度。</p>
+                <p>Practice speaking. / 聽示範練習口說。</p>
             </div>
             <div class="menu-card" onclick="startL(3)">
-                <h3>Level 3: Listening Challenge</h3>
-                <p>Blind listening & troubleshooting.<br>盲聽提問並進行故障排除。</p>
+                <h3>Level 3: Trouble-shooting</h3>
+                <p>Listen and respond. / 聽取問題並回答。</p>
             </div>
         </div>
     </div>
@@ -104,9 +97,23 @@
                 document.getElementById('pool').appendChild(s);
             });
         } else if (currentL === 2) {
-            const d = l1Data[currentStep]; m.innerHTML = `<h3>Listen & Repeat</h3><div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--p1); text-align:center;">${d.correct}</p><button class="btn-action btn-listen" onclick="speak('${d.correct}')">🔊 Listen / 聽示範</button><button class="btn-action btn-record" onclick="rec('${d.correct}', this)">🎤 Record / 錄音</button><button class="btn-action" style="background:#eee; color:#333;" onclick="nextStep()">Next / 下一步</button>`;
+            const d = l1Data[currentStep]; m.innerHTML = `<h3>Listen & Repeat</h3><div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--p1); text-align:center;">${d.correct}</p><button class="btn-action btn-listen" onclick="speak('${d.correct}')">🔊 Play Guide / 聽示範</button><button class="btn-action btn-record" onclick="rec('${d.correct}', this)">🎤 Record / 錄音</button><button class="btn-action" style="background:#eee; color:#333;" onclick="nextStep()">Next / 下一步</button>`;
         } else if (currentL === 3) {
-            m.innerHTML = `<h3>Trouble-shooting Challenge</h3><div class="img-box" style="background:var(--dark); cursor:pointer;" onclick="speak('What should I do if the screwdriver bit doesn\'t fit?')"><div style="color:white; text-align:center;"><span style="font-size:3rem;">🎧</span><br>Click to hear customer<br>點擊聽取客人提問</div></div><div style="background:#fff9db; padding:15px; border-radius:10px; border-left:5px solid var(--p3); font-size:0.85rem; line-height:1.6;"><strong>Trouble-shooting:</strong><br>1. If the screwdriver is rusted, remove the rust with sandpaper.<br>2. If the screwdriver bit doesn’t fit, use another one.<br>3. If the screws are bent, use new ones.<br>4. If the light switch is damanged, replace it.</div><button class="btn-action btn-record" onclick="rec('use another one', this, true)">🎤 Answer / 回答問題</button>`;
+            m.innerHTML = `<h3>Trouble-shooting</h3>
+            <div class="img-box" style="background:#f0f0f0;">
+                <div style="text-align:center;">
+                    <span style="font-size:3rem;">🙋‍♂️</span><br>
+                    <button onclick="speak('What should I do if the screwdriver bit doesn\'t fit?')" style="padding:10px 20px; border-radius:20px; border:none; background:var(--p3); color:white; font-weight:bold; cursor:pointer; margin-top:10px;">🔊 Click to Hear Question / 點擊聽取問題</button>
+                </div>
+            </div>
+            <div style="background:#fff9db; padding:15px; border-radius:10px; border-left:5px solid var(--p3); font-size:0.85rem; line-height:1.6;">
+                <strong>Trouble-shooting Guide:</strong><br>
+                1. If the screwdriver is rusted, remove the rust with sandpaper.<br>
+                2. If the screwdriver bit doesn’t fit, <b>use another one</b>.<br>
+                3. If the screws are bent, use new ones.<br>
+                4. If the light switch is damanged, replace it.
+            </div>
+            <button class="btn-action btn-record" onclick="rec('use another one', this, true)">🎤 Answer the Customer / 回答問題</button>`;
         }
     }
 
@@ -114,40 +121,41 @@
         const d = l1Data[currentStep];
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.word')).map(e => e.innerText).join(" ");
         if (ans === d.correct) {
-            showPop("✅ Correct!", "🌟", `<strong>${d.correct}</strong><br><br><em>中文意思：${d.chi}</em>`);
+            showPop("✅ Correct!", "🌟", `<strong>${d.correct}</strong><br><br><em>中文：${d.chi}</em>`);
             currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; }
             render();
-        } else { showPop("❌ Incorrect", "😕", "Try again! Watch the verb and sequence.<br>再試一次！注意動詞和順序。"); render(); }
+        } else { showPop("❌ Incorrect", "😕", "Order is wrong. Try again!<br>順序錯誤，請再試一次！"); render(); }
     }
 
     function nextStep() { currentStep++; if(currentStep > 2) { currentStep = 0; startL(3); } else render(); }
 
     function speak(t) { 
+        if (!window.speechSynthesis) { alert("Your browser doesn't support audio. / 您的瀏覽器不支援語音。"); return; }
         window.speechSynthesis.cancel();
         const m = new SpeechSynthesisUtterance(t); 
-        m.lang = 'en-US'; m.rate = 0.85; 
+        m.lang = 'en-US'; m.rate = 0.8; 
         window.speechSynthesis.speak(m); 
     }
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
-    if (recognition) recognition.lang = 'en-US';
+    if (recognition) { recognition.lang = 'en-US'; recognition.continuous = false; }
 
     function rec(target, btn, isL3 = false) {
-        if(!recognition) { alert("Speech recognition not supported in this browser."); return; }
-        btn.innerText = "Listening..."; btn.classList.add('recording');
+        if(!recognition) { alert("Speech recognition not supported. Please use Chrome. / 請使用 Chrome 瀏覽器以支援語音功能。"); return; }
+        btn.innerText = "Listening... 👂"; btn.classList.add('recording');
         recognition.start();
         recognition.onresult = (e) => {
             const res = e.results[0][0].transcript.toLowerCase();
-            btn.innerText = "🎤 Record"; btn.classList.remove('recording');
-            let isCorrect = res.includes(target.toLowerCase()) || target.toLowerCase().includes(res);
+            btn.innerText = isL3 ? "🎤 Answer the Customer" : "🎤 Record"; btn.classList.remove('recording');
+            let isCorrect = res.includes(target.toLowerCase());
             if (isL3) {
-                showPop(isCorrect ? "✅ Well Done!" : "❌ Try Again", isCorrect ? "🏆" : "💪", `<strong>Question:</strong> "What should I do if the bit doesn't fit?"<br><br><strong>You said:</strong> "${res}"<br><br><strong>Correct Answer:</strong> "You should use another one."`);
+                showPop(isCorrect ? "✅ Well Done!" : "❌ Try Again", isCorrect ? "🏆" : "💪", `<strong>Question:</strong> "What should I do if the bit doesn't fit?"<br><br><strong>You said:</strong> "${res}"<br><br><strong>Correct:</strong> "You should use another one."`);
             } else {
                 showPop(isCorrect ? "✅ Good Job!" : "❌ Not Quite", isCorrect ? "😊" : "🎧", `You said: "${res}"<br>Target: "${target}"`);
             }
         };
-        recognition.onerror = () => { btn.innerText = "🎤 Record"; btn.classList.remove('recording'); };
+        recognition.onerror = () => { btn.innerText = isL3 ? "🎤 Answer the Customer" : "🎤 Record"; btn.classList.remove('recording'); };
     }
 
     function showPop(title, icon, text) {
