@@ -37,7 +37,6 @@
 
         .guide-text { font-size: 0.7rem; color: #999; text-align: center; margin-bottom: 8px; line-height: 1.3; flex-shrink: 0; }
 
-        /* 彈跳 Button */
         .btn-action { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; flex-shrink: 0; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .btn-action:active { transform: scale(0.92); }
         
@@ -47,7 +46,6 @@
         .btn-listen { background: #eef2ff; color: var(--p1); margin-top: 5px; }
         .recording { background: #d63031 !important; animation: pulse 1.5s infinite; }
 
-        /* 發光進度條 + Icon */
         .progress-container { width: 100%; height: 12px; background: #ddd; border-radius: 6px; overflow: visible; flex-shrink: 0; position: relative; }
         .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #55efc4, var(--p2)); border-radius: 6px; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); box-shadow: 0 0 10px rgba(0, 184, 148, 0.5); position: relative; }
         .progress-icon { position: absolute; right: -10px; top: -8px; font-size: 1.2rem; transition: right 0.6s; }
@@ -110,7 +108,6 @@
 
 <script>
     let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0, currentQ = null, isMicOn = false;
-
     const congrats = ["You're a Pro! 🛠️", "Amazing Work! ✨", "Keep it up! 🔥", "Excellent! 🌟", "You're on fire! 🚀"];
 
     const tasksData = {
@@ -154,7 +151,6 @@
     function render() {
         const m = document.getElementById('main-content');
         const ind = document.getElementById('level-indicator');
-        const pb = document.getElementById('progress-bar');
         const data = tasksData[currentTask];
 
         if (currentL === 1) {
@@ -198,19 +194,8 @@
         } else { showPop("❌ Incorrect", "😕", "Please check the words or the order.<br>請檢查單字或順序是否正確。"); }
     }
 
-    function nextStep() { 
-        fireConfetti();
-        currentStep++; 
-        if(currentStep > 2) { currentStep = 0; startL(3); } else render(); 
-    }
-
-    function randomQ() { 
-        fireConfetti();
-        qCount++; 
-        currentQ = null; 
-        if(qCount >= 4) { showPop("🎉 Well Done!", "🏆", "Finish! / 完成！"); backToLevels(); } else render(); 
-    }
-    
+    function nextStep() { fireConfetti(); currentStep++; if(currentStep > 2) { currentStep = 0; startL(3); } else render(); }
+    function randomQ() { fireConfetti(); qCount++; currentQ = null; if(qCount >= 4) { showPop("🎉 Well Done!", "🏆", "Finish! / 完成！"); backToLevels(); } else render(); }
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); }
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
@@ -242,10 +227,7 @@
         if (btn) { btn.innerText = (currentL === 3) ? "🎤 Answer" : "🎤 Record"; btn.classList.remove('recording'); }
     }
 
-    function fireConfetti() {
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#4a90e2', '#00b894', '#f39c12'] });
-    }
-
+    function fireConfetti() { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#4a90e2', '#00b894', '#f39c12'] }); }
     function showPop(title, icon, text) { document.getElementById('pop-title').innerHTML = title; document.getElementById('pop-icon').innerText = icon; document.getElementById('pop-text').innerHTML = text; document.getElementById('overlay').style.display = 'block'; document.getElementById('popup').style.display = 'block'; }
     function closePopup() { document.getElementById('overlay').style.display = 'none'; document.getElementById('popup').style.display = 'none'; }
 </script>
