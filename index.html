@@ -11,6 +11,7 @@
         .page { display: none; height: 100vh; padding: 12px; box-sizing: border-box; animation: fadeIn 0.3s; }
         .page.active { display: flex; flex-direction: column; }
 
+        /* 內容褪高 (Layout shifted up) */
         .home-screen { display: flex; flex-direction: column; justify-content: flex-start; height: 100%; text-align: center; padding-top: 40px; }
         .menu-grid { display: flex; flex-direction: column; gap: 12px; padding: 0 10px; }
         .menu-card { background: white; padding: 18px; border-radius: 14px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); cursor: pointer; border: 2px solid transparent; }
@@ -25,11 +26,11 @@
         .img-box { width: 100%; height: 140px; background: #eee; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
+        /* Dropzone (簡約版) */
         .dropzone { border-bottom: 3px solid var(--p1); min-height: 50px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; background: #f0f7ff; border-radius: 10px; font-size: 1rem; color: #888; align-items: center; }
         .word-pool { display: flex; flex-wrap: wrap; gap: 8px; overflow-y: auto; max-height: 100px; padding: 5px; }
         
-        .word { padding: 8px 12px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-        .word.selected { border: 2px solid var(--p1); background: #eef2ff; transform: scale(1.05); z-index: 10; }
+        .word { padding: 8px 12px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); -webkit-tap-highlight-color: transparent; }
 
         .note-area { background: #fff9db; padding: 12px; border-radius: 10px; border-left: 5px solid var(--p3); font-size: 0.85rem; line-height: 1.5; margin-bottom: 12px; overflow-y: auto; }
 
@@ -100,7 +101,6 @@
 
 <script>
     let currentTask = 1, currentL = 1, currentStep = 0, currentQ = null, isMicOn = false;
-    let selectedWord = null;
 
     const tasksData = {
         1: {
@@ -154,7 +154,7 @@
     }
 
     function startL(l) {
-        currentL = l; currentStep = 0; currentQ = null; selectedWord = null;
+        currentL = l; currentStep = 0; currentQ = null;
         document.getElementById('page-levels').classList.remove('active');
         document.getElementById('page-practice').classList.add('active');
         render();
@@ -168,7 +168,7 @@
         if (currentL === 1) {
             ind.innerHTML = `Level 1<br>Sentence Building`;
             const d = data.steps[currentStep]; 
-            m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.9rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz">Tap words to swap or remove</div><div class="word-pool" id="pool"></div><button class="btn-action btn-record" onclick="checkL1()">Check / 檢查</button>`;
+            m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.9rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz">Tap words below to build</div><div class="word-pool" id="pool"></div><button class="btn-action btn-record" onclick="checkL1()">Check / 檢查</button>`;
             
             const dz = document.getElementById('dz');
             const pool = document.getElementById('pool');
@@ -177,55 +177,17 @@
                 const s = document.createElement('span');
                 s.className = 'word';
                 s.innerText = w;
-
-                s.onclick = (e) => {
-                    e.stopPropagation();
+                s.onclick = () => {
                     if (s.parentNode === pool) {
-                        // 從字池移動到答案欄 / Move from pool to answer
                         if (dz.innerText.includes("Tap")) dz.innerText = "";
                         dz.appendChild(s);
                     } else {
-                        // 在答案欄中的邏輯 / Logic within answer zone
-                        if (selectedWord === null) {
-                            // 第一次點擊：選中 / First tap: select
-                            selectedWord = s;
-                            s.classList.add('selected');
-                        } else if (selectedWord === s) {
-                            // 再次點擊自己：取消選中並退回字池 / Tap again: remove
-                            pool.appendChild(s);
-                            s.classList.remove('selected');
-                            selectedWord = null;
-                            if (dz.children.length === 0) dz.innerText = "Tap words to swap or remove";
-                        } else {
-                            // 點擊另一個字：交換位置 / Tap another word: swap
-                            const allWords = Array.from(dz.children);
-                            const idx1 = allWords.indexOf(selectedWord);
-                            const idx2 = allWords.indexOf(s);
-                            
-                            if (idx1 < idx2) {
-                                s.after(selectedWord);
-                                allWords[idx1].before(s);
-                            } else {
-                                s.before(selectedWord);
-                                allWords[idx1].after(s);
-                            }
-                            
-                            selectedWord.classList.remove('selected');
-                            selectedWord = null;
-                        }
+                        pool.appendChild(s);
+                        if (dz.children.length === 0) dz.innerText = "Tap words below to build";
                     }
                 };
                 pool.appendChild(s);
             });
-
-            // 點擊空白處取消選擇 / Tap empty space to deselect
-            dz.onclick = () => {
-                if(selectedWord) {
-                    selectedWord.classList.remove('selected');
-                    selectedWord = null;
-                }
-            };
-
         } else if (currentL === 2) {
             ind.innerHTML = `Level 2<br>Listen & Repeat`;
             const d = data.steps[currentStep]; 
@@ -233,7 +195,7 @@
         } else if (currentL === 3) {
             ind.innerHTML = `Level 3<br>Troubleshooting`;
             if (!currentQ) currentQ = data.trouble[Math.floor(Math.random() * data.trouble.length)];
-            m.innerHTML = `<div class="img-box" style="background:var(--dark); cursor:pointer; height:90px;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center; font-size:0.9rem;"><span style="font-size:1.5rem;">🎧</span><br>Listen to customer / 聽提問</div></div><div class="note-area"><strong>Troubleshooting:</strong><br>${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" style="margin-top:0;" onclick="rec(currentQ.a, this, true)">🎤 Answer / 回答問題</button><button class="btn-action" style="background:#eee; color:#333; padding:10px;" onclick="randomQ()">Next Question / 下一題</button>`;
+            m.innerHTML = `<div class="img-box" style="background:var(--dark); cursor:pointer; height:90px;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center; font-size:0.9rem;"><span style="font-size:1.5rem;">🎧</span><br>Listen to customer / 聽提問</div></div><div class="note-area"><strong>Troubleshooting:</strong><br>${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" style="margin-top:0;" onclick="rec(currentQ.a, this, true)">🎤 Answer / 回告問題</button><button class="btn-action" style="background:#eee; color:#333; padding:10px;" onclick="randomQ()">Next Question / 下一題</button>`;
         }
     }
 
