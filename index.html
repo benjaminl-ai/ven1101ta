@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VEN1101 TA Revision</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --p1: #4a90e2; --p2: #00b894; --p3: #f39c12; --bg: #f8f9fa; --dark: #2d3436; }
         body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); overflow: hidden; font-size: 18px; }
@@ -13,7 +14,8 @@
 
         .home-screen { display: flex; flex-direction: column; justify-content: flex-start; height: 100%; text-align: center; padding-top: 30px; }
         .menu-grid { display: flex; flex-direction: column; gap: 12px; padding: 0 10px; }
-        .menu-card { background: white; padding: 18px; border-radius: 14px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); cursor: pointer; }
+        .menu-card { background: white; padding: 18px; border-radius: 14px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); cursor: pointer; transition: transform 0.2s; }
+        .menu-card:active { transform: scale(0.95); }
         .menu-card h2 { margin: 0; font-size: 1.2rem; }
         .menu-card span { display: block; font-size: 1rem; color: #666; margin-top: 5px; }
 
@@ -31,23 +33,32 @@
         .word-pool { display: flex; flex-wrap: wrap; gap: 8px; overflow-y: auto; max-height: 80px; padding: 5px; margin-bottom: 5px; align-content: flex-start; }
         
         .word { padding: 8px 12px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-size: 0.95rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); -webkit-tap-highlight-color: transparent; }
+        .word:active { transform: scale(0.9); background: #eef2ff; }
+
         .guide-text { font-size: 0.7rem; color: #999; text-align: center; margin-bottom: 8px; line-height: 1.3; flex-shrink: 0; }
 
-        .btn-action { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; flex-shrink: 0; }
-        .btn-record { background: var(--p1); color: white; margin-top: auto; }
+        /* 彈跳 Button */
+        .btn-action { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; flex-shrink: 0; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .btn-action:active { transform: scale(0.92); }
+        
+        .btn-record { background: var(--p1); color: white; margin-top: auto; box-shadow: 0 4px 0 #357abd; }
+        .btn-record:active { box-shadow: 0 2px 0 #357abd; transform: translateY(2px) scale(0.95); }
+        
         .btn-listen { background: #eef2ff; color: var(--p1); margin-top: 5px; }
         .recording { background: #d63031 !important; animation: pulse 1.5s infinite; }
 
-        .progress-container { width: 100%; height: 10px; background: #ddd; border-radius: 5px; overflow: hidden; flex-shrink: 0; }
-        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--p2), #55efc4); transition: width 0.4s ease; }
+        /* 發光進度條 + Icon */
+        .progress-container { width: 100%; height: 12px; background: #ddd; border-radius: 6px; overflow: visible; flex-shrink: 0; position: relative; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #55efc4, var(--p2)); border-radius: 6px; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); box-shadow: 0 0 10px rgba(0, 184, 148, 0.5); position: relative; }
+        .progress-icon { position: absolute; right: -10px; top: -8px; font-size: 1.2rem; transition: right 0.6s; }
 
-        /* Level 3 黃框優化：改為自動高度，但設定最小高度 */
         .note-area { background: #fff9db; padding: 12px; border-radius: 10px; border-left: 5px solid var(--p3); font-size: 0.95rem; line-height: 1.4; margin-bottom: 10px; min-height: 120px; max-height: 180px; overflow-y: auto; flex-shrink: 0; }
 
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; }
-        .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 25px; text-align: center; width: 85%; z-index: 101; }
+        .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 25px; text-align: center; width: 85%; z-index: 101; animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     </style>
 </head>
@@ -82,7 +93,11 @@
         <div id="level-indicator" class="level-indicator"></div>
     </div>
     <div id="main-content" class="content"></div>
-    <div class="progress-container"><div id="progress-bar" class="progress-bar"></div></div>
+    <div class="progress-container">
+        <div id="progress-bar" class="progress-bar">
+            <span class="progress-icon">🛠️</span>
+        </div>
+    </div>
 </div>
 
 <div class="overlay" id="overlay"></div>
@@ -95,6 +110,8 @@
 
 <script>
     let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0, currentQ = null, isMicOn = false;
+
+    const congrats = ["You're a Pro! 🛠️", "Amazing Work! ✨", "Keep it up! 🔥", "Excellent! 🌟", "You're on fire! 🚀"];
 
     const tasksData = {
         1: {
@@ -141,7 +158,7 @@
         const data = tasksData[currentTask];
 
         if (currentL === 1) {
-            pb.style.width = (currentStep / 3 * 100) + "%";
+            updateProgress(currentStep / 3 * 100);
             ind.innerHTML = `Level 1<br>Sentence Building`;
             const d = data.steps[currentStep]; 
             m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.85rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz"></div><div class="word-pool" id="pool"></div><div class="guide-text">點選單字即可加入，再次點選則可移除。<br>Tap once to add, tap again to remove.</div><button class="btn-action btn-record" onclick="checkL1()">Check / 檢查</button>`;
@@ -152,30 +169,47 @@
                 pool.appendChild(s);
             });
         } else if (currentL === 2) {
-            pb.style.width = (currentStep / 3 * 100) + "%";
+            updateProgress(currentStep / 3 * 100);
             ind.innerHTML = `Level 2<br>Listen & Repeat`;
             const d = data.steps[currentStep];
             m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.85rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--p1); text-align:center; font-size:1.1rem; margin:10px 0;">${d.correct}</p><button class="btn-action btn-listen" onclick="speak('${d.correct}')">🔊 Listen / 聽示範</button><button id="rec-btn" class="btn-action btn-record" onclick="rec('${d.correct}', this)">🎤 Record / 錄音</button><button class="btn-action" style="background:#eee; margin-top:5px;" onclick="nextStep()">Next / 下一步</button>`;
         } else if (currentL === 3) {
-            pb.style.width = (qCount / 4 * 100) + "%";
+            updateProgress(qCount / 4 * 100);
             ind.innerHTML = `Level 3<br>Troubleshooting`;
             if (!currentQ) currentQ = data.trouble[qCount % data.trouble.length];
             m.innerHTML = `<div class="img-box" style="background:var(--dark); cursor:pointer; height:90px;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center;"><span style="font-size:1.5rem;">🎧</span><br>Listen to customer / 聽提問</div></div><div class="note-area"><strong>Troubleshooting:</strong><br>${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" onclick="rec(currentQ.a, this, true)">🎤 Answer / 回答</button><button class="btn-action" style="background:#eee; margin-top:5px;" onclick="randomQ()">Next / 下一題</button>`;
         }
     }
 
+    function updateProgress(percent) {
+        const pb = document.getElementById('progress-bar');
+        pb.style.width = percent + "%";
+    }
+
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.word')).map(e => e.innerText).join(" ");
         if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
-            showPop("✅ Correct!", "🌟", `<strong>${d.correct}</strong><br><br>${d.chi}`);
+            fireConfetti();
+            const msg = congrats[Math.floor(Math.random()*congrats.length)];
+            showPop(msg, "🌟", `<strong>${d.correct}</strong><br><br>${d.chi}`);
             currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; }
             render();
         } else { showPop("❌ Incorrect", "😕", "Please check the words or the order.<br>請檢查單字或順序是否正確。"); }
     }
 
-    function nextStep() { currentStep++; if(currentStep > 2) { currentStep = 0; startL(3); } else render(); }
-    function randomQ() { qCount++; currentQ = null; if(qCount >= 4) { showPop("🎉 Well Done!", "🏆", "Finish! / 完成！"); backToLevels(); } else render(); }
+    function nextStep() { 
+        fireConfetti();
+        currentStep++; 
+        if(currentStep > 2) { currentStep = 0; startL(3); } else render(); 
+    }
+
+    function randomQ() { 
+        fireConfetti();
+        qCount++; 
+        currentQ = null; 
+        if(qCount >= 4) { showPop("🎉 Well Done!", "🏆", "Finish! / 完成！"); backToLevels(); } else render(); 
+    }
     
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); }
 
@@ -192,8 +226,10 @@
             stopMic();
             let cleanTarget = target.toLowerCase().replace(/[.,!]/g, '');
             let isCorrect = res.includes(cleanTarget) || cleanTarget.includes(res);
+            if(isCorrect) fireConfetti();
+            const msg = isCorrect ? congrats[Math.floor(Math.random()*congrats.length)] : "❌ Try Again";
             const fb = isL3 ? `<strong>Q:</strong> "${currentQ.q}"<br><br><strong>You:</strong> "${res}"<br><br><strong>Correct:</strong> "${currentQ.full}"` : `<strong>You:</strong> "${res}"<br><strong>Target:</strong> "${target}"`;
-            showPop(isCorrect ? "✅ Good!" : "❌ Try Again", isCorrect ? "🏆" : "💪", fb);
+            showPop(msg, isCorrect ? "🏆" : "💪", fb);
         };
         recognition.onspeechend = stopMic;
         recognition.onerror = stopMic;
@@ -204,6 +240,10 @@
         isMicOn = false;
         const btn = document.getElementById('rec-btn');
         if (btn) { btn.innerText = (currentL === 3) ? "🎤 Answer" : "🎤 Record"; btn.classList.remove('recording'); }
+    }
+
+    function fireConfetti() {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#4a90e2', '#00b894', '#f39c12'] });
     }
 
     function showPop(title, icon, text) { document.getElementById('pop-title').innerHTML = title; document.getElementById('pop-icon').innerText = icon; document.getElementById('pop-text').innerHTML = text; document.getElementById('overlay').style.display = 'block'; document.getElementById('popup').style.display = 'block'; }
