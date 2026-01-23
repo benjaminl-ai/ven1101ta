@@ -3,181 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VEN1101 Assessment Prep</title>
+    <title>VEN1101 Assessment Pro</title>
     <style>
         :root { --p1: #4a90e2; --p2: #00b894; --p3: #f39c12; --bg: #f8f9fa; --dark: #2d3436; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 15px; color: var(--dark); }
-        .header { text-align: center; margin-bottom: 20px; }
-        .nav { display: flex; gap: 8px; margin-bottom: 20px; }
-        .nav button { flex: 1; padding: 12px 5px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: #ddd; font-size: 0.85rem; }
-        .nav button.active { color: white; }
-        #n1.active { background: var(--p1); } #n2.active { background: var(--p2); } #n3.active { background: var(--p3); }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); }
+        
+        /* 頁面切換 / Page Switching */
+        .page { display: none; padding: 20px; animation: fadeIn 0.4s; }
+        .page.active { display: block; }
 
-        .content { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 450px; }
+        /* 首頁 / Home Screen */
+        .home-screen { text-align: center; padding: 40px 20px; }
+        .menu-grid { display: grid; gap: 15px; margin-top: 30px; }
+        .menu-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
+        .menu-card:hover { border-color: var(--p1); transform: translateY(-3px); }
+        .menu-card h3 { margin: 0 0 5px 0; color: var(--dark); }
+        .menu-card p { margin: 0; font-size: 0.85rem; color: #666; }
+
+        /* 練習區 / Practice Area */
+        .content { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 600px; margin: auto; }
         .img-box { width: 100%; height: 200px; background: #eee; border-radius: 15px; margin-bottom: 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; }
         .img-box img { width: 100%; height: 100%; object-fit: contain; }
         
-        /* Level 1: Drag & Drop */
-        .dropzone { border-bottom: 3px solid var(--p1); min-height: 50px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; background: #f0f7ff; border-radius: 10px 10px 0 0; }
-        .word-pool { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; background: #fff; border: 1px dashed #ccc; border-radius: 10px; }
-        .word { padding: 10px 15px; background: white; border: 2px solid #e9ecef; border-radius: 8px; cursor: pointer; user-select: none; font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .word:active { transform: scale(0.95); }
-        
-        /* Voice buttons */
-        .btn-voice { width: 100%; padding: 15px; border: none; border-radius: 12px; margin-top: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; }
-        .btn-listen { background: #eef2ff; color: var(--p1); }
-        .btn-record { background: var(--p1); color: white; }
-        .recording { background: #d63031 !important; animation: pulse 1.5s infinite; }
-        
-        .trouble-note { background: #fff9db; padding: 15px; border-radius: 10px; border-left: 5px solid var(--p3); font-size: 0.9rem; margin-bottom: 15px; line-height: 1.5; }
-        .feedback { margin-top: 20px; padding: 15px; border-radius: 12px; font-size: 0.95rem; display: none; background: #f1f2f6; border: 1px solid #dfe4ea; }
+        .dropzone { border-bottom: 3px solid var(--p1); min-height: 50px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; background: #f0f7ff; border-radius: 10px; }
+        .word-pool { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; background: #fff; border: 1px dashed #ccc; border-radius: 10px; }
+        .word { padding: 8px 12px; background: white; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; font-size: 0.95rem; }
 
+        /* 彈窗 / Popup Window */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; }
+        .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 25px; text-align: center; width: 80%; max-width: 400px; z-index: 101; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        
+        /* 按鈕 / Buttons */
+        .btn-action { width: 100%; padding: 15px; border: none; border-radius: 12px; margin-top: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .btn-record { background: var(--p1); color: white; }
+        .btn-listen { background: #eef2ff; color: var(--p1); }
+        .recording { background: #d63031 !important; animation: pulse 1.5s infinite; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h2 style="margin:0;">VEN1101 Assessment Prep</h2>
-    <p style="font-size:0.9rem; color: #666;">Step-by-Step Training 🛠️</p>
+<div id="page-home" class="page active">
+    <div class="home-screen">
+        <h1 style="color:var(--p1); margin-bottom:10px;">🛠️ VEN1101 Assessment</h1>
+        <p>Light Switch Removal Guide / 拆除電燈開關教學</p>
+        
+        <div class="menu-grid">
+            <div class="menu-card" onclick="startL(1)">
+                <h3>Level 1: Sentence Building</h3>
+                <p>Drag and drop words with images.<br>根據圖片拖放單字組句。</p>
+            </div>
+            <div class="menu-card" onclick="startL(2)">
+                <h3>Level 2: Listen & Repeat</h3>
+                <p>Practice speaking fluently.<br>聽示範並練習口說流暢度。</p>
+            </div>
+            <div class="menu-card" onclick="startL(3)">
+                <h3>Level 3: Listening Challenge</h3>
+                <p>Listen to questions and troubleshoot.<br>聽客人的提問並找出故障對策。</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="nav">
-    <button id="n1" class="active" onclick="setL(1)">Level 1<br>Sentence</button>
-    <button id="n2" onclick="setL(2)">Level 2<br>Speaking</button>
-    <button id="n3" onclick="setL(3)">Level 3<br>Listening</button>
+<div id="page-practice" class="page">
+    <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+        <button onclick="goHome()" style="background:none; border:none; color:var(--p1); cursor:pointer; font-weight:bold;">← Exit / 離開</button>
+        <div id="stage-title" style="font-weight:bold;">LEVEL 1</div>
+    </div>
+    <div id="main-content" class="content"></div>
 </div>
 
-<div id="main" class="content"></div>
+<div class="overlay" id="overlay" onclick="closePopup()"></div>
+<div class="popup" id="popup">
+    <div id="pop-icon" style="font-size:3.5rem; margin-bottom:10px;"></div>
+    <h3 id="pop-title" style="margin:10px 0;"></h3>
+    <div id="pop-text" style="font-size:0.95rem; color:#666; margin-bottom:20px; line-height:1.5;"></div>
+    <button class="btn-action btn-record" onclick="closePopup()">Continue / 繼續</button>
+</div>
 
 <script>
-    let level = 1, step = 0, userWords = [];
-    
-    // 圖片名稱已更新 / Image names updated
+    let currentL = 1, currentStep = 0;
     const l1Data = [
-        { img: "lightswitch1.jpg", words: ["First,", "switch off", "the", "main power."], correct: "First, switch off the main power." },
-        { img: "lightswitch2.jpg", words: ["Next,", "remove", "the screws", "with", "a screwdriver."], correct: "Next, remove the screws with a screwdriver." },
-        { img: "lightswitch3.jpg", words: ["Finally,", "remove", "the light switch", "from", "the wall."], correct: "Finally, remove the light switch from the wall." }
+        { img: "lightswitch1.jpg", words: ["First,", "switch off", "the", "main power."], correct: "First, switch off the main power.", pool: ["turn on", "unscrew", "First,", "switch off", "the", "main power."] },
+        { img: "lightswitch2.jpg", words: ["Next,", "remove", "the screws", "with", "a screwdriver."], correct: "Next, remove the screws with a screwdriver.", pool: ["fix", "install", "Next,", "remove", "the screws", "with", "a screwdriver."] },
+        { img: "lightswitch3.jpg", words: ["Finally,", "remove", "the light switch", "from", "the wall."], correct: "Finally, remove the light switch from the wall.", pool: ["put", "clean", "Finally,", "remove", "the light switch", "from", "the wall."] }
     ];
 
-    function setL(l) { 
-        level = l; step = 0; 
-        document.querySelectorAll('.nav button').forEach((b, i) => b.classList.toggle('active', i+1 === l));
-        render(); 
+    function startL(l) {
+        currentL = l; currentStep = 0;
+        document.getElementById('page-home').classList.remove('active');
+        document.getElementById('page-practice').classList.add('active');
+        render();
+    }
+
+    function goHome() {
+        document.getElementById('page-practice').classList.remove('active');
+        document.getElementById('page-home').classList.add('active');
     }
 
     function render() {
-        const m = document.getElementById('main');
-        if (level === 1) {
-            const d = l1Data[step];
-            userWords = [];
-            m.innerHTML = `<h3>Level 1: Build Step ${step+1}</h3>
-            <div class="img-box"><img src="${d.img}" alt="Step ${step+1}"></div>
-            <div class="dropzone" id="dz">Click words below to build sentence...</div>
+        const m = document.getElementById('main-content');
+        document.getElementById('stage-title').innerText = `LEVEL ${currentL}`;
+        
+        if (currentL === 1) {
+            const d = l1Data[currentStep];
+            m.innerHTML = `<h3>Step ${currentStep+1}/3</h3><div class="img-box"><img src="${d.img}"></div>
+            <div class="dropzone" id="dz">Drag words here / 拖放到此...</div>
             <div class="word-pool" id="pool"></div>
-            <button class="btn-voice btn-record" onclick="checkL1()" style="margin-top:20px">Check Answer / 檢查</button>
-            <button onclick="render()" style="margin-top:10px; background:none; border:none; color:var(--p1); cursor:pointer;">Reset / 重放</button>`;
-            
-            const pool = document.getElementById('pool');
+            <button class="btn-action btn-record" onclick="checkL1()">Check Answer / 檢查答案</button>`;
             const dz = document.getElementById('dz');
-            [...d.words].sort(() => Math.random() - 0.5).forEach(w => {
+            d.pool.sort(() => Math.random() - 0.5).forEach(w => {
                 const s = document.createElement('span'); s.className = 'word'; s.innerText = w;
-                s.onclick = () => { 
-                    if(dz.innerText.includes("Click words")) dz.innerText = "";
-                    dz.appendChild(s); 
-                };
-                pool.appendChild(s);
+                s.onclick = () => { if(dz.innerText.includes("Drag")) dz.innerText = ""; dz.appendChild(s); };
+                document.getElementById('pool').appendChild(s);
             });
-        } else if (level === 2) {
-            const d = l1Data[step];
-            m.innerHTML = `<h3>Level 2: Listen & Repeat</h3>
-            <div class="img-box"><img src="${d.img}" alt="Step ${step+1}"></div>
-            <p style="font-weight:bold; font-size:1.1rem; text-align:center; color:var(--p1);">${d.correct}</p>
-            <button class="btn-voice btn-listen" onclick="speak('${d.correct}')">🔊 Listen / 聽示範</button>
-            <button class="btn-voice btn-record" onclick="rec('${d.correct}', this)">🎤 Record / 錄音練習</button>
-            <div id="fb" class="feedback"></div>
-            <button class="btn-voice" onclick="nextStep()" style="background:#eee; color:#333; margin-top:20px">Next Step / 下一步</button>`;
-        } else if (level === 3) {
-            m.innerHTML = `<h3>Level 3: Listening Challenge</h3>
-            <div class="img-box" style="background:#2d3436; flex-direction:column; color:white;">
-                <span style="font-size:3rem;">🎧</span>
-                <span>Listen carefully to the question</span>
+        } else if (currentL === 2) {
+            const d = l1Data[currentStep];
+            m.innerHTML = `<h3>Listen & Repeat</h3><div class="img-box"><img src="${d.img}"></div>
+            <p style="font-weight:bold; color:var(--p1); text-align:center;">${d.correct}</p>
+            <button class="btn-action btn-listen" onclick="speak('${d.correct}')">🔊 Listen / 聽示範</button>
+            <button class="btn-action btn-record" onclick="rec('${d.correct}', this)">🎤 Record / 錄音</button>
+            <button class="btn-action" style="background:#eee; color:#333;" onclick="nextStep()">Next / 下一步</button>`;
+        } else if (currentL === 3) {
+            m.innerHTML = `<h3>Trouble-shooting Challenge</h3>
+            <div class="img-box" style="background:var(--dark); cursor:pointer;" onclick="speak('What should I do if the screwdriver bit doesn\'t fit?')">
+                <div style="color:white; text-align:center;">
+                    <span style="font-size:3rem;">🎧</span><br>Click to hear customer<br>點擊聽取客人提問
+                </div>
             </div>
-            <div class="trouble-note">
-                <strong>Trouble-shooting Note:</strong><br>
-                1. If screwdriver is rusted, remove rust with sandpaper.<br>
-                2. If bit doesn't fit, <b>use another one</b>.<br>
-                3. If screws are bent, use new ones.<br>
-                4. If light switch is damaged, replace it.
+            <div style="background:#fff9db; padding:15px; border-radius:10px; border-left:5px solid var(--p3); font-size:0.85rem; line-height:1.6;">
+                <strong>Trouble-shooting:</strong><br>
+                1. If the screwdriver is rusted, remove the rust with sandpaper.<br>
+                2. If the screwdriver bit doesn’t fit, use another one.<br>
+                3. If the screws are bent, use new ones.<br>
+                4. If the light switch is damanged, replace it.
             </div>
-            <button class="btn-voice btn-listen" style="background:var(--p3); color:white" onclick="speak('What should I do if the screwdriver bit doesn\'t fit?')">👂 Listen to Customer / 聽問題</button>
-            <button class="btn-voice btn-record" onclick="rec('use another one', this, true)">🎤 Speak Your Answer / 回答問題</button>
-            <div id="fb" class="feedback"></div>`;
+            <button class="btn-action btn-record" onclick="rec('use another one', this, true)">🎤 Answer the Customer / 回答問題</button>`;
         }
     }
 
     function checkL1() {
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.word')).map(e => e.innerText).join(" ");
-        if (ans === l1Data[step].correct) {
-            alert("Correct! ✅ Moving to next step."); step++; 
-            if(step > 2) { step = 0; setL(2); } else render();
-        } else { alert("Try again! ❌ Order is incorrect."); render(); }
+        if (ans === l1Data[currentStep].correct) {
+            showPop("✅ Correct!", "🌟", "Perfect order! / 順序完全正確！");
+            currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; }
+            render();
+        } else {
+            showPop("❌ Incorrect", "😕", "Try again! Watch the verbs. / 再試一次！注意動詞。");
+            render();
+        }
     }
 
-    function nextStep() { 
-        step++; 
-        if(step > 2) { alert("Level 2 Complete! Moving to Level 3."); setL(3); } 
-        else render(); 
-    }
+    function nextStep() { currentStep++; if(currentStep > 2) { currentStep = 0; startL(3); } else render(); }
 
     function speak(t) { 
-        const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; m.rate = 0.85;
-        window.speechSynthesis.speak(m); 
+        const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); 
     }
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition(); 
-    recognition.lang = 'en-US'; 
-    recognition.interimResults = false;
+    const recognition = new SpeechRecognition(); recognition.lang = 'en-US';
 
     function rec(target, btn, isL3 = false) {
-        btn.innerText = "Listening... 👂"; btn.classList.add('recording');
+        btn.innerText = "Listening..."; btn.classList.add('recording');
         recognition.start();
-        
         recognition.onresult = (e) => {
-            const result = e.results[0][0].transcript.toLowerCase();
-            const fb = document.getElementById('fb');
-            btn.innerText = isL3 ? "🎤 Speak Your Answer" : "🎤 Record"; 
-            btn.classList.remove('recording');
-            fb.style.display = 'block';
-            
-            let isCorrect = result.includes(target.toLowerCase());
+            const res = e.results[0][0].transcript.toLowerCase();
+            btn.innerText = "🎤 Record"; btn.classList.remove('recording');
+            let isCorrect = res.includes(target.toLowerCase());
             if (isL3) {
-                fb.innerHTML = `
-                    <p><strong>Customer Question:</strong> "What should I do if the bit doesn't fit?"</p>
-                    <p><strong>You said:</strong> <span style="color:blue">"${result}"</span></p>
-                    <p><strong>Recommended Answer:</strong> "You should use another one."</p>
-                    <hr>
-                    ${isCorrect ? '<b style="color:green">✅ Well done! You identified the correct solution.</b>' : '<b style="color:red">❌ Try to include the phrase "use another one".</b>'}
-                `;
+                showPop(isCorrect ? "✅ Well Done!" : "❌ Try Again", isCorrect ? "🏆" : "💪", 
+                    `<strong>Question:</strong> "What should I do if the bit doesn't fit?"<br><br><strong>You said:</strong> "${res}"<br><br><strong>Correct Answer:</strong> "You should use another one."`);
             } else {
-                fb.innerHTML = `
-                    <p><strong>Your Voice:</strong> "${result}"</p>
-                    <p><strong>Target:</strong> "${target}"</p>
-                    ${isCorrect ? '<b style="color:green">✅ Great! Pronunciation is clear.</b>' : '<b style="color:red">❌ Keep trying! Try to speak more clearly.</b>'}
-                `;
+                showPop(isCorrect ? "✅ Good Job!" : "❌ Not Quite", isCorrect ? "😊" : "🎧", 
+                    `You said: "${res}"<br>Target: "${target}"`);
             }
-        };
-        
-        recognition.onerror = () => {
-            btn.innerText = "🎤 Record";
-            btn.classList.remove('recording');
-            alert("Could not hear you. Please try again!");
         };
     }
 
-    // Start App
-    render();
+    function showPop(title, icon, text) {
+        document.getElementById('pop-title').innerHTML = title;
+        document.getElementById('pop-icon').innerText = icon;
+        document.getElementById('pop-text').innerHTML = text;
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('popup').style.display = 'block';
+    }
+
+    function closePopup() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('popup').style.display = 'none';
+    }
 </script>
 </body>
 </html>
