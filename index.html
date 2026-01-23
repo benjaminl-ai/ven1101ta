@@ -6,35 +6,36 @@
     <title>VEN1101 TA Revision</title>
     <style>
         :root { --p1: #4a90e2; --p2: #00b894; --p3: #f39c12; --bg: #f8f9fa; --dark: #2d3436; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); overflow: hidden; font-size: 18px; } /* 整體字體加大 / Increased overall font size */
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); overflow: hidden; font-size: 18px; }
         
         .page { display: none; height: 100vh; padding: 12px; box-sizing: border-box; animation: fadeIn 0.3s; }
         .page.active { display: flex; flex-direction: column; }
 
-        /* Home & Menus */
-        .home-screen { display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center; }
+        /* 1. 字體褪高 (Moving content up) */
+        .home-screen { display: flex; flex-direction: column; justify-content: flex-start; height: 100%; text-align: center; padding-top: 40px; }
         .menu-grid { display: flex; flex-direction: column; gap: 12px; padding: 0 10px; }
         .menu-card { background: white; padding: 18px; border-radius: 14px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); cursor: pointer; border: 2px solid transparent; }
         .menu-card h2 { margin: 0; font-size: 1.2rem; line-height: 1.4; }
         .menu-card span { display: block; font-size: 1rem; color: #666; font-weight: normal; margin-top: 5px; }
 
-        /* Header */
         .level-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .btn-exit { background: none; border: none; color: var(--p1); font-weight: bold; cursor: pointer; font-size: 1rem; }
         .level-indicator { font-size: 0.9rem; font-weight: bold; color: var(--p1); background: #eef2ff; padding: 6px 14px; border-radius: 15px; text-align: right; line-height: 1.3; }
 
-        /* Content */
         .content { background: white; padding: 18px; border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .img-box { width: 100%; height: 150px; background: #eee; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .img-box { width: 100%; height: 140px; background: #eee; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
-        /* Interactive Elements */
+        /* Dropzone & Reordering */
         .dropzone { border-bottom: 3px solid var(--p1); min-height: 45px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: #f0f7ff; border-radius: 10px; font-size: 1rem; color: #888; }
-        .word-pool { display: flex; flex-wrap: wrap; gap: 8px; overflow-y: auto; max-height: 110px; padding: 5px; }
-        .word { padding: 8px 12px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .word-pool { display: flex; flex-wrap: wrap; gap: 8px; overflow-y: auto; max-height: 100px; padding: 5px; }
+        
+        /* 增加拖拽視覺效果 */
+        .word { padding: 8px 12px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); user-select: none; }
+        .word.dragging { opacity: 0.5; background: #e0e0e0; }
+
         .note-area { background: #fff9db; padding: 12px; border-radius: 10px; border-left: 5px solid var(--p3); font-size: 0.85rem; line-height: 1.5; margin-bottom: 12px; overflow-y: auto; }
 
-        /* Buttons & Popups */
         .btn-action { width: 100%; padding: 15px; border: none; border-radius: 12px; margin-top: 10px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
         .btn-record { background: var(--p1); color: white; }
         .btn-listen { background: #eef2ff; color: var(--p1); }
@@ -101,9 +102,7 @@
 </div>
 
 <script>
-    let currentTask = 1;
-    let currentL = 1, currentStep = 0, currentQ = null;
-    let isMicOn = false;
+    let currentTask = 1, currentL = 1, currentStep = 0, currentQ = null, isMicOn = false;
 
     const tasksData = {
         1: {
@@ -171,15 +170,41 @@
         if (currentL === 1) {
             ind.innerHTML = `Level 1<br>Sentence Building`;
             const d = data.steps[currentStep]; 
-            m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.9rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz">Tap words below...</div><div class="word-pool" id="pool"></div><button class="btn-action btn-record" onclick="checkL1()">Check / 檢查</button>`;
+            m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.9rem;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz" ondragover="event.preventDefault()">Tap to add / Drag to reorder</div><div class="word-pool" id="pool"></div><button class="btn-action btn-record" onclick="checkL1()">Check / 檢查</button>`;
+            
             const dz = document.getElementById('dz');
             const pool = document.getElementById('pool');
+
             [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
-                const s = document.createElement('span'); s.className = 'word'; s.innerText = w;
-                s.onclick = () => { 
-                    if(dz.innerText.includes("Tap")) dz.innerText = "";
-                    if(s.parentNode === pool) { dz.appendChild(s); } else { pool.appendChild(s); if(dz.children.length === 0) dz.innerText = "Tap words below..."; }
+                const s = document.createElement('span');
+                s.className = 'word';
+                s.innerText = w;
+                s.draggable = true; // 啟用拖動 / Enable dragging
+
+                // 點擊逻辑 / Click logic
+                s.onclick = () => {
+                    if (s.parentNode === pool) {
+                        if (dz.innerText.includes("Tap")) dz.innerText = "";
+                        dz.appendChild(s);
+                    } else {
+                        pool.appendChild(s);
+                        if (dz.children.length === 0) dz.innerText = "Tap to add / Drag to reorder";
+                    }
                 };
+
+                // 拖放逻辑 (直接排序) / Drag & Drop Reordering logic
+                s.ondragstart = (e) => { s.classList.add('dragging'); };
+                s.ondragend = (e) => { s.classList.remove('dragging'); };
+
+                dz.ondragover = (e) => {
+                    e.preventDefault();
+                    const dragging = document.querySelector('.dragging');
+                    if (!dragging || dragging.parentNode !== dz) return;
+                    const afterElement = getDragAfterElement(dz, e.clientX);
+                    if (afterElement == null) { dz.appendChild(dragging); } 
+                    else { dz.insertBefore(dragging, afterElement); }
+                };
+
                 pool.appendChild(s);
             });
         } else if (currentL === 2) {
@@ -193,12 +218,23 @@
         }
     }
 
+    // 協助計算拖拽位置 / Helper to calculate drop position
+    function getDragAfterElement(container, x) {
+        const draggableElements = [...container.querySelectorAll('.word:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = x - box.left - box.width / 2;
+            if (offset < 0 && offset > closest.offset) { return { offset: offset, element: child }; } 
+            else { return closest; }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
     function randomQ() { currentQ = null; render(); }
 
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.word')).map(e => e.innerText).join(" ");
-        if (ans.toLowerCase().replace(/ /g,'') === d.correct.toLowerCase().replace(/ /g,'')) {
+        if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
             showPop("✅ Correct!", "🌟", `<strong>${d.correct}</strong><br><br>${d.chi}`);
             currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; }
             render();
