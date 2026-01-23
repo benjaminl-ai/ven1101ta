@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VEN1101 TA Revision</title>
+    <title>VEN1101 TA Challenges</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --p1: #4a90e2; --p2: #00b894; --p3: #f39c12; --bg: #f0f4f8; --dark: #2d3436; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); overflow: hidden; font-size: 18px; }
         
+        /* 頁面基礎樣式 */
         .page { display: none; height: 100dvh; padding: 20px; box-sizing: border-box; animation: fadeIn 0.4s ease-out; background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%); }
         .page.active { display: flex; flex-direction: column; }
 
+        /* 標題樣式 */
         .header-area { text-align: center; margin-bottom: 25px; padding-top: 20px; }
         .header-area h1 { color: #243b55; font-size: 1.8rem; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .header-area p { color: #627d98; margin: 5px 0 0; font-weight: 500; }
+        .header-area p { color: #627d98; margin: 5px 0 0; font-weight: 500; font-size: 1.1rem; }
 
+        /* 卡片網格設計 */
         .menu-grid { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 400px; margin: 0 auto; }
         
         .task-card { 
@@ -36,10 +39,12 @@
         .task-info h2 { margin: 0; font-size: 1.1rem; color: #102a43; line-height: 1.2; }
         .task-info span { display: block; font-size: 0.9rem; color: #627d98; margin-top: 4px; }
 
+        /* Level 專用卡片顏色 */
         .l1 { background: #e3f2fd; color: #1976d2; }
         .l2 { background: #e8f5e9; color: #388e3c; }
         .l3 { background: #fff3e0; color: #f57c00; }
 
+        /* 內容頁面樣式 */
         .level-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .btn-exit { background: white; border: none; color: var(--p1); font-weight: bold; cursor: pointer; font-size: 1rem; padding: 8px 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .level-indicator { font-size: 0.85rem; font-weight: bold; color: var(--p1); background: white; padding: 6px 14px; border-radius: 15px; text-align: right; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -53,14 +58,17 @@
         .word-pool { display: flex; flex-wrap: wrap; gap: 8px; overflow-y: auto; max-height: 85px; padding: 5px; }
         .word { padding: 10px 14px; background: white; border: 1px solid #d9e2ec; border-radius: 10px; cursor: pointer; font-size: 0.95rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         
+        /* 動作按鈕 */
         .btn-action { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: all 0.1s; }
         .btn-record { background: var(--p1); color: white; box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3); }
         .recording { background: #ef4444 !important; animation: pulse 1s infinite; }
 
+        /* 進度條 */
         .progress-container { width: 100%; height: 12px; background: #d9e2ec; border-radius: 10px; overflow: visible; position: relative; }
         .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #48bb78, #38a169); border-radius: 10px; transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 0 10px rgba(72, 187, 120, 0.4); position: relative; }
         .progress-icon { position: absolute; right: -12px; top: -10px; font-size: 1.4rem; }
 
+        /* 彈窗樣式 */
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(16, 42, 67, 0.6); backdrop-filter: blur(4px); z-index: 100; }
         .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 30px; text-align: center; width: 85%; z-index: 101; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
@@ -75,8 +83,8 @@
 
 <div id="page-home" class="page active">
     <div class="header-area">
-        <h1>🛠️ VEN1101 Revision</h1>
-        <p>Choose your mission / 選擇練習任務</p>
+        <h1>🛠️ VEN1101 TA Challenges</h1>
+        <p>Building Services Engineering 屋宇裝備</p>
     </div>
     <div class="menu-grid">
         <div class="task-card" onclick="selectTask(1)">
