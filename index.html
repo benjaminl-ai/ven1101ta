@@ -16,18 +16,20 @@
             margin: 0; padding: 0; color: #fff; overflow: hidden; font-size: 12px;
         }
         
+        /* Pages */
         .page { display: none; height: 100dvh; padding: 15px; box-sizing: border-box; flex-direction: column; }
         .page.active { display: flex; }
 
+        /* Header */
         .header-area { text-align: center; margin-bottom: 25px; text-shadow: 4px 4px var(--dark); }
         .header-area h1 { font-size: 16px; line-height: 1.6; color: #fff; margin-bottom: 8px; }
         .header-area .sub-en { font-size: 9px; color: var(--m-yellow); display: block; margin-bottom: 5px; }
-        .header-area .sub-chi { font-size: 14px; color: var(--m-yellow); display: block; }
+        .header-area .sub-chi { font-size: 14px; color: var(--m-yellow); display: block; font-family: sans-serif; font-weight: bold; }
 
-        .menu-grid { display: flex; flex-direction: column; gap: 18px; width: 100%; max-width: 380px; margin: 0 auto; }
-        
+        /* Menu Grid */
+        .menu-grid { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 380px; margin: 0 auto; }
         .task-card { 
-            background: var(--m-brown); padding: 18px; border: 4px solid #fff;
+            background: var(--m-brown); padding: 15px; border: 4px solid #fff;
             box-shadow: 6px 6px 0 rgba(0,0,0,0.4); cursor: pointer; 
             display: flex; align-items: center; gap: 12px;
         }
@@ -35,38 +37,37 @@
         .task-info h2 { font-size: 10px; margin: 0; line-height: 1.4; color: #fff; }
         .task-info span { font-size: 8px; color: var(--m-yellow); margin-top: 6px; display: block; }
 
+        /* Content Area */
         .content { 
             background: #fff; color: #000; padding: 15px; border: 4px solid var(--dark);
             box-shadow: 8px 8px 0 rgba(0,0,0,0.2); height: 72%; display: flex; flex-direction: column; 
             overflow: hidden; margin-bottom: 10px; position: relative;
         }
-        
-        .img-box { width: 100%; height: 120px; background: #eee; border: 3px solid var(--dark); margin-bottom: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .img-box { width: 100%; height: 120px; background: #eee; border: 3px solid var(--dark); margin-bottom: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
         .img-box img { max-width: 100%; max-height: 100%; }
-        
-        .chi-text { font-family: sans-serif; font-weight: bold; font-size: 14px; color: #444; margin-bottom: 10px; text-align: center; line-height: 1.4; }
 
+        /* Dropzone & Words */
         .dropzone { border: 3px dashed var(--m-brown); min-height: 45px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; background: #f8f8f8; }
         .word-pool { display: flex; flex-wrap: wrap; gap: 8px; overflow-y: auto; padding: 5px; margin-bottom: 5px; }
-        .word { padding: 8px; background: var(--m-yellow); border: 2px solid var(--dark); cursor: pointer; font-size: 10px; color: #000; box-shadow: 3px 3px 0 #000; display: inline-block; }
+        .word { padding: 8px; background: var(--m-yellow); border: 2px solid var(--dark); cursor: pointer; font-size: 10px; color: #000; box-shadow: 3px 3px 0 #000; }
+
+        /* Buttons (Bilingual) */
+        .btn-action { font-family: 'Press Start 2P', cursive; padding: 12px; border: 4px solid var(--dark); cursor: pointer; margin-top: 6px; box-shadow: 4px 4px 0 var(--dark); width: 100%; color: #fff; line-height: 1.4; }
+        .btn-action span { display: block; font-family: sans-serif; font-weight: bold; font-size: 13px; margin-top: 4px; }
         
-        .btn-action { font-family: 'Press Start 2P', cursive; padding: 15px; border: 4px solid var(--dark); cursor: pointer; font-size: 11px; margin-top: 5px; box-shadow: 4px 4px 0 var(--dark); width: 100%; }
-        .btn-record { background: var(--m-red); color: #fff; }
+        .btn-record { background: var(--m-red); }
         .btn-hint { background: var(--m-yellow); color: var(--dark); margin-top: auto; }
-        .btn-exit { background: #fff; border: 3px solid var(--dark); font-size: 9px; padding: 8px; margin-bottom: 12px; align-self: flex-start; }
+        .btn-exit { background: #fff; color: #000; border: 3px solid var(--dark); font-size: 8px; padding: 6px; width: auto; align-self: flex-start; margin-bottom: 10px; }
 
-        .progress-container { width: 100%; height: 12px; background: #000; position: relative; margin-top: 20px; border: 3px solid #fff; box-sizing: border-box; }
+        /* Progress Bar */
+        .progress-container { width: 100%; height: 12px; background: #000; position: relative; margin-top: 15px; border: 3px solid #fff; }
         .progress-bar { height: 100%; width: 0%; background: var(--m-green); transition: 0.6s; position: relative; }
-        .progress-icon { position: absolute; right: -10px; top: -25px; font-size: 22px; transition: 0.6s; z-index: 10; display: inline-block; transform: scaleX(-1); }
+        .progress-icon { position: absolute; right: -10px; top: -25px; font-size: 22px; transition: 0.6s; transform: scaleX(-1); }
 
-        .popup { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            background: #fff; color: #000; padding: 25px; border: 6px solid var(--dark); 
-            width: 85%; text-align: center; z-index: 101; 
-        }
+        /* Popups */
+        .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; color: #000; padding: 25px; border: 6px solid var(--dark); width: 85%; text-align: center; z-index: 101; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; }
-
-        .note-area { background: #fffbea; padding: 10px; border: 3px solid var(--m-yellow); font-size: 9px; line-height: 1.8; margin-bottom: 10px; color: #000; overflow-y: auto; text-align: left; }
+        .note-area { background: #fffbea; padding: 10px; border: 2px solid var(--m-yellow); font-size: 9px; line-height: 1.8; margin-bottom: 10px; color: #000; overflow-y: auto; text-align: left; }
     </style>
 </head>
 <body>
@@ -80,30 +81,30 @@
     <div class="menu-grid">
         <div class="task-card" onclick="selectTask(1)">
             <div class="icon-circle">💡</div>
-            <div class="task-info"><h2>REMOVING A LIGHT SWITCH</h2><span>STAGE 1</span></div>
+            <div class="task-info"><h2>REMOVING A LIGHT SWITCH</h2><span>STAGE 1 / 第一階段</span></div>
         </div>
         <div class="task-card" onclick="selectTask(2)">
             <div class="icon-circle">⚙️</div>
-            <div class="task-info"><h2>DRILLING HOLES ON STEEL BOX</h2><span>STAGE 2</span></div>
+            <div class="task-info"><h2>DRILLING HOLES ON STEEL BOX</h2><span>STAGE 2 / 第二階段</span></div>
         </div>
     </div>
 </div>
 
 <div id="page-levels" class="page">
-    <button onclick="backToHome()" class="btn-exit">← BACK</button>
+    <button onclick="backToHome()" class="btn-exit">BACK / 返回</button>
     <div class="header-area">
         <h1 id="task-title" style="font-size:12px;"></h1>
-        <p>SELECT WORLD</p>
+        <p>SELECT WORLD / 選擇世界</p>
     </div>
     <div class="menu-grid">
-        <div class="task-card" onclick="startL(1)"><div class="icon-circle">🧩</div><div class="task-info"><h2>WORLD 1: BUILDING</h2><span>SENTENCE BUILDING</span></div></div>
-        <div class="task-card" onclick="startL(2)"><div class="icon-circle">🗣️</div><div class="task-info"><h2>WORLD 2: SPEAKING</h2><span>LISTEN & REPEAT</span></div></div>
-        <div class="task-card" onclick="startL(3)"><div class="icon-circle">👑</div><div class="task-info"><h2>WORLD 3: EXPERT</h2><span>TROUBLESHOOTING</span></div></div>
+        <div class="task-card" onclick="startL(1)"><div class="icon-circle">🧩</div><div class="task-info"><h2>WORLD 1: BUILDING</h2><span>SENTENCE BUILDING / 組句</span></div></div>
+        <div class="task-card" onclick="startL(2)"><div class="icon-circle">🗣️</div><div class="task-info"><h2>WORLD 2: SPEAKING</h2><span>LISTEN & REPEAT / 聽說</span></div></div>
+        <div class="task-card" onclick="startL(3)"><div class="icon-circle">👑</div><div class="task-info"><h2>WORLD 3: EXPERT</h2><span>TROUBLESHOOTING / 故障排除</span></div></div>
     </div>
 </div>
 
 <div id="page-practice" class="page">
-    <button onclick="backToLevels()" class="btn-exit">← EXIT</button>
+    <button onclick="backToLevels()" class="btn-exit">EXIT / 離開</button>
     <div id="level-indicator" style="font-size:9px; text-align:right; margin-bottom:8px; color: var(--m-yellow);"></div>
     <div id="main-content" class="content"></div>
     <div class="progress-container">
@@ -118,42 +119,41 @@
     <div id="pop-icon" style="font-size:2.5rem; margin-bottom: 10px;"></div>
     <h3 id="pop-title" style="font-size:14px; margin-bottom: 15px;"></h3>
     <div id="pop-text" style="font-size:10px; line-height:1.5; margin-bottom:20px;"></div>
-    <button id="pop-btn" class="btn-action btn-record" onclick="closePopup()">CONTINUE</button>
+    <button id="pop-btn" class="btn-action btn-record" onclick="closePopup()">CONTINUE / 繼續</button>
 </div>
 
 <script>
     let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0, currentQ = null, isMicOn = false, shouldAutoNext = false;
     let shuffledL3 = [];
-    const congrats = ["SUPER!", "GREAT!", "AMAZING!", "EXCELLENT!"];
 
     const tasksData = {
         1: {
-            title: "TASK 1: REMOVING A LIGHT SWITCH",
+            title: "TASK 1: LIGHT SWITCH",
             steps: [
-                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "turn on", "connect", "open"] },
-                { img: "lightswitch2.jpg", correct: "Next, remove the screws with a screwdriver.", chi: "接著，用螺絲批拆除螺絲。", pool: ["Next,", "remove", "the screws", "with", "a screwdriver.", "install", "fix", "pull"] },
-                { img: "lightswitch3.jpg", correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall.", "put", "clean", "paint"] }
+                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "turn on", "connect"] },
+                { img: "lightswitch2.jpg", correct: "Next, remove the screws with a screwdriver.", chi: "接著，用螺絲批拆除螺絲。", pool: ["Next,", "remove", "the screws", "with", "a screwdriver.", "install"] },
+                { img: "lightswitch3.jpg", correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall.", "put"] }
             ],
             trouble: [
-                { q: "What should I do if the screwdriver is rusted?", qChi: "如果螺絲批生鏽了怎麼辦？", a: "remove the rust", full: "You should remove the rust with sandpaper.", chi: "如果螺絲批生鏽了，用砂紙除鏽。" },
-                { q: "What should I do if the screwdriver bit doesn't fit?", qChi: "如果批頭不合適怎麼辦？", a: "use another one", full: "You should use another one.", chi: "如果批頭不合適，換另一個使用。" },
-                { q: "What should I do if the screws are bent?", qChi: "如果螺絲彎曲了怎麼辦？", a: "use new ones", full: "You should use new ones.", chi: "如果螺絲彎曲了，使用新的螺絲。" },
-                { q: "What should I do if the light switch is damaged?", qChi: "如果電燈開關損壞了怎麼辦？", a: "replace it", full: "You should replace it.", chi: "如果電燈開關損壞了，更換它。" }
+                { q: "What should I do if the screwdriver is rusted?", a: "remove the rust", full: "You should remove the rust with sandpaper.", chi: "如果螺絲批生鏽了，用砂紙除鏽。" },
+                { q: "What should I do if the screwdriver bit doesn't fit?", a: "use another one", full: "You should use another one.", chi: "如果批頭不合適，換另一個使用。" },
+                { q: "What should I do if the screws are bent?", a: "use new ones", full: "You should use new ones.", chi: "如果螺絲彎曲了，使用新的螺絲。" },
+                { q: "What should I do if the light switch is damaged?", a: "replace it", full: "You should replace it.", chi: "如果電燈開關損壞了，更換它。" }
             ],
             ts_note: "1. If the screwdriver is rusted, remove the rust with sandpaper.<br><br>2. If the screwdriver bit doesn't fit, use another one.<br><br>3. If the screws are bent, use new ones.<br><br>4. If the light switch is damaged, replace it."
         },
         2: {
-            title: "TASK 2: DRILLING HOLES ON STEEL BOX",
+            title: "TASK 2: STEEL BOX",
             steps: [
-                { img: "drill1.jpg", correct: "First, measure the steel box with a tape measure.", chi: "首先，用捲尺測量鋼箱。", pool: ["First,", "measure", "the steel box", "with", "a tape measure.", "cut", "mark", "hammer"] },
-                { img: "drill2.jpg", correct: "Next, mark the spots with a marker.", chi: "接著，用標記筆標記位置。", pool: ["Next,", "mark", "the spots", "with", "a marker.", "drill", "clean", "remove"] },
-                { img: "drill3.jpg", correct: "Finally, drill holes with a power drill.", chi: "最後，用電鑽鑽孔。", pool: ["Finally,", "drill", "holes", "with", "a power drill.", "screw", "tape", "paint"] }
+                { img: "drill1.jpg", correct: "First, measure the steel box with a tape measure.", chi: "首先，用捲尺測量鋼箱。", pool: ["First,", "measure", "the steel box", "with", "a tape measure.", "cut"] },
+                { img: "drill2.jpg", correct: "Next, mark the spots with a marker.", chi: "接著，用標記筆標記位置。", pool: ["Next,", "mark", "the spots", "with", "a marker.", "drill"] },
+                { img: "drill3.jpg", correct: "Finally, drill holes with a power drill.", chi: "最後，用電鑽鑽孔。", pool: ["Finally,", "drill", "holes", "with", "a power drill.", "screw"] }
             ],
             trouble: [
-                { q: "What should I do if the drill bit is broken?", qChi: "如果鑽頭斷了怎麼辦？", a: "replace it", full: "If the drill bit is broken, replace it.", chi: "如果鑽頭斷了，更換它。" },
-                { q: "What should I do if the power drill doesn't work?", qChi: "如果電鑽無法運作怎麼辦？", a: "check the battery", full: "If the power drill doesn't work, check the battery.", chi: "如果電鑽無法運作，檢查電池。" },
-                { q: "What should I do if the drill bit is rusted?", qChi: "如果鑽頭生鏽了怎麼辦？", a: "clean it with sandpaper", full: "If the drill bit is rusted, clean it with sandpaper.", chi: "如果鑽頭生鏽了，用砂紙清潔。" },
-                { q: "What should I do if the drill bit doesn't fit?", qChi: "如果鑽頭不合適怎麼辦？", a: "choose another one", full: "If the drill bit doesn't fit, choose another one.", chi: "如果鑽頭不合適，選擇另一個使用。" }
+                { q: "What should I do if the drill bit is broken?", a: "replace it", full: "If the drill bit is broken, replace it.", chi: "如果鑽頭斷了，更換它。" },
+                { q: "What should I do if the power drill doesn't work?", a: "check the battery", full: "If the power drill doesn't work, check the battery.", chi: "如果電鑽無法運作，檢查電池。" },
+                { q: "What should I do if the drill bit is rusted?", a: "clean it with sandpaper", full: "If the drill bit is rusted, clean it with sandpaper.", chi: "如果鑽頭生鏽了，用砂紙清潔。" },
+                { q: "What should I do if the drill bit doesn't fit?", a: "choose another one", full: "If the drill bit doesn't fit, choose another one.", chi: "如果鑽頭不合適，選擇另一個使用。" }
             ],
             ts_note: "1. If the drill bit is broken, replace it.<br><br>2. If the power drill doesn't work, check the battery.<br><br>3. If the drill bit is rusted, clean it with sandpaper.<br><br>4. If the drill bit doesn't fit, choose another one."
         }
@@ -181,7 +181,7 @@
             updateProgress(currentStep / 3 * 100);
             ind.innerHTML = `WORLD 1: BUILDING`;
             const d = data.steps[currentStep]; 
-            m.innerHTML = `<div class="img-box"><img src="${d.img}"></div><div class="chi-text">${d.chi}</div><div class="dropzone" id="dz"></div><div class="word-pool" id="pool"></div><button class="btn-action btn-record" onclick="checkL1()">CHECK</button>`;
+            m.innerHTML = `<div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz"></div><div class="word-pool" id="pool"></div><button class="btn-action btn-hint" onclick="showHint('${d.chi}')">HINT<span>提示</span></button><button class="btn-action btn-record" onclick="checkL1()">CHECK<span>檢查答案</span></button>`;
             const dz = document.getElementById('dz'); const pool = document.getElementById('pool');
             [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
                 const s = document.createElement('span'); s.className = 'word'; s.innerText = w;
@@ -192,37 +192,38 @@
             updateProgress(currentStep / 3 * 100);
             ind.innerHTML = `WORLD 2: SPEAKING`;
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--m-red); text-align:center; font-size:10px; line-height:1.6; margin:0;">${d.correct}</p><div class="chi-text" style="margin-top:5px;">${d.chi}</div><button class="btn-action btn-hint" onclick="speak('${d.correct}')">LISTEN</button><button id="rec-btn" class="btn-action btn-record" onclick="rec('${d.correct}', this)">SPEAK</button>`;
+            m.innerHTML = `<div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--m-red); text-align:center; font-size:10px; line-height:1.6; margin:0;">${d.correct}</p><p style="text-align:center; font-family:sans-serif; font-weight:bold; font-size:14px; color:#444; margin-top:5px;">${d.chi}</p><button class="btn-action btn-hint" onclick="speak('${d.correct}')">LISTEN<span>聽示範</span></button><button id="rec-btn" class="btn-action btn-record" onclick="rec('${d.correct}', this)">SPEAK<span>開始錄音</span></button>`;
         } else if (currentL === 3) {
             updateProgress(qCount / 4 * 100);
             ind.innerHTML = `WORLD 3: EXPERT`;
             currentQ = shuffledL3[qCount];
-            m.innerHTML = `<div class="img-box" style="background:#000; cursor:pointer;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center; font-size:10px;">LISTEN TO Q</div></div><div class="chi-text">客戶問：${currentQ.qChi}</div><div class="note-area">${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" onclick="rec(currentQ.a, this, true)">ANSWER</button>`;
+            m.innerHTML = `<div class="img-box" style="background:#000; cursor:pointer;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center; font-size:10px;">LISTEN TO Q<span>聽客戶問題</span></div></div><div class="note-area">${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" onclick="rec(currentQ.a, this, true)">ANSWER<span>錄音回答</span></button>`;
         }
     }
 
     function updateProgress(p) { document.getElementById('progress-bar').style.width = p + "%"; }
+    function showHint(txt) { showPop("HINT / 提示", "❓", `<div style="font-size:16px; font-weight:bold;">${txt}</div>`); }
 
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.word')).map(e => e.innerText).join(" ");
         if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
             fireConfetti(); shouldAutoNext = true;
-            showPop("COURSE CLEAR!", "🌟", `${d.correct}<br><br>${d.chi}`);
-        } else { showPop("MISS!", "❌", "CHECK THE WORDS!"); }
+            showPop("COURSE CLEAR!", "🌟", `${d.correct}<br><br><span style="font-family:sans-serif; font-weight:bold;">${d.chi}</span>`);
+        } else { showPop("MISS!", "❌", "TRY AGAIN / 再試一次"); }
     }
 
     function nextStep() { currentStep++; if(currentStep > 2) { currentStep = 0; startL(3); } else render(); }
-    function randomQ() { qCount++; if(qCount >= 4) { fireConfetti(); showPop("THANK YOU!", "🏆", "MISSION COMPLETE!"); backToLevels(); } else render(); }
+    function randomQ() { qCount++; if(qCount >= 4) { fireConfetti(); showPop("THANK YOU!", "🏆", "MISSION COMPLETE / 任務完成！"); backToLevels(); } else render(); }
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
 
-    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    const SpeechRecognition = window.webkitSpeechRecognition || window.Recognition;
     const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
     if (recognition) { recognition.lang = 'en-US'; }
 
-    function rec(target, btn, isL3 = false) {
+    function rec(target, btn) {
         if(!recognition || isMicOn) return;
-        isMicOn = true; btn.innerText = "...";
+        isMicOn = true; btn.innerHTML = "RECORDING...<span>錄音中...</span>";
         recognition.start();
         recognition.onresult = (e) => {
             const res = e.results[0][0].transcript.toLowerCase();
@@ -235,7 +236,13 @@
         recognition.onspeechend = stopMic; recognition.onerror = stopMic;
     }
 
-    function stopMic() { if (recognition) recognition.stop(); isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerText = (currentL === 3) ? "ANSWER" : "SPEAK"; }
+    function stopMic() { 
+        if (recognition) recognition.stop(); 
+        isMicOn = false; 
+        const btn = document.getElementById('rec-btn'); 
+        if (btn) btn.innerHTML = (currentL === 3) ? "ANSWER<span>錄音回答</span>" : "SPEAK<span>開始錄音</span>"; 
+    }
+
     function fireConfetti() { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); }
     function showPop(title, icon, text) { document.getElementById('pop-title').innerText = title; document.getElementById('pop-icon').innerText = icon; document.getElementById('pop-text').innerHTML = text; document.getElementById('overlay').style.display = 'block'; document.getElementById('popup').style.display = 'block'; }
     function closePopup() { 
