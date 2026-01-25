@@ -6,25 +6,48 @@
     <title>BSE Challengers - Ultimate Arcade</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@900&display=swap" rel="stylesheet">
     <style>
-        :root { --arc-red: #ff1111; --arc-yellow: #f8e71c; --arc-blue: #0044cc; --arc-dark: #000; }
+        :root {
+            --arc-red: #ff1111; --arc-yellow: #f8e71c; --arc-blue: #0044cc; --arc-dark: #000;
+        }
         body { 
             font-family: 'Oswald', 'Noto Sans TC', sans-serif; background: #111; 
             margin: 0; padding: 0; color: #fff; overflow: hidden;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 🔴 強制紅色閃爍 Class */
-        .active-flash { background: var(--arc-red) !important; background-color: var(--arc-red) !important; color: #fff !important; transform: scale(0.92) !important; transition: 0s !important; }
+        /* Flash & Shake Effects */
+        .shake { animation: shake 0.3s; }
+        @keyframes shake { 
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-4px, 4px); }
+            50% { transform: translate(4px, -4px); }
+            75% { transform: translate(-4px, -4px); }
+        }
+
+        /* 🔴 修正：定義一個 Flash Class 供 JS 調用 */
+        .flash-active { 
+            background-color: var(--arc-red) !important; 
+            background-image: none !important;
+            color: #fff !important;
+            transform: scale(0.94);
+        }
 
         .page { display: none; height: 100dvh; padding: 15px; flex-direction: column; box-sizing: border-box; }
         .page.active { display: flex; }
 
-        .arcade-header { display: flex; align-items: center; justify-content: space-between; padding: 8px; background: #000; border-bottom: 3px solid var(--arc-yellow); margin-bottom: 10px; }
+        .arcade-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px; background: #000; border-bottom: 3px solid var(--arc-yellow); margin-bottom: 10px;
+        }
         .hp-bar { height: 14px; width: 100px; background: #333; border: 2px solid #fff; }
         .hp-fill { height: 100%; width: 100%; background: #00ff00; transition: 0.4s; }
 
         .btn-small { background: #444; border: 2px solid #fff; color: #fff; padding: 4px 10px; font-size: 11px; cursor: pointer; width: fit-content; }
-        .btn-box { background: linear-gradient(to right, #222, #000); border: 3px solid #fff; padding: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; }
+
+        .btn-box {
+            background: linear-gradient(to right, #222, #000); border: 3px solid #fff;
+            padding: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px;
+        }
         .btn-box .btn-text { flex-grow: 1; }
         .btn-box span { color: var(--arc-yellow); font-size: 13px; display: block; margin-top: 4px; }
 
@@ -35,37 +58,63 @@
         .chip { background: var(--arc-yellow); color: #000; padding: 6px 10px; font-weight: bold; font-size: 13px; border: 1px solid #000; cursor: pointer; }
 
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .arc-btn { border: 2px solid #fff; color: #fff; padding: 10px; font-weight: bold; text-align: center; cursor: pointer; font-size: 14px; }
+        .arc-btn { border: 2px solid #fff; color: #fff; padding: 10px; font-weight: bold; text-align: center; cursor: pointer; font-size: 14px; transition: background 0.1s; }
         .arc-btn.red { background: #990000; }
         .arc-btn.blue { background: var(--arc-blue); }
         .arc-btn.grey { background: #555; }
 
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; }
-        .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; background: #fff; color: #000; border: 5px solid var(--arc-yellow); padding: 15px; z-index: 101; text-align: center; }
+        .popup { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 80%; background: #fff; color: #000; border: 5px solid var(--arc-yellow); padding: 15px; z-index: 101; text-align: center;
+        }
         .popup h2 { margin: 0; font-size: 32px; font-style: italic; color: var(--arc-red); -webkit-text-stroke: 1px #000; }
         .popup .chi-sub { display: block; font-size: 14px; margin-top: 8px; color: #444; font-weight: bold; }
         .pop-btn-small { background: var(--arc-red); color: #fff; padding: 8px 15px; border: 2px solid #000; font-weight: bold; display: inline-block; margin-top: 15px; cursor: pointer; font-size: 13px; }
+
+        #flash { position: fixed; top:0; left:0; width:100%; height:100%; background: #fff; display:none; z-index: 1000; opacity: 0.7; pointer-events: none; }
     </style>
 </head>
-<body>
+<body id="game-body">
+
+<div id="flash"></div>
 
 <div id="page-home" class="page active">
     <div style="text-align:center; padding-top: 35px;">
-        <h2 style="font-size: 19px; color:var(--arc-yellow); margin:0;">🥊 BSE STUDENTS <span style="color:var(--arc-red);">VS</span> VEN1101 TA 🧤</h2>
-        <div style="margin-top: 25px; padding: 5px 15px; background: #fff; color: #000; display: inline-block; font-weight: bold; font-size: 14px; border: 2px solid var(--arc-red);">BSE CHALLENGE | 屋宇裝備工程</div>
+        <h2 style="font-size: 19px; color:var(--arc-yellow); margin:0; letter-spacing: 0.5px;">
+            🥊 BSE STUDENTS <span style="color:var(--arc-red); font-style:italic;">VS</span> VEN1101 TA 🧤
+        </h2>
+        <div style="margin-top: 25px; padding: 5px 15px; background: #fff; color: #000; display: inline-block; font-weight: bold; font-size: 14px; border: 2px solid var(--arc-red);">
+            BSE CHALLENGE | 屋宇裝備工程
+        </div>
     </div>
     <div style="margin-top: 45px;">
-        <div class="btn-box" onclick="selectTask(1)"><div>🥊</div><div class="btn-text">STRIKE 1: Removing a light switch<span>第一階段：拆卸電燈開關</span></div></div>
-        <div class="btn-box" onclick="selectTask(2)"><div>🥊</div><div class="btn-text">STRIKE 2: Drilling holes on a steel box<span>第二階段：在鋼箱鑽孔</span></div></div>
+        <div class="btn-box" onclick="selectTask(1)">
+            <div style="font-size: 28px;">🥊</div>
+            <div class="btn-text">STRIKE 1: Removing a light switch<span>第一階段：拆卸電燈開關</span></div>
+        </div>
+        <div class="btn-box" onclick="selectTask(2)">
+            <div style="font-size: 28px;">🥊</div>
+            <div class="btn-text">STRIKE 2: Drilling holes on a steel box<span>第二階段：在鋼箱鑽孔</span></div>
+        </div>
     </div>
 </div>
 
 <div id="page-levels" class="page">
     <div class="btn-small" onclick="backToHome()">⬅ HOME</div>
     <h2 style="text-align:center; color: var(--arc-yellow);">SELECT ROUND</h2>
-    <div class="btn-box" onclick="startL(1)">🥊<div class="btn-text">ROUND 1: BUILDING<span>組句練習</span></div></div>
-    <div class="btn-box" onclick="startL(2)">🥊<div class="btn-text">ROUND 2: SPEAKING<span>聽說練習</span></div></div>
-    <div class="btn-box" onclick="startL(3)">🥊<div class="btn-text">ROUND 3: TROUBLESHOOTING<span>疑難排解</span></div></div>
+    <div class="btn-box" onclick="startL(1)">
+        <div style="font-size: 20px;">🥊</div>
+        <div class="btn-text">ROUND 1: BUILDING<span>組句練習</span></div>
+    </div>
+    <div class="btn-box" onclick="startL(2)">
+        <div style="font-size: 20px;">🥊</div>
+        <div class="btn-text">ROUND 2: SPEAKING<span>聽說練習</span></div>
+    </div>
+    <div class="btn-box" onclick="startL(3)">
+        <div style="font-size: 20px;">🥊</div>
+        <div class="btn-text">ROUND 3: TROUBLESHOOTING<span>疑難排解</span></div>
+    </div>
 </div>
 
 <div id="page-practice" class="page">
@@ -74,20 +123,21 @@
         <div style="color:var(--arc-red); font-weight:900;">VS</div>
         <div><div style="font-size:9px; text-align:right;">VEN1101 TA</div><div class="hp-bar"><div id="hp-enemy" class="hp-fill" style="background:var(--arc-red);"></div></div></div>
     </div>
-    <div id="main-content" style="flex-grow:1; display:flex; flex-direction:column;"></div>
+    <div id="main-content" class="stage-box" style="flex-grow:1;"></div>
     <div class="btn-small" style="margin-top:10px;" onclick="backToLevels()">⬅ BACK</div>
 </div>
 
 <div class="overlay" id="overlay"></div>
 <div id="popup" class="popup">
-    <h2 id="pop-title">VICTORY!</h2>
+    <h2 id="pop-title">K.O.</h2>
     <div id="pop-text" style="font-weight:bold; margin-top: 10px;"></div>
     <div id="pop-btn" class="pop-btn-small" onclick="closePopup()">CONTINUE / 繼續</div>
 </div>
 
 <script>
-    let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0;
-    let isMicOn = false, shouldAutoNext = false, isGameOver = false, shuffledL3 = [];
+    let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0, currentQ = null, isMicOn = false, shouldAutoNext = false;
+    let shuffledL3 = [];
+    let isVictoryState = false; // 🔴 新增：標記是否為最後勝利狀態
 
     const tasksData = {
         1: {
@@ -120,26 +170,25 @@
         }
     };
 
-    // 🔴 閃爍機制：JS 監聽，保證每一次點擊都閃
-    ['mousedown', 'touchstart'].forEach(evt => {
-        document.addEventListener(evt, e => {
+    // 🔴 修正閃爍：使用 JS 監聽所有點擊/觸摸
+    ['mousedown', 'touchstart'].forEach(evtType => {
+        document.addEventListener(evtType, (e) => {
             const el = e.target.closest('.btn-box, .arc-btn, .btn-small, .chip, .pop-btn-small');
             if (el) {
-                el.classList.add('active-flash');
-                setTimeout(() => el.classList.remove('active-flash'), 100);
+                el.classList.add('flash-active');
+                setTimeout(() => el.classList.remove('flash-active'), 100);
             }
         });
     });
 
-    function selectTask(tid) { currentTask = tid; showPage('page-levels'); }
-    function backToHome() { showPage('page-home'); }
-    function backToLevels() { stopMic(); showPage('page-levels'); }
-    function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    function selectTask(tid) { currentTask = tid; document.getElementById('page-home').classList.remove('active'); document.getElementById('page-levels').classList.add('active'); }
+    function backToHome() { document.getElementById('page-levels').classList.remove('active'); document.getElementById('page-home').classList.add('active'); }
+    function backToLevels() { stopMic(); document.getElementById('page-practice').classList.remove('active'); document.getElementById('page-levels').classList.add('active'); }
 
     function startL(l) { 
-        currentL = l; currentStep = 0; qCount = 0; isGameOver = false;
+        currentL = l; currentStep = 0; qCount = 0; isVictoryState = false;
         if (l === 3) shuffledL3 = [...tasksData[currentTask].trouble].sort(() => Math.random() - 0.5);
-        showPage('page-practice'); render(); 
+        document.getElementById('page-levels').classList.remove('active'); document.getElementById('page-practice').classList.add('active'); render(); 
     }
 
     function render() {
@@ -149,36 +198,39 @@
 
         if (currentL === 1) {
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div class="drop-zone" id="dz"></div><div id="pool" style="min-height:50px;"></div>
-            <div class="action-grid" style="margin-top:auto;"><div class="arc-btn blue" onclick="showPop('HINT', '${d.chi}', false)">HINT</div><div class="arc-btn red" onclick="checkL1()">CHECK</div></div>`;
+            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div class="drop-zone" id="dz"></div><div class="drop-zone" id="pool" style="border:none; background:none;"></div><div class="action-grid"><div class="arc-btn blue" onclick="showPop('HINT', '${d.chi}', false)">HINT<br><small>提示</small></div><div class="arc-btn red" onclick="checkL1()">CHALLENGE!<br><small>檢查</small></div></div>`;
             const dz = document.getElementById('dz'), pool = document.getElementById('pool');
             [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
                 const s = document.createElement('span'); s.className = 'chip'; s.innerText = w;
-                s.onclick = () => { (s.parentNode === pool ? dz : pool).appendChild(s); };
+                s.onclick = () => { s.parentNode === pool ? dz.appendChild(s) : pool.appendChild(s); };
                 pool.appendChild(s);
             });
         } else if (currentL === 2) {
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div style="background:#fff; color:#000; padding:12px; font-weight:bold; border:4px solid var(--arc-yellow);"><p style="color:var(--arc-red); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px;">${d.chi}</p></div>
-            <div style="margin-top:auto;"><div class="arc-btn blue" onclick="speak('${d.correct}')">🔊 LISTEN</div><div class="arc-btn red" style="margin-top:8px;" id="rec-btn" onclick="rec('${d.correct}')">🎤 SPEAK</div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP</div></div>`;
+            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div style="background:#fff; color:#000; padding:12px; font-weight:bold; border:4px solid var(--arc-yellow);"><p style="color:var(--arc-red); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px;">${d.chi}</p></div><div class="action-grid" style="margin-top:10px;"><div class="arc-btn blue" onclick="speak('${d.correct}')">LISTEN<br><small>聽示範</small></div><div id="rec-btn" class="arc-btn red" onclick="rec('${d.correct}', this)">SPEAKING FIGHT!<br><small>開始挑戰</small></div></div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP ROUND / 跳過</div>`;
         } else if (currentL === 3) {
-            const q = shuffledL3[qCount];
-            m.innerHTML = `<div class="arc-btn blue" onclick="speak('${q.q}')">🔊 CLIENT: ${q.q}</div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:13px; flex-grow:1; overflow-y:auto; margin:10px 0;">${data.ts_note}</div>
-            <div style="margin-top:auto;"><div class="arc-btn red" id="rec-btn" onclick="rec('${q.a}')">🎤 ANSWER</div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP</div></div>`;
+            currentQ = shuffledL3[qCount];
+            m.innerHTML = `<div class="arc-btn blue" onclick="speak(currentQ.q)" style="padding:15px; margin-bottom:10px;">🔊 LISTEN TO CLIENT<br><small>聽取客戶問題</small></div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:13px; flex-grow:1; overflow-y:auto;">${data.ts_note}</div><div id="rec-btn" class="arc-btn red" style="margin-top:10px;" onclick="rec(currentQ.a, this)">CHALLENGE!<br><small>錄音回答</small></div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP QUESTION / 跳過</div>`;
         }
     }
 
     function updateHP() {
-        let eHP = 100 - (currentL === 3 ? (qCount / shuffledL3.length * 100) : (currentStep / 3 * 100));
+        let eHP = 100 - (currentL === 3 ? (qCount / 4 * 100) : (currentStep / 3 * 100));
         document.getElementById('hp-enemy').style.width = eHP + "%";
+    }
+
+    function triggerEffect() {
+        const f = document.getElementById('flash'); f.style.display = 'block'; setTimeout(() => f.style.display = 'none', 100);
+        document.getElementById('game-body').classList.add('shake');
+        setTimeout(() => document.getElementById('game-body').classList.remove('shake'), 300);
     }
 
     function showPop(title, mainText, success) {
         document.getElementById('pop-title').innerText = title;
         let chiLine = "";
-        if (title === "VICTORY!") { chiLine = "做得好！你已經完成所有挑戰！"; isGameOver = true; }
-        else if (title === "HINT") { chiLine = "這是給你的提示！"; }
-        else if (success) { chiLine = "做得好！繼續下一關！"; }
+        if (title === "VICTORY!") { chiLine = "做得好！你已經完成所有挑戰！"; } // 🔴 修正中文錯誤
+        else if (title === "HINT") { chiLine = "這是給你的提示！"; } 
+        else if (success) { chiLine = "做得好！繼續下一關！"; } 
         else {
             if (currentL === 1) chiLine = "揀錯動詞或順序不對，再試一次！";
             else if (currentL === 2) chiLine = "發音不夠準確，請再挑戰！";
@@ -189,45 +241,63 @@
         document.getElementById('overlay').style.display = 'block';
         document.getElementById('popup').style.display = 'block';
         shouldAutoNext = success;
+        if(success) triggerEffect();
     }
 
+    // 🔴 修正卡關：確保關閉彈窗後才處理跳轉
     function closePopup() {
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('popup').style.display = 'none';
-        if (isGameOver) backToHome();
-        else if (shouldAutoNext) nextQ();
+        if(isVictoryState) { 
+            backToHome(); 
+        } else if(shouldAutoNext) { 
+            nextQ(); 
+        }
     }
 
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.chip')).map(e => e.innerText).join(" ");
-        if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) showPop("PERFECT!", d.correct, true);
-        else showPop("MISS!", "Sequence Error!", false);
+        if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
+            showPop("PERFECT!", d.correct, true);
+        } else {
+            showPop("MISS!", "Sequence or Verb error!", false);
+        }
     }
 
     function nextQ() {
         if(currentL === 1) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; } }
         else if(currentL === 2) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 3; } }
-        else if(currentL === 3) { qCount++; if(qCount >= shuffledL3.length) { showPop("VICTORY!", "ALL ROUNDS COMPLETED!", true); return; } }
+        else if(currentL === 3) { 
+            qCount++; 
+            if(qCount >= 4) { 
+                isVictoryState = true; // 🔴 標記進入勝利狀態
+                showPop("VICTORY!", "ALL ROUNDS COMPLETED!", true); 
+                return; 
+            } 
+        }
         render();
     }
 
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
-    
-    function rec(target) {
-        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-        if (!SpeechRecognition) return;
-        const btn = document.getElementById('rec-btn');
-        btn.innerText = "LISTENING...";
-        const recognition = new SpeechRecognition(); recognition.lang = 'en-US'; recognition.start();
+
+    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
+    if (recognition) { recognition.lang = 'en-US'; }
+
+    function rec(target, btn) {
+        if(!recognition || isMicOn) return;
+        isMicOn = true; btn.innerHTML = "FIGHTING...<br><small>挑戰中</small>";
+        recognition.start();
         recognition.onresult = (e) => {
             const res = e.results[0][0].transcript.toLowerCase(); stopMic();
-            if (res.includes(target.toLowerCase().split(' ')[0])) showPop("K.O.!", "Great Skill!", true);
+            if(res.includes(target.toLowerCase().replace(/[.,!]/g, ''))) { showPop("K.O.!", "Great Skill!", true); }
             else showPop("BLOCK!", `You said: "${res}"`, false);
         };
-        recognition.onerror = stopMic; recognition.onspeechend = stopMic;
+        recognition.onspeechend = stopMic; recognition.onerror = stopMic;
     }
-    function stopMic() { render(); }
+
+    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "CHALLENGE!<br><small>錄音回答</small>" : "SPEAKING FIGHT!<br><small>開始挑戰</small>"; if(recognition) recognition.stop(); }
 </script>
 </body>
 </html>
