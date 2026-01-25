@@ -12,9 +12,9 @@
         body { 
             font-family: 'Oswald', 'Noto Sans TC', sans-serif; background: #111; 
             margin: 0; padding: 0; color: #fff; overflow: hidden;
+            -webkit-tap-highlight-color: transparent; /* 移除手機預設點擊框 */
         }
 
-        /* Flash & Shake Effects */
         .shake { animation: shake 0.3s; }
         @keyframes shake { 
             0%, 100% { transform: translate(0, 0); }
@@ -23,13 +23,12 @@
             75% { transform: translate(-4px, -4px); }
         }
 
-        /* 🔥 FIX: Red Flash on EVERY Click/Touch */
+        /* 🔴 強制紅色閃爍 - 增加 !important 並確保優先權 */
         .btn-box:active, .arc-btn:active, .btn-small:active, .chip:active, .pop-btn-small:active { 
-            background-color: var(--arc-red) !important; 
-            background-image: none !important;
+            background: var(--arc-red) !important; 
+            background-color: var(--arc-red) !important;
             color: #fff !important;
             transform: scale(0.92);
-            transition: 0s; /* Instant flash */
         }
 
         .page { display: none; height: 100dvh; padding: 15px; flex-direction: column; box-sizing: border-box; }
@@ -58,7 +57,7 @@
         .chip { background: var(--arc-yellow); color: #000; padding: 6px 10px; font-weight: bold; font-size: 13px; border: 1px solid #000; cursor: pointer; }
 
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .arc-btn { border: 2px solid #fff; color: #fff; padding: 10px; font-weight: bold; text-align: center; cursor: pointer; font-size: 14px; transition: background 0.1s; }
+        .arc-btn { border: 2px solid #fff; color: #fff; padding: 10px; font-weight: bold; text-align: center; cursor: pointer; font-size: 14px; }
         .arc-btn.red { background: #990000; }
         .arc-btn.blue { background: var(--arc-blue); }
         .arc-btn.grey { background: #555; }
@@ -81,8 +80,8 @@
 
 <div id="page-home" class="page active">
     <div style="text-align:center; padding-top: 35px;">
-        <h2 style="font-size: 19px; color:var(--arc-yellow); margin:0; letter-spacing: 0.5px;">
-            🥊 BSE STUDENTS <span style="color:var(--arc-red); font-style:italic;">VS</span> VEN1101 TA 🧤
+        <h2 style="font-size: 19px; color:var(--arc-yellow); margin:0;">
+            🥊 BSE STUDENTS <span style="color:var(--arc-red);">VS</span> VEN1101 TA 🧤
         </h2>
         <div style="margin-top: 25px; padding: 5px 15px; background: #fff; color: #000; display: inline-block; font-weight: bold; font-size: 14px; border: 2px solid var(--arc-red);">
             BSE CHALLENGE | 屋宇裝備工程
@@ -169,14 +168,14 @@
         }
     };
 
-    function selectTask(tid) { currentTask = tid; document.getElementById('page-home').classList.remove('active'); document.getElementById('page-levels').classList.add('active'); }
-    function backToHome() { document.getElementById('page-levels').classList.remove('active'); document.getElementById('page-home').classList.add('active'); }
-    function backToLevels() { stopMic(); document.getElementById('page-practice').classList.remove('active'); document.getElementById('page-levels').classList.add('active'); }
+    function selectTask(tid) { currentTask = tid; document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-levels').classList.add('active'); }
+    function backToHome() { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-home').classList.add('active'); }
+    function backToLevels() { stopMic(); document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-levels').classList.add('active'); }
 
     function startL(l) { 
         currentL = l; currentStep = 0; qCount = 0;
         if (l === 3) shuffledL3 = [...tasksData[currentTask].trouble].sort(() => Math.random() - 0.5);
-        document.getElementById('page-levels').classList.remove('active'); document.getElementById('page-practice').classList.add('active'); render(); 
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-practice').classList.add('active'); render(); 
     }
 
     function render() {
@@ -215,22 +214,15 @@
 
     function showPop(title, mainText, success) {
         document.getElementById('pop-title').innerText = title;
-        let chiLine = "";
-        if (title === "HINT") { chiLine = "這是給你的提示！"; } 
-        else if (success) { chiLine = "做得好！繼續下一關！"; } 
-        else {
-            if (currentL === 1) chiLine = "揀錯動詞或順序不對，再試一次！";
-            else if (currentL === 2) chiLine = "發音不夠準確，請再挑戰！";
-            else chiLine = "回答錯誤，請檢查筆記再試！";
-        }
+        let chiLine = (title === "HINT") ? "這是給你的提示！" : (success ? "做得好！繼續下一關！" : (currentL === 1 ? "揀錯動詞或順序不對，再試一次！" : currentL === 2 ? "發音不夠準確，請再挑戰！" : "回答錯誤，請檢查筆記再試！"));
         document.getElementById('pop-text').innerHTML = `${mainText}<span class="chi-sub">${chiLine}</span>`;
-        document.getElementById('pop-btn').innerText = success ? "CONTINUE / 繼續" : "TRY AGAIN / 重試";
         document.getElementById('overlay').style.display = 'block';
         document.getElementById('popup').style.display = 'block';
         shouldAutoNext = success;
         if(success) triggerEffect();
     }
 
+    // 🔴 FIX: 關閉彈窗後先檢查係咪要跳轉，確保唔會卡死
     function closePopup() {
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('popup').style.display = 'none';
@@ -242,37 +234,41 @@
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.chip')).map(e => e.innerText).join(" ");
         if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
             showPop("PERFECT!", d.correct, true);
-        } else {
-            showPop("MISS!", "Sequence or Verb error!", false);
-        }
+        } else showPop("MISS!", "Sequence or Verb error!", false);
     }
 
     function nextQ() {
         if(currentL === 1) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; } }
         else if(currentL === 2) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 3; } }
-        else if(currentL === 3) { qCount++; if(qCount >= 4) { showPop("VICTORY!", "ALL ROUNDS COMPLETED!", true); backToHome(); return; } }
+        else if(currentL === 3) { 
+            qCount++; 
+            if(qCount >= 4) { 
+                showPop("VICTORY!", "ALL ROUNDS COMPLETED!", false); // 改為 false 避免無限 loop
+                backToHome(); 
+                return; 
+            } 
+        }
         render();
     }
 
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
-
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
     if (recognition) { recognition.lang = 'en-US'; }
 
     function rec(target, btn) {
         if(!recognition || isMicOn) return;
-        isMicOn = true; btn.innerHTML = "FIGHTING...<br><small>挑戰中</small>";
+        isMicOn = true; btn.innerHTML = "FIGHTING...";
         recognition.start();
         recognition.onresult = (e) => {
             const res = e.results[0][0].transcript.toLowerCase(); stopMic();
-            if(res.includes(target.toLowerCase().replace(/[.,!]/g, ''))) { showPop("K.O.!", "Great Skill!", true); }
+            if(res.includes(target.toLowerCase().replace(/[.,!]/g, ''))) showPop("K.O.!", "Great Skill!", true);
             else showPop("BLOCK!", `You said: "${res}"`, false);
         };
         recognition.onspeechend = stopMic; recognition.onerror = stopMic;
     }
 
-    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "CHALLENGE!<br><small>錄音回答</small>" : "SPEAKING FIGHT!<br><small>開始挑戰</small>"; if(recognition) recognition.stop(); }
+    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "CHALLENGE!" : "SPEAKING FIGHT!"; if(recognition) recognition.stop(); }
 </script>
 </body>
 </html>
