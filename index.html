@@ -7,57 +7,68 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --arc-red: #ff3e3e; --arc-yellow: #f8e71c; --arc-blue: #003366; --arc-dark: #000;
+            --arc-red: #ff3e3e; --arc-yellow: #f8e71c; --arc-blue: #0044cc; --arc-dark: #000;
         }
         body { 
-            font-family: 'Oswald', 'Noto Sans TC', sans-serif; background: #1a1a1a; 
+            font-family: 'Oswald', 'Noto Sans TC', sans-serif; background: #111; 
             margin: 0; padding: 0; color: #fff; overflow: hidden;
         }
 
-        /* Explosion Effect Class */
+        /* Explosion Shake */
         .shake { animation: shake 0.3s; }
         @keyframes shake { 
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            40% { transform: translate(3px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            80% { transform: translate(3px, -2px) rotate(1deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-4px, 4px); }
+            50% { transform: translate(4px, -4px); }
+            75% { transform: translate(-4px, -4px); }
         }
 
         .page { display: none; height: 100dvh; padding: 15px; flex-direction: column; box-sizing: border-box; }
         .page.active { display: flex; }
 
-        /* Header UI */
+        /* HP Bars */
         .arcade-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 10px; background: var(--arc-dark); border-bottom: 4px solid var(--arc-yellow);
+            padding: 8px; background: #000; border-bottom: 3px solid var(--arc-yellow); margin-bottom: 10px;
         }
-        .hp-bar { height: 18px; width: 120px; background: #444; border: 2px solid #fff; position: relative; }
-        .hp-fill { height: 100%; width: 100%; background: linear-gradient(to bottom, #00ff00, #008000); transition: 0.5s; }
+        .hp-bar { height: 14px; width: 100px; background: #333; border: 2px solid #fff; }
+        .hp-fill { height: 100%; width: 100%; background: #00ff00; transition: 0.4s; }
 
-        /* Buttons */
+        /* Small Back Button */
+        .btn-small { 
+            background: #444; border: 2px solid #fff; color: #fff; padding: 4px 10px; 
+            font-size: 12px; cursor: pointer; display: inline-block; width: fit-content;
+        }
+
+        /* Menu Options */
         .btn-box {
-            background: linear-gradient(to bottom, #444, #000); border: 3px solid #fff;
-            padding: 15px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+            background: linear-gradient(to right, #222, #000); border: 3px solid #fff;
+            padding: 12px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 12px;
         }
-        .btn-box:active { background: var(--arc-red); color: #fff; }
-        .btn-box span { color: var(--arc-yellow); font-size: 13px; display: block; }
+        .btn-box:active { background: var(--arc-red); }
+        .btn-box span { color: var(--arc-yellow); font-size: 12px; }
 
-        /* Control Area */
-        .stage-box { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-        .img-screen { width: 100%; height: 140px; border: 3px solid #fff; background: #333; display: flex; align-items: center; justify-content: center; }
+        /* Game UI */
+        .img-screen { width: 100%; height: 130px; border: 3px solid #fff; background: #222; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
         .img-screen img { max-width: 100%; max-height: 100%; }
 
-        .drop-zone { min-height: 50px; border: 2px dashed #fff; padding: 10px; display: flex; flex-wrap: wrap; gap: 5px; background: rgba(0,0,0,0.5); }
-        .chip { background: var(--arc-yellow); color: #000; padding: 8px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .drop-zone { min-height: 45px; border: 2px dashed #777; padding: 8px; display: flex; flex-wrap: wrap; gap: 5px; background: rgba(0,0,0,0.7); margin-bottom: 8px; }
+        .chip { background: var(--arc-yellow); color: #000; padding: 6px 10px; font-weight: bold; font-size: 13px; box-shadow: 2px 2px 0 #888; }
 
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .arc-btn { background: var(--arc-red); border: 2px solid #fff; color: #fff; padding: 12px; font-weight: bold; text-align: center; cursor: pointer; }
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .arc-btn { border: 2px solid #fff; color: #fff; padding: 10px; font-weight: bold; text-align: center; cursor: pointer; font-size: 14px; }
+        .arc-btn.red { background: var(--arc-red); }
         .arc-btn.blue { background: var(--arc-blue); }
 
-        /* Flash overlay for explosion */
-        #flash { position: fixed; top:0; left:0; width:100%; height:100%; background: #fff; display:none; z-index: 1000; opacity: 0.8; }
+        /* Pop-up Windows */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; }
+        .popup { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 80%; background: #fff; color: #000; border: 5px solid var(--arc-yellow); padding: 20px; z-index: 101; text-align: center;
+        }
+        .popup h2 { margin: 0; font-size: 40px; font-style: italic; color: var(--arc-red); -webkit-text-stroke: 1px #000; }
+
+        #flash { position: fixed; top:0; left:0; width:100%; height:100%; background: #fff; display:none; z-index: 1000; opacity: 0.7; }
     </style>
 </head>
 <body id="game-body">
@@ -65,55 +76,60 @@
 <div id="flash"></div>
 
 <div id="page-home" class="page active">
-    <div style="text-align:center; padding-top: 30px;">
-        <h2 style="font-size: 16px; margin:0; color:var(--arc-yellow);">🧤 CHALLENGER APPROACHING</h2>
-        <h1 style="font-size: 32px; color: #fff; text-shadow: 4px 4px var(--arc-red); margin: 10px 0;">BSE CHALLENGE</h1>
-        <p style="font-size: 14px; color: #aaa;">BUILDING SERVICES ENGINEERING</p>
+    <div style="text-align:center; padding-top: 20px;">
+        <h2 style="font-size: 18px; color:var(--arc-yellow); margin:0;">🥊 CHALLENGER APPROACHING</h2>
+        <h1 style="font-size: 36px; margin: 10px 0; letter-spacing: 2px;">BSE CHALLENGE</h1>
+        <div style="border-top: 2px solid #fff; border-bottom: 2px solid #fff; padding: 5px; display: inline-block;">
+            VEN1101 TA | 屋宇裝備工程
+        </div>
     </div>
-    <div style="margin-top: 30px;">
+    <div style="margin-top: 35px;">
         <div class="btn-box" onclick="selectTask(1)">
-            <div style="font-size: 24px;">🧤</div>
+            <div style="font-size: 28px;">🥊</div>
             <div>STRIKE 1: LIGHT SWITCH<span>第一階段：拆卸電燈開關</span></div>
         </div>
         <div class="btn-box" onclick="selectTask(2)">
-            <div style="font-size: 24px;">🧤</div>
+            <div style="font-size: 28px;">🥊</div>
             <div>STRIKE 2: STEEL BOX<span>第二階段：在鋼箱鑽孔</span></div>
         </div>
     </div>
 </div>
 
 <div id="page-levels" class="page">
-    <div class="arc-btn" style="width: 80px;" onclick="backToHome()">HOME<br><small>主頁</small></div>
-    <h2 style="text-align:center; color: var(--arc-yellow); margin-top:20px;">SELECT ROUND</h2>
-    <div>
-        <div class="btn-box" onclick="startL(1)">ROUND 1: BUILDING<span>組句練習</span></div>
-        <div class="btn-box" onclick="startL(2)">ROUND 2: SPEAKING<span>聽說練習</span></div>
-        <div class="btn-box" onclick="startL(3)">ROUND 3: EXPERT<span>疑難排解</span></div>
-    </div>
+    <div class="btn-small" onclick="backToHome()">⬅ BACK</div>
+    <h2 style="text-align:center; color: var(--arc-yellow);">SELECT ROUND</h2>
+    <div class="btn-box" onclick="startL(1)">ROUND 1: BUILDING<span>組句練習</span></div>
+    <div class="btn-box" onclick="startL(2)">ROUND 2: SPEAKING<span>聽說練習</span></div>
+    <div class="btn-box" onclick="startL(3)">ROUND 3: TROUBLESHOOTING<span>疑難排解</span></div>
 </div>
 
 <div id="page-practice" class="page">
     <div class="arcade-header">
-        <div class="hp-bar"><div id="hp-player" class="hp-fill"></div><div style="position:absolute; top:-15px; font-size:10px;">STUDENT</div></div>
-        <div style="color:var(--arc-red); font-weight:900;">VS</div>
-        <div class="hp-bar"><div id="hp-enemy" class="hp-fill" style="background:var(--arc-red);"></div><div style="position:absolute; top:-15px; right:0; font-size:10px;">CLIENT</div></div>
+        <div><div style="font-size:9px;">CHALLENGER</div><div class="hp-bar"><div id="hp-player" class="hp-fill"></div></div></div>
+        <div style="color:var(--arc-red); font-weight:900; font-style:italic;">VS</div>
+        <div><div style="font-size:9px; text-align:right;">CLIENT</div><div class="hp-bar"><div id="hp-enemy" class="hp-fill" style="background:var(--arc-red);"></div></div></div>
     </div>
-    <div id="main-content" class="stage-box"></div>
-    <div style="margin-top:auto;">
-        <div class="arc-btn" style="width: 100%; background:#444;" onclick="backToLevels()">BACK / 返回</div>
-    </div>
+    <div id="main-content" class="stage-box" style="flex-grow:1;"></div>
+    <div class="btn-small" style="margin-top:10px;" onclick="backToLevels()">⬅ BACK</div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div id="popup" class="popup">
+    <h2 id="pop-title">K.O.</h2>
+    <div id="pop-text" style="font-weight:bold; margin: 15px 0;"></div>
+    <div class="arc-btn red" onclick="closePopup()">CONTINUE / 繼續</div>
 </div>
 
 <script>
     let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0, currentQ = null, isMicOn = false, shouldAutoNext = false;
+    let shuffledL3 = [];
 
     const tasksData = {
         1: {
-            title: "LIGHT SWITCH",
             steps: [
-                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "disconnect"] },
-                { img: "lightswitch2.jpg", correct: "Next, remove the screws with a screwdriver.", chi: "接著，用螺絲批拆除螺絲。", pool: ["Next,", "remove", "the screws", "with", "a screwdriver.", "unscrew"] },
-                { img: "lightswitch3.jpg", correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall.", "detach"] }
+                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "disconnect", "loosen", "unscrew"] },
+                { img: "lightswitch2.jpg", correct: "Next, remove the screws with a screwdriver.", chi: "接著，用螺絲批拆除螺絲。", pool: ["Next,", "remove", "the screws", "with", "a screwdriver.", "tighten", "unscrew", "pull"] },
+                { img: "lightswitch3.jpg", correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall.", "detach", "fix", "connect"] }
             ],
             trouble: [
                 { q: "What should I do if the screwdriver is rusted?", a: "remove the rust", chi: "如果螺絲批生鏽了，用砂紙除鏽。" },
@@ -124,11 +140,10 @@
             ts_note: "1. If the screwdriver is rusted, remove the rust with sandpaper.<br>2. If the screwdriver bit doesn't fit, use another one.<br>3. If the screws are bent, use new ones.<br>4. If the light switch is damaged, replace it."
         },
         2: {
-            title: "STEEL BOX",
             steps: [
-                { img: "drill1.jpg", correct: "First, measure the steel box with a tape measure.", chi: "首先，用捲尺測量鋼箱。", pool: ["First,", "measure", "the steel box", "with", "a tape measure.", "mark"] },
-                { img: "drill2.jpg", correct: "Next, mark the spots with a marker.", chi: "接著，用標記筆標記位置。", pool: ["Next,", "mark", "the spots", "with", "a marker.", "drill"] },
-                { img: "drill3.jpg", correct: "Finally, drill holes with a power drill.", chi: "最後，用電鑽鑽孔。", pool: ["Finally,", "drill", "holes", "with", "a power drill.", "screw"] }
+                { img: "drill1.jpg", correct: "First, measure the steel box with a tape measure.", chi: "首先，用捲尺測量鋼箱。", pool: ["First,", "measure", "the steel box", "with", "a tape measure.", "mark", "cut", "drill"] },
+                { img: "drill2.jpg", correct: "Next, mark the spots with a marker.", chi: "接著，用標記筆標記位置。", pool: ["Next,", "mark", "the spots", "with", "a marker.", "measure", "drill", "clean"] },
+                { img: "drill3.jpg", correct: "Finally, drill holes with a power drill.", chi: "最後，用電鑽鑽孔。", pool: ["Finally,", "drill", "holes", "with", "a power drill.", "screw", "plug", "unscrew"] }
             ],
             trouble: [
                 { q: "What should I do if the drill bit is broken?", a: "replace it", chi: "如果鑽頭斷了，更換它。" },
@@ -142,7 +157,7 @@
 
     function selectTask(tid) { currentTask = tid; document.getElementById('page-home').classList.remove('active'); document.getElementById('page-levels').classList.add('active'); }
     function backToHome() { document.getElementById('page-levels').classList.remove('active'); document.getElementById('page-home').classList.add('active'); }
-    function backToLevels() { document.getElementById('page-practice').classList.remove('active'); document.getElementById('page-levels').classList.add('active'); }
+    function backToLevels() { stopMic(); document.getElementById('page-practice').classList.remove('active'); document.getElementById('page-levels').classList.add('active'); }
 
     function startL(l) { 
         currentL = l; currentStep = 0; qCount = 0;
@@ -157,7 +172,7 @@
 
         if (currentL === 1) {
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div class="drop-zone" id="dz"></div><div class="drop-zone" id="pool" style="border:none;"></div><div class="action-grid"><div class="arc-btn blue" onclick="showH('${d.chi}')">HINT<br><small>提示</small></div><div class="arc-btn" onclick="checkL1()">CHECK<br><small>檢查</small></div></div>`;
+            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div class="drop-zone" id="dz"></div><div class="drop-zone" id="pool" style="border:none; background:none;"></div><div class="action-grid"><div class="arc-btn blue" onclick="alert('HINT: ${d.chi}')">HINT<br><small>提示</small></div><div class="arc-btn red" onclick="checkL1()">CHECK<br><small>檢查</small></div></div>`;
             const dz = document.getElementById('dz'), pool = document.getElementById('pool');
             [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
                 const s = document.createElement('span'); s.className = 'chip'; s.innerText = w;
@@ -166,10 +181,10 @@
             });
         } else if (currentL === 2) {
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div style="background:#fff; color:#000; padding:15px; font-weight:bold; border:4px solid var(--arc-yellow);"><p style="color:var(--arc-red); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px;">${d.chi}</p></div><div class="action-grid"><div class="arc-btn blue" onclick="speak('${d.correct}')">LISTEN<br><small>聽示範</small></div><div id="rec-btn" class="arc-btn" onclick="rec('${d.correct}', this)">SPEAK<small>開始挑戰</small></div></div>`;
+            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div style="background:#fff; color:#000; padding:15px; font-weight:bold; border:4px solid var(--arc-yellow);"><p style="color:var(--arc-red); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px;">${d.chi}</p></div><div class="action-grid" style="margin-top:10px;"><div class="arc-btn blue" onclick="speak('${d.correct}')">LISTEN<br><small>聽示範</small></div><div id="rec-btn" class="arc-btn red" onclick="rec('${d.correct}', this)">SPEAK<br><small>開始挑戰</small></div></div>`;
         } else if (currentL === 3) {
             currentQ = shuffledL3[qCount];
-            m.innerHTML = `<div class="arc-btn blue" onclick="speak(currentQ.q)" style="padding:20px;">🔊 LISTEN TO CLIENT<br><small>聽取客戶問題</small></div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:12px; height:150px; overflow-y:auto;">${data.ts_note}</div><div id="rec-btn" class="arc-btn" onclick="rec(currentQ.a, this)">ANSWER<br><small>錄音回答</small></div>`;
+            m.innerHTML = `<div class="arc-btn blue" onclick="speak(currentQ.q)" style="padding:15px; margin-bottom:10px;">🔊 LISTEN TO CLIENT<br><small>聽取客戶問題</small></div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:13px; flex-grow:1; overflow-y:auto; line-height:1.6;">${data.ts_note}</div><div id="rec-btn" class="arc-btn red" style="margin-top:10px;" onclick="rec(currentQ.a, this)">ANSWER<br><small>錄音回答</small></div>`;
         }
     }
 
@@ -178,30 +193,42 @@
         document.getElementById('hp-enemy').style.width = eHP + "%";
     }
 
-    function triggerExplosion(isWin) {
-        if(isWin) {
-            const f = document.getElementById('flash'); f.style.display = 'block'; setTimeout(() => f.style.display = 'none', 100);
-            document.getElementById('game-body').classList.add('shake');
-            setTimeout(() => document.getElementById('game-body').classList.remove('shake'), 300);
-        }
+    function triggerEffect() {
+        const f = document.getElementById('flash'); f.style.display = 'block'; setTimeout(() => f.style.display = 'none', 100);
+        document.getElementById('game-body').classList.add('shake');
+        setTimeout(() => document.getElementById('game-body').classList.remove('shake'), 300);
+    }
+
+    function showPop(title, text, success) {
+        document.getElementById('pop-title').innerText = title;
+        document.getElementById('pop-text').innerHTML = text;
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('popup').style.display = 'block';
+        shouldAutoNext = success;
+        if(success) triggerEffect();
+    }
+
+    function closePopup() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('popup').style.display = 'none';
+        if(shouldAutoNext) nextQ();
     }
 
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.chip')).map(e => e.innerText).join(" ");
         if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
-            triggerExplosion(true); alert("🥊 ROUND CLEAR!"); nextQ();
-        } else alert("MISS!");
+            showPop("PERFECT!", `${d.correct}<br><br>${d.chi}`, true);
+        } else showPop("MISS!", "Wrong sequence! Try again.", false);
     }
 
     function nextQ() {
         if(currentL === 1) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; } }
         else if(currentL === 2) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 3; } }
-        else if(currentL === 3) { qCount++; if(qCount >= 4) { alert("🏆 STAGE COMPLETE!"); backToHome(); return; } }
+        else if(currentL === 3) { qCount++; if(qCount >= 4) { showPop("VICTORY!", "ALL ROUNDS COMPLETED!", false); backToHome(); return; } }
         render();
     }
 
-    function showH(t) { alert("HINT: " + t); }
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
@@ -214,13 +241,13 @@
         recognition.start();
         recognition.onresult = (e) => {
             const res = e.results[0][0].transcript.toLowerCase(); stopMic();
-            if(res.includes(target.toLowerCase().replace(/[.,!]/g, ''))) { triggerExplosion(true); alert("🥊 K.O.!"); nextQ(); }
-            else alert("RETRY! You said: " + res);
+            if(res.includes(target.toLowerCase().replace(/[.,!]/g, ''))) { showPop("K.O.!", "Great Speaking Skill!", true); }
+            else showPop("BLOCK!", `You said: "${res}"`, false);
         };
         recognition.onspeechend = stopMic; recognition.onerror = stopMic;
     }
 
-    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "ANSWER<br><small>錄音回答</small>" : "SPEAK<small>開始挑戰</small>"; if(recognition) recognition.stop(); }
+    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "ANSWER<br><small>錄音回答</small>" : "SPEAK<br><small>開始挑戰</small>"; if(recognition) recognition.stop(); }
 </script>
 </body>
 </html>
