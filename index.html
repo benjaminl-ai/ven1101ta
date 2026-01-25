@@ -14,7 +14,7 @@
         }
 
         /* 🔴 強制紅色閃爍 Class */
-        .active-flash { background: var(--arc-red) !important; background-color: var(--arc-red) !important; color: #fff !important; transform: scale(0.94) !important; transition: 0s !important; }
+        .active-flash { background: var(--arc-red) !important; background-color: var(--arc-red) !important; color: #fff !important; transform: scale(0.92) !important; transition: 0s !important; }
 
         .page { display: none; height: 100dvh; padding: 15px; flex-direction: column; box-sizing: border-box; }
         .page.active { display: flex; }
@@ -70,9 +70,9 @@
 
 <div id="page-practice" class="page">
     <div class="arcade-header">
-        <div><div class="hp-bar"><div id="hp-player" class="hp-fill"></div></div></div>
+        <div><div style="font-size:9px;">CHALLENGER</div><div class="hp-bar"><div id="hp-player" class="hp-fill"></div></div></div>
         <div style="color:var(--arc-red); font-weight:900;">VS</div>
-        <div><div class="hp-bar"><div id="hp-enemy" class="hp-fill" style="background:var(--arc-red);"></div></div></div>
+        <div><div style="font-size:9px; text-align:right;">VEN1101 TA</div><div class="hp-bar"><div id="hp-enemy" class="hp-fill" style="background:var(--arc-red);"></div></div></div>
     </div>
     <div id="main-content" style="flex-grow:1; display:flex; flex-direction:column;"></div>
     <div class="btn-small" style="margin-top:10px;" onclick="backToLevels()">⬅ BACK</div>
@@ -81,7 +81,7 @@
 <div class="overlay" id="overlay"></div>
 <div id="popup" class="popup">
     <h2 id="pop-title">VICTORY!</h2>
-    <div id="pop-text"></div>
+    <div id="pop-text" style="font-weight:bold; margin-top: 10px;"></div>
     <div id="pop-btn" class="pop-btn-small" onclick="closePopup()">CONTINUE / 繼續</div>
 </div>
 
@@ -120,7 +120,7 @@
         }
     };
 
-    // 🔴 閃爍修復：全局監聽點擊，100% 觸發
+    // 🔴 閃爍機制：JS 監聽，保證每一次點擊都閃
     ['mousedown', 'touchstart'].forEach(evt => {
         document.addEventListener(evt, e => {
             const el = e.target.closest('.btn-box, .arc-btn, .btn-small, .chip, .pop-btn-small');
@@ -213,10 +213,12 @@
     }
 
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
+    
     function rec(target) {
         const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
         if (!SpeechRecognition) return;
-        isMicOn = true; document.getElementById('rec-btn').innerText = "LISTENING...";
+        const btn = document.getElementById('rec-btn');
+        btn.innerText = "LISTENING...";
         const recognition = new SpeechRecognition(); recognition.lang = 'en-US'; recognition.start();
         recognition.onresult = (e) => {
             const res = e.results[0][0].transcript.toLowerCase(); stopMic();
@@ -225,7 +227,7 @@
         };
         recognition.onerror = stopMic; recognition.onspeechend = stopMic;
     }
-    function stopMic() { isMicOn = false; render(); }
+    function stopMic() { render(); }
 </script>
 </body>
 </html>
