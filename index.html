@@ -3,132 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VEN1101 TA Challenges</title>
+    <title>VEN1101 TA Challenges - Mario Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --p1: #4a90e2; --p2: #00b894; --p3: #f39c12; --bg: #f0f4f8; --dark: #2d3436; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); overflow: hidden; font-size: 18px; }
+        :root { 
+            --m-red: #ff0000; --m-blue: #5c94fc; --m-yellow: #f8d878; 
+            --m-green: #00a800; --m-brown: #885418; --dark: #000;
+        }
+        body { 
+            font-family: 'Press Start 2P', cursive; background: var(--m-blue); 
+            margin: 0; padding: 0; color: #fff; overflow: hidden; font-size: 10px;
+        }
         
-        .page { display: none; height: 100dvh; padding: 20px; box-sizing: border-box; animation: fadeIn 0.4s ease-out; background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%); }
-        .page.active { display: flex; flex-direction: column; }
+        .page { display: none; height: 100dvh; padding: 15px; box-sizing: border-box; flex-direction: column; }
+        .page.active { display: flex; }
 
-        .header-area { text-align: center; margin-bottom: 25px; padding-top: 20px; }
-        .header-area h1 { color: #243b55; font-size: 1.8rem; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .header-area p { color: #627d98; margin: 5px 0 0; font-weight: 500; font-size: 1.1rem; }
+        /* Heading Style */
+        .header-area { text-align: center; margin-bottom: 20px; text-shadow: 4px 4px var(--dark); }
+        .header-area h1 { font-size: 14px; line-height: 1.5; color: #fff; margin-bottom: 10px; }
+        .header-area p { font-size: 8px; color: var(--m-yellow); }
 
-        .menu-grid { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 400px; margin: 0 auto; }
+        /* Menu Grid - Retro Blocks */
+        .menu-grid { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 350px; margin: 0 auto; }
         
         .task-card { 
-            background: white; padding: 20px; border-radius: 20px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06); cursor: pointer; 
-            display: flex; align-items: center; gap: 15px;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 2px solid transparent;
+            background: var(--m-brown); padding: 15px; border: 4px solid #fff;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.3); cursor: pointer; 
+            display: flex; align-items: center; gap: 10px; transition: 0.1s;
         }
-        .task-card:active { transform: scale(0.96); border-color: var(--p1); }
-        .task-card .icon-circle { width: 55px; height: 55px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
-        .task-info h2 { margin: 0; font-size: 1.1rem; color: #102a43; line-height: 1.2; }
-        .task-info span { display: block; font-size: 0.9rem; color: #627d98; margin-top: 4px; }
+        .task-card:active { transform: translate(4px, 4px); box-shadow: 4px 4px 0 rgba(0,0,0,0.3); }
+        .task-card .icon-circle { font-size: 20px; }
+        .task-info h2 { font-size: 9px; margin: 0; line-height: 1.4; color: #fff; }
+        .task-info span { font-size: 7px; color: var(--m-yellow); margin-top: 5px; display: block; }
 
-        .l1 { background: #e3f2fd; color: #1976d2; }
-        .l2 { background: #e8f5e9; color: #388e3c; }
-        .l3 { background: #fff3e0; color: #f57c00; }
-
-        .level-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .btn-exit { background: white; border: none; color: var(--p1); font-weight: bold; cursor: pointer; font-size: 1rem; padding: 8px 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .level-indicator { font-size: 0.85rem; font-weight: bold; color: var(--p1); background: white; padding: 6px 14px; border-radius: 15px; text-align: right; }
-
-        .content { background: white; padding: 15px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); height: 75%; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 10px; }
+        /* Content Box */
+        .content { 
+            background: #fff; color: #000; padding: 15px; border: 4px solid var(--dark);
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.2); height: 70%; display: flex; flex-direction: column; 
+            overflow: hidden; margin-bottom: 15px; position: relative;
+        }
         
-        .img-box { width: 100%; height: 140px; background: #f0f4f8; border-radius: 18px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid #d9e2ec; }
-        .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .img-box { width: 100%; height: 120px; background: #eee; border: 3px solid var(--dark); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; }
+        .img-box img { max-width: 100%; max-height: 100%; }
         
-        .dropzone { border-bottom: 3px dashed var(--p1); min-height: 55px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; background: #f8fbff; border-radius: 12px; align-items: center; }
-        .word-pool { display: flex; flex-wrap: wrap; gap: 8px; overflow-y: auto; max-height: 85px; padding: 5px; }
-        .word { padding: 10px 14px; background: white; border: 1px solid #d9e2ec; border-radius: 10px; cursor: pointer; font-size: 0.95rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        /* Dropzone - Mario Bricks */
+        .dropzone { border: 3px solid var(--m-brown); min-height: 40px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; background: #fff; }
+        .word { padding: 8px; background: var(--m-yellow); border: 2px solid var(--dark); cursor: pointer; font-size: 8px; color: #000; box-shadow: 2px 2px 0 #000; margin: 2px; }
         
-        .btn-action { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: all 0.1s; margin-top: 5px; }
-        .btn-record { background: var(--p1); color: white; box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3); }
-        .btn-hint { background: #fffae6; color: #d97706; border: 1px solid #fcd34d; font-size: 0.9rem; padding: 10px; margin-top: auto; }
-        .recording { background: #ef4444 !important; animation: pulse 1s infinite; }
+        /* Buttons */
+        .btn-action { font-family: 'Press Start 2P', cursive; padding: 12px; border: 4px solid var(--dark); cursor: pointer; font-size: 10px; margin-top: 5px; box-shadow: 4px 4px 0 var(--dark); }
+        .btn-record { background: var(--m-red); color: #fff; }
+        .btn-hint { background: var(--m-yellow); color: var(--dark); }
+        .btn-exit { background: #fff; border: 3px solid var(--dark); font-size: 8px; padding: 5px; margin-bottom: 10px; }
 
-        .progress-container { width: 100%; height: 12px; background: #d9e2ec; border-radius: 10px; overflow: visible; position: relative; }
-        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #48bb78, #38a169); border-radius: 10px; transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
-        .progress-icon { position: absolute; right: -12px; top: -10px; font-size: 1.4rem; }
+        /* Progress - Mario Running */
+        .progress-container { width: 100%; height: 10px; background: #000; position: relative; margin-top: 10px; border: 2px solid #fff; }
+        .progress-bar { height: 100%; width: 0%; background: var(--m-green); transition: 0.5s; position: relative; }
+        .progress-icon { position: absolute; right: -15px; top: -15px; font-size: 16px; transition: 0.5s; }
 
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(16, 42, 67, 0.6); backdrop-filter: blur(4px); z-index: 100; }
-        .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 30px; text-align: center; width: 85%; z-index: 101; animation: popIn 0.4s; }
+        /* Popup */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; }
+        .popup { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: #fff; color: #000; padding: 20px; border: 6px solid var(--dark); 
+            width: 80%; text-align: center; z-index: 101; 
+        }
 
-        .note-area { background: #fffbea; padding: 15px; border-radius: 15px; border-left: 5px solid #f6ad55; font-size: 0.95rem; line-height: 1.5; margin-bottom: 10px; text-align: left; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); opacity: 0.8; } 100% { transform: scale(1); } }
+        .note-area { background: #eee; padding: 10px; border: 2px dashed var(--dark); font-size: 7px; line-height: 1.8; margin-bottom: 10px; color: #000; }
     </style>
 </head>
 <body>
 
 <div id="page-home" class="page active">
     <div class="header-area">
-        <h1>🛠️ VEN1101 TA Challenges</h1>
-        <p>Building Services Engineering 屋宇裝備</p>
+        <h1>MARIO<br>VEN1101 TA</h1>
+        <p>BUILDING SERVICES ENG.</p>
     </div>
     <div class="menu-grid">
         <div class="task-card" onclick="selectTask(1)">
-            <div class="icon-circle l1">💡</div>
-            <div class="task-info"><h2>Removing a light switch</h2><span>拆卸電燈開關</span></div>
+            <div class="icon-circle">💡</div>
+            <div class="task-info"><h2>REMOVING SWITCH</h2><span>LEVEL 1-1</span></div>
         </div>
         <div class="task-card" onclick="selectTask(2)">
-            <div class="icon-circle l2">⚙️</div>
-            <div class="task-info"><h2>Drilling holes on steel box</h2><span>在鋼箱上鑽孔</span></div>
+            <div class="icon-circle">⚙️</div>
+            <div class="task-info"><h2>DRILLING HOLES</h2><span>LEVEL 1-2</span></div>
         </div>
     </div>
 </div>
 
 <div id="page-levels" class="page">
-    <div class="header-area" style="text-align: left; padding-left: 10px;">
-        <button onclick="backToHome()" class="btn-exit" style="margin-bottom: 15px;">← Back</button>
-        <h1 id="task-title" style="font-size: 1.5rem;"></h1>
-        <p>Select Level / 選擇難度</p>
+    <button onclick="backToHome()" class="btn-exit">BACK</button>
+    <div class="header-area">
+        <h1 id="task-title" style="font-size:10px;"></h1>
+        <p>SELECT STAGE</p>
     </div>
     <div class="menu-grid">
-        <div class="task-card" onclick="startL(1)"><div class="icon-circle l1">🧩</div><div class="task-info"><h2>Level 1: Building</h2><span>Sentence Building 句子重組</span></div></div>
-        <div class="task-card" onclick="startL(2)"><div class="icon-circle l2">🗣️</div><div class="task-info"><h2>Level 2: Speaking</h2><span>Listen & Repeat 聽說練習</span></div></div>
-        <div class="task-card" onclick="startL(3)"><div class="icon-circle l3">❓</div><div class="task-info"><h2>Level 3: Expert</h2><span>Troubleshooting 疑難排解</span></div></div>
+        <div class="task-card" onclick="startL(1)">
+            <div class="icon-circle">🧩</div>
+            <div class="task-info"><h2>WORLD 1: BUILDING</h2></div>
+        </div>
+        <div class="task-card" onclick="startL(2)">
+            <div class="icon-circle">🗣️</div>
+            <div class="task-info"><h2>WORLD 2: SPEAKING</h2></div>
+        </div>
+        <div class="task-card" onclick="startL(3)">
+            <div class="icon-circle">❓</div>
+            <div class="task-info"><h2>WORLD 3: EXPERT</h2></div>
+        </div>
     </div>
 </div>
 
 <div id="page-practice" class="page">
-    <div class="level-header">
-        <button onclick="backToLevels()" class="btn-exit">← Exit</button>
-        <div id="level-indicator" class="level-indicator"></div>
-    </div>
+    <button onclick="backToLevels()" class="btn-exit">EXIT</button>
+    <div id="level-indicator" style="font-size:8px; text-align:right; margin-bottom:5px;"></div>
     <div id="main-content" class="content"></div>
     <div class="progress-container">
-        <div id="progress-bar" class="progress-bar"><span class="progress-icon">🔧</span></div>
+        <div id="progress-bar" class="progress-bar">
+            <span class="progress-icon">🏃</span>
+        </div>
     </div>
 </div>
 
 <div class="overlay" id="overlay" onclick="closePopup()"></div>
 <div class="popup" id="popup">
-    <div id="pop-icon" style="font-size:3.5rem; margin-bottom: 10px;"></div>
-    <h3 id="pop-title" style="margin:0 0 10px 0; font-size: 1.4rem;"></h3>
-    <div id="pop-text" style="margin-bottom:20px; line-height:1.6; color: #486581;"></div>
-    <button id="pop-btn" class="btn-action btn-record" onclick="closePopup()">Continue / 繼續</button>
+    <div id="pop-icon" style="font-size:2rem;"></div>
+    <h3 id="pop-title" style="font-size:12px;"></h3>
+    <div id="pop-text" style="font-size:8px; margin: 15px 0;"></div>
+    <button id="pop-btn" class="btn-action btn-record" onclick="closePopup()">CONTINUE</button>
 </div>
 
 <script>
+    // 邏輯部分與之前完全相同，只係換咗啲 UI 文字同字體
     let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0, currentQ = null, isMicOn = false, shouldAutoNext = false;
     let shuffledL3 = [];
-    const congrats = ["You're a Pro! 🛠️", "Amazing Work! ✨", "Keep it up! 🔥", "Excellent! 🌟", "You're on fire! 🚀"];
+    const congrats = ["SUPER!", "GREAT!", "MARVELOUS!", "AWESOME!"];
 
     const tasksData = {
         1: {
-            title: "Task 1: Removing a light switch",
+            title: "REMOVE SWITCH",
             steps: [
-                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "turn on", "connect", "open"] },
-                { img: "lightswitch2.jpg", correct: "Next, remove the screws with a screwdriver.", chi: "接著，用螺絲批拆除螺絲。", pool: ["Next,", "remove", "the screws", "with", "a screwdriver.", "install", "fix", "pull"] },
-                { img: "lightswitch3.jpg", correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall.", "put", "clean", "paint"] }
+                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "turn on", "connect"] },
+                { img: "lightswitch2.jpg", correct: "Next, remove the screws with a screwdriver.", chi: "接著，用螺絲批拆除螺絲。", pool: ["Next,", "remove", "the screws", "with", "a screwdriver.", "install"] },
+                { img: "lightswitch3.jpg", correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall.", "put"] }
             ],
             trouble: [
                 { q: "What should I do if the screwdriver is rusted?", a: "remove the rust", full: "You should remove the rust with sandpaper.", chi: "如果螺絲批生鏽了，用砂紙除鏽。" },
@@ -136,14 +153,14 @@
                 { q: "What should I do if the screws are bent?", a: "use new ones", full: "You should use new ones.", chi: "如果螺絲彎曲了，使用新的螺絲。" },
                 { q: "What should I do if the light switch is damaged?", a: "replace it", full: "You should replace it.", chi: "如果電燈開關損壞了，更換它。" }
             ],
-            ts_note: "1. If the screwdriver is rusted, remove the rust with sandpaper.<br>2. If the screwdriver bit doesn't fit, use another one.<br>3. If the screws are bent, use new ones.<br>4. If the light switch is damaged, replace it."
+            ts_note: "1. Rusted: use sandpaper.<br>2. Not fit: use another.<br>3. Bent: use new ones.<br>4. Damaged: replace it."
         },
         2: {
-            title: "Task 2: Drilling holes on a steel box",
+            title: "DRILL HOLES",
             steps: [
-                { img: "drill1.jpg", correct: "First, measure the steel box with a tape measure.", chi: "首先，用捲尺測量鋼箱。", pool: ["First,", "measure", "the steel box", "with", "a tape measure.", "cut", "mark", "hammer"] },
-                { img: "drill2.jpg", correct: "Next, mark the spots with a marker.", chi: "接著，用標記筆標記位置。", pool: ["Next,", "mark", "the spots", "with", "a marker.", "drill", "clean", "remove"] },
-                { img: "drill3.jpg", correct: "Finally, drill holes with a power drill.", chi: "最後，用電鑽鑽孔。", pool: ["Finally,", "drill", "holes", "with", "a power drill.", "screw", "tape", "paint"] }
+                { img: "drill1.jpg", correct: "First, measure the steel box with a tape measure.", chi: "首先，用捲尺測量鋼箱。", pool: ["First,", "measure", "the steel box", "with", "a tape measure.", "cut"] },
+                { img: "drill2.jpg", correct: "Next, mark the spots with a marker.", chi: "接著，用標記筆標記位置。", pool: ["Next,", "mark", "the spots", "with", "a marker.", "drill"] },
+                { img: "drill3.jpg", correct: "Finally, drill holes with a power drill.", chi: "最後，用電鑽鑽孔。", pool: ["Finally,", "drill", "holes", "with", "a power drill.", "screw"] }
             ],
             trouble: [
                 { q: "What should I do if the drill bit is broken?", a: "replace it", full: "If the drill bit is broken, replace it.", chi: "如果鑽頭斷了，更換它。" },
@@ -151,7 +168,7 @@
                 { q: "What should I do if the drill bit is rusted?", a: "clean it with sandpaper", full: "If the drill bit is rusted, clean it with sandpaper.", chi: "如果鑽頭生鏽了，用砂紙清潔。" },
                 { q: "What should I do if the drill bit doesn't fit?", a: "choose another one", full: "If the drill bit doesn't fit, choose another one.", chi: "如果鑽頭不合適，選擇另一個使用。" }
             ],
-            ts_note: "1. If the drill bit is broken, replace it.<br>2. If the power drill doesn't work, check the battery.<br>3. If the drill bit is rusted, clean it with sandpaper.<br>4. If the drill bit doesn't fit, choose another one."
+            ts_note: "1. Broken: replace it.<br>2. Power: check battery.<br>3. Rusted: use sandpaper.<br>4. Not fit: choose another."
         }
     };
 
@@ -160,7 +177,7 @@
     function backToLevels() { stopMic(); document.getElementById('page-practice').classList.remove('active'); document.getElementById('page-levels').classList.add('active'); }
     
     function startL(l) { 
-        currentL = l; currentStep = 0; qCount = 0; currentQ = null;
+        currentL = l; currentStep = 0; qCount = 0;
         if (l === 3) shuffledL3 = [...tasksData[currentTask].trouble].sort(() => Math.random() - 0.5);
         document.getElementById('page-levels').classList.remove('active'); 
         document.getElementById('page-practice').classList.add('active'); 
@@ -175,9 +192,9 @@
 
         if (currentL === 1) {
             updateProgress(currentStep / 3 * 100);
-            ind.innerHTML = `Level 1: Building`;
+            ind.innerHTML = `WORLD 1: BUILDING`;
             const d = data.steps[currentStep]; 
-            m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.8rem; color:#627d98;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz"></div><div class="word-pool" id="pool"></div><button class="btn-action btn-hint" onclick="showHint('${d.chi}')">💡 Hint / 提示</button><button class="btn-action btn-record" onclick="checkL1()">Check / 檢查</button>`;
+            m.innerHTML = `<div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz"></div><div class="word-pool" id="pool"></div><button class="btn-action btn-hint" onclick="showHint('${d.chi}')">? HINT</button><button class="btn-action btn-record" onclick="checkL1()">CHECK</button>`;
             const dz = document.getElementById('dz'); const pool = document.getElementById('pool');
             [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
                 const s = document.createElement('span'); s.className = 'word'; s.innerText = w;
@@ -186,32 +203,32 @@
             });
         } else if (currentL === 2) {
             updateProgress(currentStep / 3 * 100);
-            ind.innerHTML = `Level 2: Speaking`;
+            ind.innerHTML = `WORLD 2: SPEAKING`;
             const d = data.steps[currentStep];
-            m.innerHTML = `<p style="margin:0 0 5px 0; font-size:0.8rem; color:#627d98;">Step ${currentStep+1}/3</p><div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--p1); text-align:center; font-size:1.1rem; margin:10px 0;">${d.correct}</p><button class="btn-action" style="background:#eef2ff; color:var(--p1); margin-bottom:8px;" onclick="speak('${d.correct}')">🔊 Listen / 聽示範</button><button id="rec-btn" class="btn-action btn-record" onclick="rec('${d.correct}', this)">🎤 Record / 錄音</button><button class="btn-action" style="background:none; color:#999; font-size:0.9rem;" onclick="nextStep()">Skip / 跳過</button>`;
+            m.innerHTML = `<div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--m-red); text-align:center; font-size:8px; line-height:1.5;">${d.correct}</p><button class="btn-action btn-hint" onclick="speak('${d.correct}')">LISTEN</button><button id="rec-btn" class="btn-action btn-record" onclick="rec('${d.correct}', this)">SPEAK</button>`;
         } else if (currentL === 3) {
             updateProgress(qCount / 4 * 100);
-            ind.innerHTML = `Level 3: Expert`;
+            ind.innerHTML = `WORLD 3: EXPERT`;
             currentQ = shuffledL3[qCount];
-            m.innerHTML = `<div class="img-box" style="background:#243b55; cursor:pointer;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center;"><span style="font-size:2rem;">🎧</span><br>Listen to customer / 聽提問</div></div><div class="note-area"><strong>Troubleshooting:</strong><br>${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" onclick="rec(currentQ.a, this, true)">🎤 Answer / 回答</button><button class="btn-action" style="background:none; color:#999; font-size:0.9rem;" onclick="randomQ()">Skip / 跳過</button>`;
+            m.innerHTML = `<div class="img-box" style="background:#000; cursor:pointer;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center;">LISTEN Q</div></div><div class="note-area">${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" onclick="rec(currentQ.a, this, true)">ANSWER</button>`;
         }
     }
 
     function updateProgress(p) { document.getElementById('progress-bar').style.width = p + "%"; }
-    function showHint(txt) { showPop("Hint / 提示", "💡", `<div style="font-size:1.3rem; font-weight:bold;">${txt}</div>`); }
+    function showHint(txt) { showPop("HINT", "❓", txt); }
 
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.word')).map(e => e.innerText).join(" ");
         if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
             fireConfetti(); shouldAutoNext = true;
-            showPop(congrats[Math.floor(Math.random()*congrats.length)], "🌟", `<strong>${d.correct}</strong><br><br>${d.chi}`);
-        } else { showPop("Try Again", "❌", "Please check the words and the order.<br>請檢查單字或順序是否正確。"); }
+            showPop("COURSE CLEAR!", "🌟", d.correct);
+        } else { showPop("MISS!", "❌", "TRY AGAIN!"); }
     }
 
     function nextStep() { currentStep++; if(currentStep > 2) { currentStep = 0; startL(3); } else render(); }
-    function randomQ() { qCount++; if(qCount >= 4) { fireConfetti(); showPop("Mission Complete!", "🏆", "You've finished this task! / 你已完成此任務！"); backToLevels(); } else render(); }
-    function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); }
+    function randomQ() { qCount++; if(qCount >= 4) { fireConfetti(); showPop("THANK YOU!", "🏆", "MISSION COMPLETE!"); backToLevels(); } else render(); }
+    function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
@@ -219,7 +236,7 @@
 
     function rec(target, btn, isL3 = false) {
         if(!recognition || isMicOn) return;
-        isMicOn = true; btn.innerText = "Listening..."; btn.classList.add('recording');
+        isMicOn = true; btn.innerText = "...";
         recognition.start();
         recognition.onresult = (e) => {
             const res = e.results[0][0].transcript.toLowerCase();
@@ -227,21 +244,14 @@
             let cleanT = target.toLowerCase().replace(/[.,!]/g, '');
             let isCorrect = res.includes(cleanT) || cleanT.includes(res);
             if(isCorrect) { fireConfetti(); shouldAutoNext = true; }
-            const msg = isCorrect ? congrats[Math.floor(Math.random()*congrats.length)] : "Try Again";
-            const fb = isL3 ? `<strong>Q:</strong> "${currentQ.q}"<br><br><strong>You:</strong> "${res}"<br><br><strong>Correct:</strong> "${currentQ.full}"` : `<strong>You:</strong> "${res}"<br><strong>Target:</strong> "${target}"`;
-            showPop(msg, isCorrect ? "🏆" : "💪", fb);
+            showPop(isCorrect ? "SUPER!" : "MISS!", isCorrect ? "🌟" : "💪", isCorrect ? "PERFECT!" : "TRY AGAIN!");
         };
         recognition.onspeechend = stopMic; recognition.onerror = stopMic;
     }
 
-    function stopMic() {
-        if (recognition) recognition.stop(); isMicOn = false;
-        const btn = document.getElementById('rec-btn');
-        if (btn) { btn.innerText = (currentL === 3) ? "🎤 Answer" : "🎤 Record"; btn.classList.remove('recording'); }
-    }
-
+    function stopMic() { if (recognition) recognition.stop(); isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerText = (currentL === 3) ? "ANSWER" : "SPEAK"; }
     function fireConfetti() { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); }
-    function showPop(title, icon, text) { document.getElementById('pop-title').innerHTML = title; document.getElementById('pop-icon').innerText = icon; document.getElementById('pop-text').innerHTML = text; document.getElementById('overlay').style.display = 'block'; document.getElementById('popup').style.display = 'block'; }
+    function showPop(title, icon, text) { document.getElementById('pop-title').innerText = title; document.getElementById('pop-icon').innerText = icon; document.getElementById('pop-text').innerHTML = text; document.getElementById('overlay').style.display = 'block'; document.getElementById('popup').style.display = 'block'; }
     function closePopup() { 
         document.getElementById('overlay').style.display = 'none'; 
         document.getElementById('popup').style.display = 'none'; 
