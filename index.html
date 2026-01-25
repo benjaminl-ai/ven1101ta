@@ -15,7 +15,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Flash & Shake Effects */
         .shake { animation: shake 0.3s; }
         @keyframes shake { 
             0%, 100% { transform: translate(0, 0); }
@@ -24,7 +23,6 @@
             75% { transform: translate(-4px, -4px); }
         }
 
-        /* 🔴 修正：定義一個 Flash Class 供 JS 調用 */
         .flash-active { 
             background-color: var(--arc-red) !important; 
             background-image: none !important;
@@ -137,7 +135,7 @@
 <script>
     let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0, currentQ = null, isMicOn = false, shouldAutoNext = false;
     let shuffledL3 = [];
-    let isVictoryState = false; // 🔴 新增：標記是否為最後勝利狀態
+    let isVictoryState = false;
 
     const tasksData = {
         1: {
@@ -170,7 +168,6 @@
         }
     };
 
-    // 🔴 修正閃爍：使用 JS 監聽所有點擊/觸摸
     ['mousedown', 'touchstart'].forEach(evtType => {
         document.addEventListener(evtType, (e) => {
             const el = e.target.closest('.btn-box, .arc-btn, .btn-small, .chip, .pop-btn-small');
@@ -226,9 +223,10 @@
     }
 
     function showPop(title, mainText, success) {
+        stopMic(); // 🔴 修正：彈窗出現即時停錄音
         document.getElementById('pop-title').innerText = title;
         let chiLine = "";
-        if (title === "VICTORY!") { chiLine = "做得好！你已經完成所有挑戰！"; } // 🔴 修正中文錯誤
+        if (title === "VICTORY!") { chiLine = "做得好！你已經完成所有挑戰！"; }
         else if (title === "HINT") { chiLine = "這是給你的提示！"; } 
         else if (success) { chiLine = "做得好！繼續下一關！"; } 
         else {
@@ -244,7 +242,6 @@
         if(success) triggerEffect();
     }
 
-    // 🔴 修正卡關：確保關閉彈窗後才處理跳轉
     function closePopup() {
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('popup').style.display = 'none';
@@ -271,7 +268,7 @@
         else if(currentL === 3) { 
             qCount++; 
             if(qCount >= 4) { 
-                isVictoryState = true; // 🔴 標記進入勝利狀態
+                isVictoryState = true;
                 showPop("VICTORY!", "ALL ROUNDS COMPLETED!", true); 
                 return; 
             } 
@@ -297,7 +294,14 @@
         recognition.onspeechend = stopMic; recognition.onerror = stopMic;
     }
 
-    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "CHALLENGE!<br><small>錄音回答</small>" : "SPEAKING FIGHT!<br><small>開始挑戰</small>"; if(recognition) recognition.stop(); }
+    function stopMic() { 
+        isMicOn = false; 
+        const btn = document.getElementById('rec-btn'); 
+        if (btn) btn.innerHTML = (currentL === 3) ? "CHALLENGE!<br><small>錄音回答</small>" : "SPEAKING FIGHT!<br><small>開始挑戰</small>"; 
+        if(recognition) {
+            try { recognition.stop(); } catch(e) {}
+        } 
+    }
 </script>
 </body>
 </html>
