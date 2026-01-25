@@ -3,123 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VEN1101 TA Challenges - Mario Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>VEN1101 TA Challenges - RPG Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700&family=Poppins:wght@600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { 
-            --m-red: #ff0000; --m-blue: #5c94fc; --m-yellow: #f8d878; 
-            --m-green: #00a800; --m-brown: #885418; --dark: #000;
+            --rpg-blue: linear-gradient(180deg, #0000ad 0%, #00004a 100%);
+            --rpg-border: #fff;
+            --rpg-shadow: #555;
+            --m-yellow: #f8d878;
         }
         body { 
-            font-family: 'Press Start 2P', cursive; background: var(--m-blue); 
-            margin: 0; padding: 0; color: #fff; overflow: hidden; font-size: 12px;
+            font-family: 'Poppins', 'Noto Sans TC', sans-serif; 
+            background-color: #222; 
+            margin: 0; padding: 0; color: #fff; overflow: hidden;
         }
         
-        /* Pages */
-        .page { display: none; height: 100dvh; padding: 15px; box-sizing: border-box; flex-direction: column; }
+        /* 經典 RPG 藍色對話框背景 */
+        .rpg-box {
+            background: var(--rpg-blue);
+            border: 3px solid var(--rpg-border);
+            border-radius: 8px;
+            box-shadow: 0 0 0 2px #000, 4px 4px 10px rgba(0,0,0,0.5);
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .page { display: none; height: 100dvh; padding: 15px; flex-direction: column; }
         .page.active { display: flex; }
 
         /* Header */
-        .header-area { text-align: center; margin-bottom: 25px; text-shadow: 4px 4px var(--dark); }
-        .header-area h1 { font-size: 16px; line-height: 1.6; color: #fff; margin-bottom: 8px; }
-        .header-area .sub-en { font-size: 9px; color: var(--m-yellow); display: block; margin-bottom: 5px; }
-        .header-area .sub-chi { font-size: 14px; color: var(--m-yellow); display: block; font-family: sans-serif; font-weight: bold; }
+        .header-area { text-align: center; margin-bottom: 20px; }
+        .header-area h1 { font-size: 22px; margin: 0; letter-spacing: 1px; color: #fff; }
+        .header-area .sub-text { font-size: 14px; color: var(--m-yellow); font-weight: bold; }
 
-        /* Menu Grid */
-        .menu-grid { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 380px; margin: 0 auto; }
-        .task-card { 
-            background: var(--m-brown); padding: 15px; border: 4px solid #fff;
-            box-shadow: 6px 6px 0 rgba(0,0,0,0.4); cursor: pointer; 
-            display: flex; align-items: center; gap: 12px;
+        /* Menu List - 仿選單手指指向效果 */
+        .menu-list { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 400px; margin: 0 auto; }
+        .rpg-item { 
+            background: rgba(0,0,0,0.3); border: 2px solid transparent;
+            padding: 15px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 15px;
         }
-        .task-card:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 rgba(0,0,0,0.4); }
-        .task-info h2 { font-size: 10px; margin: 0; line-height: 1.4; color: #fff; }
-        .task-info span { font-size: 8px; color: var(--m-yellow); margin-top: 6px; display: block; }
-
-        /* Content Area */
-        .content { 
-            background: #fff; color: #000; padding: 15px; border: 4px solid var(--dark);
-            box-shadow: 8px 8px 0 rgba(0,0,0,0.2); height: 72%; display: flex; flex-direction: column; 
-            overflow: hidden; margin-bottom: 10px; position: relative;
+        .rpg-item:hover, .rpg-item:active { 
+            border-color: var(--rpg-border); background: rgba(255,255,255,0.1);
         }
-        .img-box { width: 100%; height: 120px; background: #eee; border: 3px solid var(--dark); margin-bottom: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-        .img-box img { max-width: 100%; max-height: 100%; }
+        .rpg-item::before { content: "▶"; color: #fff; font-size: 12px; }
 
-        /* Dropzone & Words */
-        .dropzone { border: 3px dashed var(--m-brown); min-height: 45px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; background: #f8f8f8; }
-        .word-pool { display: flex; flex-wrap: wrap; gap: 8px; overflow-y: auto; padding: 5px; margin-bottom: 5px; }
-        .word { padding: 8px; background: var(--m-yellow); border: 2px solid var(--dark); cursor: pointer; font-size: 10px; color: #000; box-shadow: 3px 3px 0 #000; }
+        /* Practice Area */
+        .content-area { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .img-container { width: 100%; height: 150px; background: #000; border: 2px solid #fff; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; }
+        .img-container img { max-width: 100%; max-height: 100%; }
 
-        /* Buttons (Bilingual) */
-        .btn-action { font-family: 'Press Start 2P', cursive; padding: 12px; border: 4px solid var(--dark); cursor: pointer; margin-top: 6px; box-shadow: 4px 4px 0 var(--dark); width: 100%; color: #fff; line-height: 1.4; }
-        .btn-action span { display: block; font-family: sans-serif; font-weight: bold; font-size: 13px; margin-top: 4px; }
-        
-        .btn-record { background: var(--m-red); }
-        .btn-hint { background: var(--m-yellow); color: var(--dark); margin-top: auto; }
-        .btn-exit { background: #fff; color: #000; border: 3px solid var(--dark); font-size: 8px; padding: 6px; width: auto; align-self: flex-start; margin-bottom: 10px; }
+        /* Word Blocks */
+        .word-area { background: rgba(0,0,0,0.5); border: 1px solid #777; padding: 10px; min-height: 50px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .word-chip { 
+            background: #eee; color: #000; padding: 8px 12px; border-radius: 4px; 
+            font-weight: bold; font-size: 14px; cursor: pointer; border-bottom: 3px solid #999;
+        }
+        .word-chip:active { transform: translateY(2px); border-bottom: 1px solid #999; }
+
+        /* RPG Buttons */
+        .btn-rpg {
+            background: var(--rpg-blue); border: 2px solid #fff; color: #fff;
+            padding: 12px; border-radius: 6px; cursor: pointer; font-size: 14px;
+            font-weight: bold; width: 100%; margin-top: 10px; text-align: center;
+        }
+        .btn-rpg:active { background: #00004a; }
+        .btn-rpg span { display: block; font-size: 12px; opacity: 0.8; margin-top: 2px; }
 
         /* Progress Bar */
-        .progress-container { width: 100%; height: 12px; background: #000; position: relative; margin-top: 15px; border: 3px solid #fff; }
-        .progress-bar { height: 100%; width: 0%; background: var(--m-green); transition: 0.6s; position: relative; }
-        .progress-icon { position: absolute; right: -10px; top: -25px; font-size: 22px; transition: 0.6s; transform: scaleX(-1); }
+        .prog-track { width: 100%; height: 15px; background: #333; border: 2px solid #fff; margin-top: 20px; position: relative; border-radius: 10px; }
+        .prog-fill { height: 100%; width: 0%; background: #00ff00; border-radius: 8px; transition: 0.5s; }
+        .prog-char { position: absolute; top: -25px; right: -10px; font-size: 20px; transition: 0.5s; }
 
-        /* Popups */
-        .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; color: #000; padding: 25px; border: 6px solid var(--dark); width: 85%; text-align: center; z-index: 101; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; }
-        .note-area { background: #fffbea; padding: 10px; border: 2px solid var(--m-yellow); font-size: 9px; line-height: 1.8; margin-bottom: 10px; color: #000; overflow-y: auto; text-align: left; }
+        .note-text { font-size: 13px; line-height: 1.6; color: #fff; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 5px; }
     </style>
 </head>
 <body>
 
 <div id="page-home" class="page active">
     <div class="header-area">
-        <h1>VEN1101 TA<br>CHALLENGES</h1>
-        <span class="sub-en">Building Services Engineering</span>
-        <span class="sub-chi">屋宇裝備</span>
+        <h1 class="rpg-box">VEN1101 TA CHALLENGES</h1>
+        <div class="sub-text" style="margin-top:15px;">Building Services Engineering<br>屋宇裝備工程</div>
     </div>
-    <div class="menu-grid">
-        <div class="task-card" onclick="selectTask(1)">
-            <div class="icon-circle">💡</div>
-            <div class="task-info"><h2>REMOVING A LIGHT SWITCH</h2><span>STAGE 1 / 第一階段</span></div>
+    <div class="menu-list">
+        <div class="rpg-item rpg-box" onclick="selectTask(1)">
+            <div>REMOVING A LIGHT SWITCH<br><small>第一階段：拆卸電燈開關</small></div>
         </div>
-        <div class="task-card" onclick="selectTask(2)">
-            <div class="icon-circle">⚙️</div>
-            <div class="task-info"><h2>DRILLING HOLES ON STEEL BOX</h2><span>STAGE 2 / 第二階段</span></div>
+        <div class="rpg-item rpg-box" onclick="selectTask(2)">
+            <div>DRILLING HOLES ON STEEL BOX<br><small>第二階段：在鋼箱鑽孔</small></div>
         </div>
     </div>
 </div>
 
 <div id="page-levels" class="page">
-    <button onclick="backToHome()" class="btn-exit">BACK / 返回</button>
-    <div class="header-area">
-        <h1 id="task-title" style="font-size:12px;"></h1>
-        <p>SELECT WORLD / 選擇世界</p>
+    <button onclick="backToHome()" class="btn-rpg" style="width:auto; padding: 5px 15px;">BACK / 返回</button>
+    <div class="header-area" style="margin-top:20px;">
+        <h2 id="task-title" style="color:var(--m-yellow);"></h2>
     </div>
-    <div class="menu-grid">
-        <div class="task-card" onclick="startL(1)"><div class="icon-circle">🧩</div><div class="task-info"><h2>WORLD 1: BUILDING</h2><span>SENTENCE BUILDING / 組句</span></div></div>
-        <div class="task-card" onclick="startL(2)"><div class="icon-circle">🗣️</div><div class="task-info"><h2>WORLD 2: SPEAKING</h2><span>LISTEN & REPEAT / 聽說</span></div></div>
-        <div class="task-card" onclick="startL(3)"><div class="icon-circle">👑</div><div class="task-info"><h2>WORLD 3: EXPERT</h2><span>TROUBLESHOOTING / 故障排除</span></div></div>
+    <div class="menu-list">
+        <div class="rpg-item rpg-box" onclick="startL(1)">WORLD 1: BUILDING / 組句練習</div>
+        <div class="rpg-item rpg-box" onclick="startL(2)">WORLD 2: SPEAKING / 聽說練習</div>
+        <div class="rpg-item rpg-box" onclick="startL(3)">WORLD 3: EXPERT / 故障排除</div>
     </div>
 </div>
 
 <div id="page-practice" class="page">
-    <button onclick="backToLevels()" class="btn-exit">EXIT / 離開</button>
-    <div id="level-indicator" style="font-size:9px; text-align:right; margin-bottom:8px; color: var(--m-yellow);"></div>
-    <div id="main-content" class="content"></div>
-    <div class="progress-container">
-        <div id="progress-bar" class="progress-bar">
-            <span class="progress-icon">🏃</span>
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom:10px;">
+        <button onclick="backToLevels()" class="btn-rpg" style="width:auto; padding: 5px 15px; margin:0;">EXIT / 離開</button>
+        <span id="level-indicator" style="color:var(--m-yellow); font-weight:bold; font-size:12px;"></span>
+    </div>
+    <div id="main-content" class="content-area rpg-box"></div>
+    <div class="prog-track">
+        <div id="progress-bar" class="prog-fill">
+            <span class="prog-char">⚔️</span>
         </div>
     </div>
 </div>
 
 <div class="overlay" id="overlay" onclick="closePopup()"></div>
-<div class="popup" id="popup">
-    <div id="pop-icon" style="font-size:2.5rem; margin-bottom: 10px;"></div>
-    <h3 id="pop-title" style="font-size:14px; margin-bottom: 15px;"></h3>
-    <div id="pop-text" style="font-size:10px; line-height:1.5; margin-bottom:20px;"></div>
-    <button id="pop-btn" class="btn-action btn-record" onclick="closePopup()">CONTINUE / 繼續</button>
+<div class="popup rpg-box" id="popup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:80%; z-index:200; text-align:center;">
+    <div id="pop-icon" style="font-size:30px; margin-bottom:10px;"></div>
+    <div id="pop-text" style="font-size:14px; margin-bottom:20px;"></div>
+    <button class="btn-rpg" onclick="closePopup()">CONTINUE / 繼續</button>
 </div>
 
 <script>
@@ -181,10 +186,10 @@
             updateProgress(currentStep / 3 * 100);
             ind.innerHTML = `WORLD 1: BUILDING`;
             const d = data.steps[currentStep]; 
-            m.innerHTML = `<div class="img-box"><img src="${d.img}"></div><div class="dropzone" id="dz"></div><div class="word-pool" id="pool"></div><button class="btn-action btn-hint" onclick="showHint('${d.chi}')">HINT<span>提示</span></button><button class="btn-action btn-record" onclick="checkL1()">CHECK<span>檢查答案</span></button>`;
+            m.innerHTML = `<div class="img-container"><img src="${d.img}"></div><div class="word-area" id="dz"></div><div class="word-area" id="pool" style="background:none; border:none;"></div><button class="btn-rpg" onclick="showHint('${d.chi}')">HINT<span>提示</span></button><button class="btn-rpg" onclick="checkL1()">CHECK<span>檢查答案</span></button>`;
             const dz = document.getElementById('dz'); const pool = document.getElementById('pool');
             [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
-                const s = document.createElement('span'); s.className = 'word'; s.innerText = w;
+                const s = document.createElement('span'); s.className = 'word-chip'; s.innerText = w;
                 s.onclick = () => { if (s.parentNode === pool) dz.appendChild(s); else pool.appendChild(s); };
                 pool.appendChild(s);
             });
@@ -192,32 +197,32 @@
             updateProgress(currentStep / 3 * 100);
             ind.innerHTML = `WORLD 2: SPEAKING`;
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="img-box"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--m-red); text-align:center; font-size:10px; line-height:1.6; margin:0;">${d.correct}</p><p style="text-align:center; font-family:sans-serif; font-weight:bold; font-size:14px; color:#444; margin-top:5px;">${d.chi}</p><button class="btn-action btn-hint" onclick="speak('${d.correct}')">LISTEN<span>聽示範</span></button><button id="rec-btn" class="btn-action btn-record" onclick="rec('${d.correct}', this)">SPEAK<span>開始錄音</span></button>`;
+            m.innerHTML = `<div class="img-container"><img src="${d.img}"></div><p style="font-weight:bold; color:var(--m-yellow); text-align:center; font-size:16px;">${d.correct}</p><p style="text-align:center; font-size:14px; opacity:0.9;">${d.chi}</p><button class="btn-rpg" onclick="speak('${d.correct}')">LISTEN<span>聽示範</span></button><button id="rec-btn" class="btn-rpg" onclick="rec('${d.correct}', this)">SPEAK<span>開始錄音</span></button>`;
         } else if (currentL === 3) {
             updateProgress(qCount / 4 * 100);
             ind.innerHTML = `WORLD 3: EXPERT`;
             currentQ = shuffledL3[qCount];
-            m.innerHTML = `<div class="img-box" style="background:#000; cursor:pointer;" onclick="speak(currentQ.q)"><div style="color:white; text-align:center; font-size:10px;">LISTEN TO Q<span>聽客戶問題</span></div></div><div class="note-area">${data.ts_note}</div><button id="rec-btn" class="btn-action btn-record" onclick="rec(currentQ.a, this, true)">ANSWER<span>錄音回答</span></button>`;
+            m.innerHTML = `<div class="img-container" style="cursor:pointer;" onclick="speak(currentQ.q)"><div>🔊 LISTEN TO QUESTION<span>聽客戶問題</span></div></div><div class="note-text">${data.ts_note}</div><button id="rec-btn" class="btn-rpg" onclick="rec(currentQ.a, this)">ANSWER<span>錄音回答</span></button>`;
         }
     }
 
     function updateProgress(p) { document.getElementById('progress-bar').style.width = p + "%"; }
-    function showHint(txt) { showPop("HINT / 提示", "❓", `<div style="font-size:16px; font-weight:bold;">${txt}</div>`); }
+    function showHint(txt) { showPop("HINT / 提示", "💡", `<div style="font-size:18px;">${txt}</div>`); }
 
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
-        const ans = Array.from(document.getElementById('dz').querySelectorAll('.word')).map(e => e.innerText).join(" ");
+        const ans = Array.from(document.getElementById('dz').querySelectorAll('.word-chip')).map(e => e.innerText).join(" ");
         if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
             fireConfetti(); shouldAutoNext = true;
-            showPop("COURSE CLEAR!", "🌟", `${d.correct}<br><br><span style="font-family:sans-serif; font-weight:bold;">${d.chi}</span>`);
-        } else { showPop("MISS!", "❌", "TRY AGAIN / 再試一次"); }
+            showPop("EXCELLENT!", "⚔️", `${d.correct}<br><br>${d.chi}`);
+        } else { showPop("MISS!", "❓", "TRY AGAIN / 再試一次"); }
     }
 
     function nextStep() { currentStep++; if(currentStep > 2) { currentStep = 0; startL(3); } else render(); }
-    function randomQ() { qCount++; if(qCount >= 4) { fireConfetti(); showPop("THANK YOU!", "🏆", "MISSION COMPLETE / 任務完成！"); backToLevels(); } else render(); }
+    function randomQ() { qCount++; if(qCount >= 4) { fireConfetti(); showPop("VICTORY!", "🏆", "ALL TASKS COMPLETED / 任務全部完成！"); backToHome(); } else render(); }
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
 
-    const SpeechRecognition = window.webkitSpeechRecognition || window.Recognition;
+    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
     if (recognition) { recognition.lang = 'en-US'; }
 
@@ -231,23 +236,16 @@
             let cleanT = target.toLowerCase().replace(/[.,!]/g, '');
             let isCorrect = res.includes(cleanT) || cleanT.includes(res);
             if(isCorrect) { fireConfetti(); shouldAutoNext = true; }
-            showPop(isCorrect ? "SUPER!" : "MISS!", isCorrect ? "🌟" : "💪", isCorrect ? "PERFECT!" : `YOU SAID: "${res}"`);
+            showPop(isCorrect ? "SUCCESS!" : "MISS!", isCorrect ? "✨" : "🔥", isCorrect ? "PERFECT!" : `YOU SAID: "${res}"`);
         };
         recognition.onspeechend = stopMic; recognition.onerror = stopMic;
     }
 
-    function stopMic() { 
-        if (recognition) recognition.stop(); 
-        isMicOn = false; 
-        const btn = document.getElementById('rec-btn'); 
-        if (btn) btn.innerHTML = (currentL === 3) ? "ANSWER<span>錄音回答</span>" : "SPEAK<span>開始錄音</span>"; 
-    }
-
+    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "ANSWER<span>錄音回答</span>" : "SPEAK<span>開始錄音</span>"; if(recognition) recognition.stop(); }
     function fireConfetti() { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); }
-    function showPop(title, icon, text) { document.getElementById('pop-title').innerText = title; document.getElementById('pop-icon').innerText = icon; document.getElementById('pop-text').innerHTML = text; document.getElementById('overlay').style.display = 'block'; document.getElementById('popup').style.display = 'block'; }
+    function showPop(title, icon, text) { document.getElementById('pop-icon').innerText = icon; document.getElementById('pop-text').innerHTML = `<strong>${title}</strong><br><br>${text}`; document.getElementById('overlay').style.display = 'block'; document.getElementById('popup').style.display = 'block'; }
     function closePopup() { 
-        document.getElementById('overlay').style.display = 'none'; 
-        document.getElementById('popup').style.display = 'none'; 
+        document.getElementById('overlay').style.display = 'none'; document.getElementById('popup').style.display = 'none'; 
         if(shouldAutoNext) {
             if(currentL === 1) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; } render(); }
             else if(currentL === 2) nextStep();
