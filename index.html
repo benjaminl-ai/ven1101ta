@@ -3,80 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BSE Challengers - Ultimate Arcade</title>
+    <title>BSE Challengers</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --arc-red: #ff1111; --arc-yellow: #f8e71c; --arc-blue: #0044cc; --arc-dark: #000;
-        }
+        :root { --arc-red: #ff1111; --arc-yellow: #f8e71c; --arc-blue: #0044cc; }
         body { 
             font-family: 'Oswald', 'Noto Sans TC', sans-serif; background: #111; 
             margin: 0; padding: 0; color: #fff; overflow: hidden;
-            -webkit-tap-highlight-color: transparent; /* 移除手機預設點擊框 */
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .shake { animation: shake 0.3s; }
-        @keyframes shake { 
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(-4px, 4px); }
-            50% { transform: translate(4px, -4px); }
-            75% { transform: translate(-4px, -4px); }
-        }
-
-        /* 🔴 強制紅色閃爍 - 增加 !important 並確保優先權 */
-        .btn-box:active, .arc-btn:active, .btn-small:active, .chip:active, .pop-btn-small:active { 
-            background: var(--arc-red) !important; 
-            background-color: var(--arc-red) !important;
-            color: #fff !important;
-            transform: scale(0.92);
-        }
+        /* 強制閃爍 Class */
+        .active-flash { background: var(--arc-red) !important; color: #fff !important; transform: scale(0.92) !important; }
 
         .page { display: none; height: 100dvh; padding: 15px; flex-direction: column; box-sizing: border-box; }
         .page.active { display: flex; }
 
-        .arcade-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 8px; background: #000; border-bottom: 3px solid var(--arc-yellow); margin-bottom: 10px;
-        }
+        .arcade-header { display: flex; align-items: center; justify-content: space-between; padding: 8px; background: #000; border-bottom: 3px solid var(--arc-yellow); margin-bottom: 10px; }
         .hp-bar { height: 14px; width: 100px; background: #333; border: 2px solid #fff; }
         .hp-fill { height: 100%; width: 100%; background: #00ff00; transition: 0.4s; }
 
-        .btn-small { background: #444; border: 2px solid #fff; color: #fff; padding: 4px 10px; font-size: 11px; cursor: pointer; width: fit-content; }
-
-        .btn-box {
-            background: linear-gradient(to right, #222, #000); border: 3px solid #fff;
-            padding: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px;
-        }
-        .btn-box .btn-text { flex-grow: 1; }
+        .btn-box { background: linear-gradient(to right, #222, #000); border: 3px solid #fff; padding: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; }
         .btn-box span { color: var(--arc-yellow); font-size: 13px; display: block; margin-top: 4px; }
-
-        .img-screen { width: 100%; height: 125px; border: 3px solid #fff; background: #222; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
-        .img-screen img { max-width: 100%; max-height: 100%; }
-
-        .drop-zone { min-height: 45px; border: 2px dashed #777; padding: 8px; display: flex; flex-wrap: wrap; gap: 5px; background: rgba(0,0,0,0.7); margin-bottom: 8px; }
-        .chip { background: var(--arc-yellow); color: #000; padding: 6px 10px; font-weight: bold; font-size: 13px; border: 1px solid #000; cursor: pointer; }
-
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .arc-btn { border: 2px solid #fff; color: #fff; padding: 10px; font-weight: bold; text-align: center; cursor: pointer; font-size: 14px; }
+        
+        .chip { background: var(--arc-yellow); color: #000; padding: 6px 10px; font-weight: bold; font-size: 13px; border: 1px solid #000; cursor: pointer; margin: 2px; display: inline-block; }
+        .arc-btn { border: 2px solid #fff; color: #fff; padding: 10px; font-weight: bold; text-align: center; cursor: pointer; }
         .arc-btn.red { background: #990000; }
         .arc-btn.blue { background: var(--arc-blue); }
         .arc-btn.grey { background: #555; }
 
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; }
-        .popup { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 80%; background: #fff; color: #000; border: 5px solid var(--arc-yellow); padding: 15px; z-index: 101; text-align: center;
-        }
+        .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; background: #fff; color: #000; border: 5px solid var(--arc-yellow); padding: 15px; z-index: 101; text-align: center; }
         .popup h2 { margin: 0; font-size: 32px; font-style: italic; color: var(--arc-red); -webkit-text-stroke: 1px #000; }
         .popup .chi-sub { display: block; font-size: 14px; margin-top: 8px; color: #444; font-weight: bold; }
-        .pop-btn-small { background: var(--arc-red); color: #fff; padding: 8px 15px; border: 2px solid #000; font-weight: bold; display: inline-block; margin-top: 15px; cursor: pointer; font-size: 13px; }
+        .pop-btn-small { background: var(--arc-red); color: #fff; padding: 8px 15px; border: 2px solid #000; font-weight: bold; display: inline-block; margin-top: 15px; cursor: pointer; }
 
-        #flash { position: fixed; top:0; left:0; width:100%; height:100%; background: #fff; display:none; z-index: 1000; opacity: 0.7; pointer-events: none; }
+        .img-screen { width: 100%; height: 120px; border: 3px solid #fff; background: #222; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+        .img-screen img { max-width: 100%; max-height: 100%; }
+        .drop-zone { min-height: 40px; border: 2px dashed #777; padding: 5px; background: rgba(0,0,0,0.7); margin-bottom: 8px; }
     </style>
 </head>
-<body id="game-body">
-
-<div id="flash"></div>
+<body>
 
 <div id="page-home" class="page active">
     <div style="text-align:center; padding-top: 35px;">
@@ -88,11 +55,11 @@
         </div>
     </div>
     <div style="margin-top: 45px;">
-        <div class="btn-box" onclick="selectTask(1)">
+        <div class="btn-box flash-trigger" onclick="selectTask(1)">
             <div style="font-size: 28px;">🥊</div>
             <div class="btn-text">STRIKE 1: Removing a light switch<span>第一階段：拆卸電燈開關</span></div>
         </div>
-        <div class="btn-box" onclick="selectTask(2)">
+        <div class="btn-box flash-trigger" onclick="selectTask(2)">
             <div style="font-size: 28px;">🥊</div>
             <div class="btn-text">STRIKE 2: Drilling holes on a steel box<span>第二階段：在鋼箱鑽孔</span></div>
         </div>
@@ -100,83 +67,79 @@
 </div>
 
 <div id="page-levels" class="page">
-    <div class="btn-small" onclick="backToHome()">⬅ HOME</div>
+    <div class="arc-btn grey flash-trigger" style="width:fit-content; padding: 5px 10px; font-size:12px;" onclick="backToHome()">⬅ HOME</div>
     <h2 style="text-align:center; color: var(--arc-yellow);">SELECT ROUND</h2>
-    <div class="btn-box" onclick="startL(1)">
-        <div style="font-size: 20px;">🥊</div>
-        <div class="btn-text">ROUND 1: BUILDING<span>組句練習</span></div>
-    </div>
-    <div class="btn-box" onclick="startL(2)">
-        <div style="font-size: 20px;">🥊</div>
-        <div class="btn-text">ROUND 2: SPEAKING<span>聽說練習</span></div>
-    </div>
-    <div class="btn-box" onclick="startL(3)">
-        <div style="font-size: 20px;">🥊</div>
-        <div class="btn-text">ROUND 3: TROUBLESHOOTING<span>疑難排解</span></div>
-    </div>
+    <div class="btn-box flash-trigger" onclick="startL(1)">🥊 <div class="btn-text">ROUND 1: BUILDING<span>組句練習</span></div></div>
+    <div class="btn-box flash-trigger" onclick="startL(2)">🥊 <div class="btn-text">ROUND 2: SPEAKING<span>聽說練習</span></div></div>
+    <div class="btn-box flash-trigger" onclick="startL(3)">🥊 <div class="btn-text">ROUND 3: TROUBLESHOOTING<span>疑難排解</span></div></div>
 </div>
 
 <div id="page-practice" class="page">
     <div class="arcade-header">
-        <div><div style="font-size:9px;">CHALLENGER</div><div class="hp-bar"><div id="hp-player" class="hp-fill"></div></div></div>
+        <div><div class="hp-bar"><div id="hp-player" class="hp-fill"></div></div></div>
         <div style="color:var(--arc-red); font-weight:900;">VS</div>
-        <div><div style="font-size:9px; text-align:right;">VEN1101 TA</div><div class="hp-bar"><div id="hp-enemy" class="hp-fill" style="background:var(--arc-red);"></div></div></div>
+        <div><div class="hp-bar"><div id="hp-enemy" class="hp-fill" style="background:var(--arc-red);"></div></div></div>
     </div>
-    <div id="main-content" class="stage-box" style="flex-grow:1;"></div>
-    <div class="btn-small" style="margin-top:10px;" onclick="backToLevels()">⬅ BACK</div>
+    <div id="main-content" style="flex-grow:1; display:flex; flex-direction:column;"></div>
+    <div class="arc-btn grey flash-trigger" style="margin-top:10px; font-size:12px;" onclick="backToLevels()">⬅ BACK</div>
 </div>
 
 <div class="overlay" id="overlay"></div>
 <div id="popup" class="popup">
-    <h2 id="pop-title">K.O.</h2>
-    <div id="pop-text" style="font-weight:bold; margin-top: 10px;"></div>
-    <div id="pop-btn" class="pop-btn-small" onclick="closePopup()">CONTINUE / 繼續</div>
+    <h2 id="pop-title">VICTORY!</h2>
+    <div id="pop-text"></div>
+    <div id="pop-btn" class="pop-btn-small flash-trigger" onclick="closePopup()">CONTINUE / 繼續</div>
 </div>
 
 <script>
-    let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0, currentQ = null, isMicOn = false, shouldAutoNext = false;
-    let shuffledL3 = [];
+    let currentTask = 1, currentL = 1, currentStep = 0, qCount = 0;
+    let isMicOn = false, shouldAutoNext = false, isGameOver = false;
 
     const tasksData = {
         1: {
             steps: [
-                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "disconnect", "unscrew", "loosen"] },
-                { img: "lightswitch2.jpg", correct: "Next, remove the screws with a screwdriver.", chi: "接著，用螺絲批拆除螺絲。", pool: ["Next,", "remove", "the screws", "with", "a screwdriver.", "tighten", "unscrew", "pull"] },
-                { img: "lightswitch3.jpg", correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall.", "detach", "fix", "connect"] }
+                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "disconnect", "unscrew"] },
+                { img: "lightswitch2.jpg", correct: "Next, remove the screws with a screwdriver.", chi: "接著，用螺絲批拆除螺絲。", pool: ["Next,", "remove", "the screws", "with", "a screwdriver.", "pull"] },
+                { img: "lightswitch3.jpg", correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall.", "fix"] }
             ],
             trouble: [
                 { q: "What should I do if the screwdriver is rusted?", a: "remove the rust", chi: "如果螺絲批生鏽了，用砂紙除鏽。" },
-                { q: "What should I do if the screwdriver bit doesn't fit?", a: "use another one", chi: "如果批頭不合適，換另一個使用。" },
-                { q: "What should I do if the screws are bent?", a: "use new ones", chi: "如果螺絲彎曲了，使用新的螺絲。" },
-                { q: "What should I do if the light switch is damaged?", a: "replace it", chi: "如果電燈開關損壞了，更換它。" }
+                { q: "What should I do if the screwdriver bit doesn't fit?", a: "use another one", chi: "如果批頭不合適，換另一個使用。" }
             ],
-            ts_note: "1. If the screwdriver is rusted, remove the rust with sandpaper.<br>2. If the screwdriver bit doesn't fit, use another one.<br>3. If the screws are bent, use new ones.<br>4. If the light switch is damaged, replace it."
+            ts_note: "1. If rusted, remove rust.<br>2. If not fit, use another one."
         },
         2: {
             steps: [
-                { img: "drill1.jpg", correct: "First, measure the steel box with a tape measure.", chi: "首先，用捲尺測量鋼箱。", pool: ["First,", "measure", "the steel box", "with", "a tape measure.", "mark", "cut", "drill"] },
-                { img: "drill2.jpg", correct: "Next, mark the spots with a marker.", chi: "接著，用標記筆標記位置。", pool: ["Next,", "mark", "the spots", "with", "a marker.", "measure", "drill", "clean"] },
-                { img: "drill3.jpg", correct: "Finally, drill holes with a power drill.", chi: "最後，用電鑽鑽孔。", pool: ["Finally,", "drill", "holes", "with", "a power drill.", "screw", "plug", "unscrew"] }
+                { img: "drill1.jpg", correct: "First, measure the steel box with a tape measure.", chi: "首先，用捲尺測量鋼箱。", pool: ["First,", "measure", "the box", "with", "tape measure.", "mark"] },
+                { img: "drill2.jpg", correct: "Next, mark the spots with a marker.", chi: "接著，用標記筆標記位置。", pool: ["Next,", "mark", "the spots", "with", "a marker.", "drill"] },
+                { img: "drill3.jpg", correct: "Finally, drill holes with a power drill.", chi: "最後，用電鑽鑽孔。", pool: ["Finally,", "drill", "holes", "with", "a power drill.", "screw"] }
             ],
             trouble: [
                 { q: "What should I do if the drill bit is broken?", a: "replace it", chi: "如果鑽頭斷了，更換它。" },
-                { q: "What should I do if the power drill doesn't work?", a: "check the battery", chi: "如果電鑽無法運作，檢查電池。" },
-                { q: "What should I do if the drill bit is rusted?", a: "clean it with sandpaper", chi: "如果鑽頭生鏽了，用砂紙清潔。" },
-                { q: "What should I do if the drill bit doesn't fit?", a: "choose another one", chi: "如果鑽頭不合適，選擇另一個使用。" }
+                { q: "What should I do if the power drill doesn't work?", a: "check the battery", chi: "如果電鑽無法運作，檢查電池。" }
             ],
-            ts_note: "1. If the drill bit is broken, replace it.<br>2. If the power drill doesn't work, check the battery.<br>3. If the drill bit is rusted, clean it with sandpaper.<br>4. If the drill bit doesn't fit, choose another one."
+            ts_note: "1. If broken, replace it.<br>2. If no power, check battery."
         }
     };
 
-    function selectTask(tid) { currentTask = tid; document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-levels').classList.add('active'); }
-    function backToHome() { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-home').classList.add('active'); }
-    function backToLevels() { stopMic(); document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-levels').classList.add('active'); }
+    // 🔴 修正閃爍：用 JS 監聽所有點擊
+    document.addEventListener('mousedown', handleFlash);
+    document.addEventListener('touchstart', handleFlash);
 
-    function startL(l) { 
-        currentL = l; currentStep = 0; qCount = 0;
-        if (l === 3) shuffledL3 = [...tasksData[currentTask].trouble].sort(() => Math.random() - 0.5);
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-practice').classList.add('active'); render(); 
+    function handleFlash(e) {
+        const el = e.target.closest('.flash-trigger, .chip, .arc-btn, .btn-box');
+        if (el) {
+            el.classList.add('active-flash');
+            setTimeout(() => el.classList.remove('active-flash'), 150);
+        }
     }
+
+    function selectTask(tid) { currentTask = tid; showPage('page-levels'); }
+    function backToHome() { showPage('page-home'); }
+    function backToLevels() { showPage('page-levels'); }
+    function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+    function startL(l) { currentL = l; currentStep = 0; qCount = 0; isGameOver = false; showPage('page-practice'); render(); }
 
     function render() {
         const m = document.getElementById('main-content');
@@ -185,66 +148,70 @@
 
         if (currentL === 1) {
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div class="drop-zone" id="dz"></div><div class="drop-zone" id="pool" style="border:none; background:none;"></div><div class="action-grid"><div class="arc-btn blue" onclick="showPop('HINT', '${d.chi}', false)">HINT<br><small>提示</small></div><div class="arc-btn red" onclick="checkL1()">CHALLENGE!<br><small>檢查</small></div></div>`;
-            const dz = document.getElementById('dz'), pool = document.getElementById('pool');
-            [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
+            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div class="drop-zone" id="dz"></div><div id="pool"></div><div class="action-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto;">
+                <div class="arc-btn blue" onclick="showPop('HINT', '${d.chi}', false)">HINT</div>
+                <div class="arc-btn red" onclick="checkL1()">CHECK</div>
+            </div>`;
+            const pool = document.getElementById('pool');
+            [...d.pool, ...d.correct.split(' ')].filter((v, i, a) => a.indexOf(v) === i).sort(()=>Math.random()-0.5).forEach(w => {
                 const s = document.createElement('span'); s.className = 'chip'; s.innerText = w;
-                s.onclick = () => { s.parentNode === pool ? dz.appendChild(s) : pool.appendChild(s); };
+                s.onclick = () => { (s.parentNode === pool ? document.getElementById('dz') : pool).appendChild(s); };
                 pool.appendChild(s);
             });
         } else if (currentL === 2) {
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div style="background:#fff; color:#000; padding:12px; font-weight:bold; border:4px solid var(--arc-yellow);"><p style="color:var(--arc-red); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px;">${d.chi}</p></div><div class="action-grid" style="margin-top:10px;"><div class="arc-btn blue" onclick="speak('${d.correct}')">LISTEN<br><small>聽示範</small></div><div id="rec-btn" class="arc-btn red" onclick="rec('${d.correct}', this)">SPEAKING FIGHT!<br><small>開始挑戰</small></div></div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP ROUND / 跳過</div>`;
+            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div style="background:#fff; color:#000; padding:10px; font-weight:bold; border:3px solid var(--arc-yellow);"><p style="color:var(--arc-red); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:13px;">${d.chi}</p></div>
+            <div style="margin-top:auto;"><div class="arc-btn blue" onclick="speak('${d.correct}')">🔊 LISTEN</div><div class="arc-btn red" style="margin-top:8px;" onclick="rec('${d.correct}')">🎤 SPEAK</div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP</div></div>`;
         } else if (currentL === 3) {
-            currentQ = shuffledL3[qCount];
-            m.innerHTML = `<div class="arc-btn blue" onclick="speak(currentQ.q)" style="padding:15px; margin-bottom:10px;">🔊 LISTEN TO CLIENT<br><small>聽取客戶問題</small></div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:13px; flex-grow:1; overflow-y:auto;">${data.ts_note}</div><div id="rec-btn" class="arc-btn red" style="margin-top:10px;" onclick="rec(currentQ.a, this)">CHALLENGE!<br><small>錄音回答</small></div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP QUESTION / 跳過</div>`;
+            const q = data.trouble[qCount];
+            m.innerHTML = `<div class="arc-btn blue" onclick="speak('${q.q}')">🔊 CLIENT: ${q.q}</div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:12px; margin:10px 0; flex-grow:1;">${data.ts_note}</div>
+            <div style="margin-top:auto;"><div class="arc-btn red" onclick="rec('${q.a}')">🎤 ANSWER</div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP</div></div>`;
         }
     }
 
     function updateHP() {
-        let eHP = 100 - (currentL === 3 ? (qCount / 4 * 100) : (currentStep / 3 * 100));
+        let eHP = 100 - (currentL === 3 ? (qCount / tasksData[currentTask].trouble.length * 100) : (currentStep / 3 * 100));
         document.getElementById('hp-enemy').style.width = eHP + "%";
-    }
-
-    function triggerEffect() {
-        const f = document.getElementById('flash'); f.style.display = 'block'; setTimeout(() => f.style.display = 'none', 100);
-        document.getElementById('game-body').classList.add('shake');
-        setTimeout(() => document.getElementById('game-body').classList.remove('shake'), 300);
     }
 
     function showPop(title, mainText, success) {
         document.getElementById('pop-title').innerText = title;
-        let chiLine = (title === "HINT") ? "這是給你的提示！" : (success ? "做得好！繼續下一關！" : (currentL === 1 ? "揀錯動詞或順序不對，再試一次！" : currentL === 2 ? "發音不夠準確，請再挑戰！" : "回答錯誤，請檢查筆記再試！"));
+        document.getElementById('pop-title').style.color = success ? "green" : "red";
+        
+        let chiLine = "";
+        if (title === "HINT") chiLine = "這是給你的提示！";
+        else if (title === "VICTORY!") chiLine = "做得好！你已經完成所有挑戰！";
+        else if (success) chiLine = "做得好！繼續下一關！";
+        else chiLine = (currentL === 1 ? "順序唔啱，再試吓！" : "發音唔準，再試吓！");
+
         document.getElementById('pop-text').innerHTML = `${mainText}<span class="chi-sub">${chiLine}</span>`;
         document.getElementById('overlay').style.display = 'block';
         document.getElementById('popup').style.display = 'block';
         shouldAutoNext = success;
-        if(success) triggerEffect();
     }
 
-    // 🔴 FIX: 關閉彈窗後先檢查係咪要跳轉，確保唔會卡死
     function closePopup() {
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('popup').style.display = 'none';
-        if(shouldAutoNext) nextQ();
+        if (isGameOver) backToHome();
+        else if (shouldAutoNext) nextQ();
     }
 
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
-        const ans = Array.from(document.getElementById('dz').querySelectorAll('.chip')).map(e => e.innerText).join(" ");
-        if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
-            showPop("PERFECT!", d.correct, true);
-        } else showPop("MISS!", "Sequence or Verb error!", false);
+        const ans = Array.from(document.getElementById('dz').querySelectorAll('.chip')).map(e => e.innerText).join(" ").replace(/ ,/g, ',');
+        if (ans.toLowerCase().trim() === d.correct.toLowerCase().trim()) showPop("PERFECT!", d.correct, true);
+        else showPop("MISS!", "Try again!", false);
     }
 
     function nextQ() {
-        if(currentL === 1) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; } }
-        else if(currentL === 2) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 3; } }
-        else if(currentL === 3) { 
+        if (currentL === 1) { currentStep++; if (currentStep > 2) { currentStep = 0; currentL = 2; } }
+        else if (currentL === 2) { currentStep++; if (currentStep > 2) { currentStep = 0; currentL = 3; } }
+        else if (currentL === 3) { 
             qCount++; 
-            if(qCount >= 4) { 
-                showPop("VICTORY!", "ALL ROUNDS COMPLETED!", false); // 改為 false 避免無限 loop
-                backToHome(); 
+            if (qCount >= tasksData[currentTask].trouble.length) { 
+                isGameOver = true;
+                showPop("VICTORY!", "ALL ROUNDS COMPLETED!", true); 
                 return; 
             } 
         }
@@ -252,23 +219,19 @@
     }
 
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
-    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-    const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
-    if (recognition) { recognition.lang = 'en-US'; }
-
-    function rec(target, btn) {
-        if(!recognition || isMicOn) return;
-        isMicOn = true; btn.innerHTML = "FIGHTING...";
+    
+    function rec(target) {
+        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+        if (!SpeechRecognition) return alert("Speech not supported");
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
         recognition.start();
         recognition.onresult = (e) => {
-            const res = e.results[0][0].transcript.toLowerCase(); stopMic();
-            if(res.includes(target.toLowerCase().replace(/[.,!]/g, ''))) showPop("K.O.!", "Great Skill!", true);
-            else showPop("BLOCK!", `You said: "${res}"`, false);
+            const res = e.results[0][0].transcript.toLowerCase();
+            if (res.includes(target.toLowerCase().split(' ')[0])) showPop("K.O.!", "Great!", true);
+            else showPop("TRY AGAIN", `You said: ${res}`, false);
         };
-        recognition.onspeechend = stopMic; recognition.onerror = stopMic;
     }
-
-    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "CHALLENGE!" : "SPEAKING FIGHT!"; if(recognition) recognition.stop(); }
 </script>
 </body>
 </html>
