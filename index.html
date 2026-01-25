@@ -23,17 +23,18 @@
             75% { transform: translate(-4px, -4px); }
         }
 
-        /* Force Red Flash on EVERY Click/Touch */
-        .btn-box:active, .arc-btn:active, .btn-small:active, .chip:active { 
-            background: var(--arc-red) !important; 
+        /* 🔥 FIX: Red Flash on EVERY Click/Touch */
+        .btn-box:active, .arc-btn:active, .btn-small:active, .chip:active, .pop-btn-small:active { 
+            background-color: var(--arc-red) !important; 
+            background-image: none !important;
             color: #fff !important;
-            transform: scale(0.96);
+            transform: scale(0.92);
+            transition: 0s; /* Instant flash */
         }
 
         .page { display: none; height: 100dvh; padding: 15px; flex-direction: column; box-sizing: border-box; }
         .page.active { display: flex; }
 
-        /* HP Header */
         .arcade-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 8px; background: #000; border-bottom: 3px solid var(--arc-yellow); margin-bottom: 10px;
@@ -43,7 +44,6 @@
 
         .btn-small { background: #444; border: 2px solid #fff; color: #fff; padding: 4px 10px; font-size: 11px; cursor: pointer; width: fit-content; }
 
-        /* Strike Buttons */
         .btn-box {
             background: linear-gradient(to right, #222, #000); border: 3px solid #fff;
             padding: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px;
@@ -61,8 +61,8 @@
         .arc-btn { border: 2px solid #fff; color: #fff; padding: 10px; font-weight: bold; text-align: center; cursor: pointer; font-size: 14px; transition: background 0.1s; }
         .arc-btn.red { background: #990000; }
         .arc-btn.blue { background: var(--arc-blue); }
+        .arc-btn.grey { background: #555; }
 
-        /* Pop-up System */
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; }
         .popup { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
@@ -84,12 +84,10 @@
         <h2 style="font-size: 19px; color:var(--arc-yellow); margin:0; letter-spacing: 0.5px;">
             🥊 BSE STUDENTS <span style="color:var(--arc-red); font-style:italic;">VS</span> VEN1101 TA 🧤
         </h2>
-        
         <div style="margin-top: 25px; padding: 5px 15px; background: #fff; color: #000; display: inline-block; font-weight: bold; font-size: 14px; border: 2px solid var(--arc-red);">
             BSE CHALLENGE | 屋宇裝備工程
         </div>
     </div>
-    
     <div style="margin-top: 45px;">
         <div class="btn-box" onclick="selectTask(1)">
             <div style="font-size: 28px;">🥊</div>
@@ -197,10 +195,10 @@
             });
         } else if (currentL === 2) {
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div style="background:#fff; color:#000; padding:12px; font-weight:bold; border:4px solid var(--arc-yellow);"><p style="color:var(--arc-red); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px;">${d.chi}</p></div><div class="action-grid" style="margin-top:10px;"><div class="arc-btn blue" onclick="speak('${d.correct}')">LISTEN<br><small>聽示範</small></div><div id="rec-btn" class="arc-btn red" onclick="rec('${d.correct}', this)">SPEAKING FIGHT!<br><small>開始挑戰</small></div></div>`;
+            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div style="background:#fff; color:#000; padding:12px; font-weight:bold; border:4px solid var(--arc-yellow);"><p style="color:var(--arc-red); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px;">${d.chi}</p></div><div class="action-grid" style="margin-top:10px;"><div class="arc-btn blue" onclick="speak('${d.correct}')">LISTEN<br><small>聽示範</small></div><div id="rec-btn" class="arc-btn red" onclick="rec('${d.correct}', this)">SPEAKING FIGHT!<br><small>開始挑戰</small></div></div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP ROUND / 跳過</div>`;
         } else if (currentL === 3) {
             currentQ = shuffledL3[qCount];
-            m.innerHTML = `<div class="arc-btn blue" onclick="speak(currentQ.q)" style="padding:15px; margin-bottom:10px;">🔊 LISTEN TO CLIENT<br><small>聽取客戶問題</small></div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:13px; flex-grow:1; overflow-y:auto;">${data.ts_note}</div><div id="rec-btn" class="arc-btn red" style="margin-top:10px;" onclick="rec(currentQ.a, this)">CHALLENGE!<br><small>錄音回答</small></div>`;
+            m.innerHTML = `<div class="arc-btn blue" onclick="speak(currentQ.q)" style="padding:15px; margin-bottom:10px;">🔊 LISTEN TO CLIENT<br><small>聽取客戶問題</small></div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:13px; flex-grow:1; overflow-y:auto;">${data.ts_note}</div><div id="rec-btn" class="arc-btn red" style="margin-top:10px;" onclick="rec(currentQ.a, this)">CHALLENGE!<br><small>錄音回答</small></div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP QUESTION / 跳過</div>`;
         }
     }
 
@@ -218,20 +216,15 @@
     function showPop(title, mainText, success) {
         document.getElementById('pop-title').innerText = title;
         let chiLine = "";
-        
-        if (title === "HINT") {
-            chiLine = "這是給你的提示！";
-        } else if (success) {
-            chiLine = "做得好！繼續下一關！";
-        } else {
+        if (title === "HINT") { chiLine = "這是給你的提示！"; } 
+        else if (success) { chiLine = "做得好！繼續下一關！"; } 
+        else {
             if (currentL === 1) chiLine = "揀錯動詞或順序不對，再試一次！";
             else if (currentL === 2) chiLine = "發音不夠準確，請再挑戰！";
             else chiLine = "回答錯誤，請檢查筆記再試！";
         }
-
         document.getElementById('pop-text').innerHTML = `${mainText}<span class="chi-sub">${chiLine}</span>`;
         document.getElementById('pop-btn').innerText = success ? "CONTINUE / 繼續" : "TRY AGAIN / 重試";
-        
         document.getElementById('overlay').style.display = 'block';
         document.getElementById('popup').style.display = 'block';
         shouldAutoNext = success;
