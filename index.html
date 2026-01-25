@@ -14,7 +14,7 @@
             margin: 0; padding: 0; color: #fff; overflow: hidden;
         }
 
-        /* Explosion Shake */
+        /* Flash & Shake Effects */
         .shake { animation: shake 0.3s; }
         @keyframes shake { 
             0%, 100% { transform: translate(0, 0); }
@@ -23,10 +23,13 @@
             75% { transform: translate(-4px, -4px); }
         }
 
+        /* Button Active State - Red Flash */
+        .btn-box:active, .arc-btn:active, .btn-small:active { background: var(--arc-red) !important; color: #fff !important; }
+
         .page { display: none; height: 100dvh; padding: 15px; flex-direction: column; box-sizing: border-box; }
         .page.active { display: flex; }
 
-        /* HP Bars */
+        /* HP Header */
         .arcade-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 8px; background: #000; border-bottom: 3px solid var(--arc-yellow); margin-bottom: 10px;
@@ -34,39 +37,32 @@
         .hp-bar { height: 14px; width: 100px; background: #333; border: 2px solid #fff; }
         .hp-fill { height: 100%; width: 100%; background: #00ff00; transition: 0.4s; }
 
-        /* Small Back Button */
-        .btn-small { 
-            background: #444; border: 2px solid #fff; color: #fff; padding: 4px 10px; 
-            font-size: 12px; cursor: pointer; display: inline-block; width: fit-content;
-        }
+        .btn-small { background: #444; border: 2px solid #fff; color: #fff; padding: 4px 10px; font-size: 11px; cursor: pointer; width: fit-content; margin-bottom: 5px; }
 
-        /* Menu Options */
         .btn-box {
             background: linear-gradient(to right, #222, #000); border: 3px solid #fff;
             padding: 12px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 12px;
         }
-        .btn-box:active { background: var(--arc-red); }
         .btn-box span { color: var(--arc-yellow); font-size: 12px; }
 
-        /* Game UI */
-        .img-screen { width: 100%; height: 130px; border: 3px solid #fff; background: #222; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+        .img-screen { width: 100%; height: 125px; border: 3px solid #fff; background: #222; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
         .img-screen img { max-width: 100%; max-height: 100%; }
 
         .drop-zone { min-height: 45px; border: 2px dashed #777; padding: 8px; display: flex; flex-wrap: wrap; gap: 5px; background: rgba(0,0,0,0.7); margin-bottom: 8px; }
-        .chip { background: var(--arc-yellow); color: #000; padding: 6px 10px; font-weight: bold; font-size: 13px; box-shadow: 2px 2px 0 #888; }
+        .chip { background: var(--arc-yellow); color: #000; padding: 6px 10px; font-weight: bold; font-size: 13px; border: 1px solid #000; }
 
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .arc-btn { border: 2px solid #fff; color: #fff; padding: 10px; font-weight: bold; text-align: center; cursor: pointer; font-size: 14px; }
         .arc-btn.red { background: var(--arc-red); }
         .arc-btn.blue { background: var(--arc-blue); }
 
-        /* Pop-up Windows */
+        /* Pop-up System */
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; }
         .popup { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             width: 80%; background: #fff; color: #000; border: 5px solid var(--arc-yellow); padding: 20px; z-index: 101; text-align: center;
         }
-        .popup h2 { margin: 0; font-size: 40px; font-style: italic; color: var(--arc-red); -webkit-text-stroke: 1px #000; }
+        .popup h2 { margin: 0; font-size: 36px; font-style: italic; color: var(--arc-red); -webkit-text-stroke: 1px #000; }
 
         #flash { position: fixed; top:0; left:0; width:100%; height:100%; background: #fff; display:none; z-index: 1000; opacity: 0.7; }
     </style>
@@ -78,36 +74,36 @@
 <div id="page-home" class="page active">
     <div style="text-align:center; padding-top: 20px;">
         <h2 style="font-size: 18px; color:var(--arc-yellow); margin:0;">🥊 CHALLENGER APPROACHING</h2>
-        <h1 style="font-size: 36px; margin: 10px 0; letter-spacing: 2px;">BSE CHALLENGE</h1>
-        <div style="border-top: 2px solid #fff; border-bottom: 2px solid #fff; padding: 5px; display: inline-block;">
+        <h1 style="font-size: 34px; margin: 10px 0;">BSE CHALLENGE</h1>
+        <div style="border-top: 2px solid #fff; border-bottom: 2px solid #fff; padding: 5px; display: inline-block; font-size: 14px;">
             VEN1101 TA | 屋宇裝備工程
         </div>
     </div>
     <div style="margin-top: 35px;">
         <div class="btn-box" onclick="selectTask(1)">
-            <div style="font-size: 28px;">🥊</div>
+            <div style="font-size: 26px;">🥊</div>
             <div>STRIKE 1: LIGHT SWITCH<span>第一階段：拆卸電燈開關</span></div>
         </div>
         <div class="btn-box" onclick="selectTask(2)">
-            <div style="font-size: 28px;">🥊</div>
+            <div style="font-size: 26px;">🥊</div>
             <div>STRIKE 2: STEEL BOX<span>第二階段：在鋼箱鑽孔</span></div>
         </div>
     </div>
 </div>
 
 <div id="page-levels" class="page">
-    <div class="btn-small" onclick="backToHome()">⬅ BACK</div>
+    <div class="btn-small" onclick="backToHome()">⬅ HOME</div>
     <h2 style="text-align:center; color: var(--arc-yellow);">SELECT ROUND</h2>
-    <div class="btn-box" onclick="startL(1)">ROUND 1: BUILDING<span>組句練習</span></div>
-    <div class="btn-box" onclick="startL(2)">ROUND 2: SPEAKING<span>聽說練習</span></div>
-    <div class="btn-box" onclick="startL(3)">ROUND 3: TROUBLESHOOTING<span>疑難排解</span></div>
+    <div class="btn-box" onclick="startL(1)">🥊 ROUND 1: BUILDING<span>組句練習</span></div>
+    <div class="btn-box" onclick="startL(2)">🥊 ROUND 2: SPEAKING<span>聽說練習</span></div>
+    <div class="btn-box" onclick="startL(3)">🥊 ROUND 3: TROUBLESHOOTING<span>疑難排解</span></div>
 </div>
 
 <div id="page-practice" class="page">
     <div class="arcade-header">
         <div><div style="font-size:9px;">CHALLENGER</div><div class="hp-bar"><div id="hp-player" class="hp-fill"></div></div></div>
-        <div style="color:var(--arc-red); font-weight:900; font-style:italic;">VS</div>
-        <div><div style="font-size:9px; text-align:right;">CLIENT</div><div class="hp-bar"><div id="hp-enemy" class="hp-fill" style="background:var(--arc-red);"></div></div></div>
+        <div style="color:var(--arc-red); font-weight:900;">VS</div>
+        <div><div style="font-size:9px; text-align:right;">VEN1101 TA</div><div class="hp-bar"><div id="hp-enemy" class="hp-fill" style="background:var(--arc-red);"></div></div></div>
     </div>
     <div id="main-content" class="stage-box" style="flex-grow:1;"></div>
     <div class="btn-small" style="margin-top:10px;" onclick="backToLevels()">⬅ BACK</div>
@@ -117,7 +113,7 @@
 <div id="popup" class="popup">
     <h2 id="pop-title">K.O.</h2>
     <div id="pop-text" style="font-weight:bold; margin: 15px 0;"></div>
-    <div class="arc-btn red" onclick="closePopup()">CONTINUE / 繼續</div>
+    <div id="pop-btn" class="arc-btn red" onclick="closePopup()">CONTINUE / 繼續</div>
 </div>
 
 <script>
@@ -127,7 +123,7 @@
     const tasksData = {
         1: {
             steps: [
-                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "disconnect", "loosen", "unscrew"] },
+                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "disconnect", "unscrew", "loosen"] },
                 { img: "lightswitch2.jpg", correct: "Next, remove the screws with a screwdriver.", chi: "接著，用螺絲批拆除螺絲。", pool: ["Next,", "remove", "the screws", "with", "a screwdriver.", "tighten", "unscrew", "pull"] },
                 { img: "lightswitch3.jpg", correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall.", "detach", "fix", "connect"] }
             ],
@@ -172,7 +168,7 @@
 
         if (currentL === 1) {
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div class="drop-zone" id="dz"></div><div class="drop-zone" id="pool" style="border:none; background:none;"></div><div class="action-grid"><div class="arc-btn blue" onclick="alert('HINT: ${d.chi}')">HINT<br><small>提示</small></div><div class="arc-btn red" onclick="checkL1()">CHECK<br><small>檢查</small></div></div>`;
+            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div class="drop-zone" id="dz"></div><div class="drop-zone" id="pool" style="border:none; background:none;"></div><div class="action-grid"><div class="arc-btn blue" onclick="showPop('HINT', '${d.chi}', false)">HINT<br><small>提示</small></div><div class="arc-btn red" onclick="checkL1()">CHALLENGE!<br><small>檢查</small></div></div>`;
             const dz = document.getElementById('dz'), pool = document.getElementById('pool');
             [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
                 const s = document.createElement('span'); s.className = 'chip'; s.innerText = w;
@@ -181,10 +177,10 @@
             });
         } else if (currentL === 2) {
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div style="background:#fff; color:#000; padding:15px; font-weight:bold; border:4px solid var(--arc-yellow);"><p style="color:var(--arc-red); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px;">${d.chi}</p></div><div class="action-grid" style="margin-top:10px;"><div class="arc-btn blue" onclick="speak('${d.correct}')">LISTEN<br><small>聽示範</small></div><div id="rec-btn" class="arc-btn red" onclick="rec('${d.correct}', this)">SPEAK<br><small>開始挑戰</small></div></div>`;
+            m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div style="background:#fff; color:#000; padding:12px; font-weight:bold; border:4px solid var(--arc-yellow);"><p style="color:var(--arc-red); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px;">${d.chi}</p></div><div class="action-grid" style="margin-top:10px;"><div class="arc-btn blue" onclick="speak('${d.correct}')">LISTEN<br><small>聽示範</small></div><div id="rec-btn" class="arc-btn red" onclick="rec('${d.correct}', this)">SPEAKING FIGHT!<br><small>開始挑戰</small></div></div>`;
         } else if (currentL === 3) {
             currentQ = shuffledL3[qCount];
-            m.innerHTML = `<div class="arc-btn blue" onclick="speak(currentQ.q)" style="padding:15px; margin-bottom:10px;">🔊 LISTEN TO CLIENT<br><small>聽取客戶問題</small></div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:13px; flex-grow:1; overflow-y:auto; line-height:1.6;">${data.ts_note}</div><div id="rec-btn" class="arc-btn red" style="margin-top:10px;" onclick="rec(currentQ.a, this)">ANSWER<br><small>錄音回答</small></div>`;
+            m.innerHTML = `<div class="arc-btn blue" onclick="speak(currentQ.q)" style="padding:15px; margin-bottom:10px;">🔊 LISTEN TO CLIENT<br><small>聽取客戶問題</small></div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:13px; flex-grow:1; overflow-y:auto;">${data.ts_note}</div><div id="rec-btn" class="arc-btn red" style="margin-top:10px;" onclick="rec(currentQ.a, this)">CHALLENGE!<br><small>錄音回答</small></div>`;
         }
     }
 
@@ -202,6 +198,7 @@
     function showPop(title, text, success) {
         document.getElementById('pop-title').innerText = title;
         document.getElementById('pop-text').innerHTML = text;
+        document.getElementById('pop-btn').innerText = success ? "CONTINUE / 繼續" : "TRY AGAIN / 重試";
         document.getElementById('overlay').style.display = 'block';
         document.getElementById('popup').style.display = 'block';
         shouldAutoNext = success;
@@ -219,7 +216,9 @@
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.chip')).map(e => e.innerText).join(" ");
         if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
             showPop("PERFECT!", `${d.correct}<br><br>${d.chi}`, true);
-        } else showPop("MISS!", "Wrong sequence! Try again.", false);
+        } else {
+            showPop("MISS!", "Sequence or Verb error! 揀錯動詞或順序不對，再試一次！", false);
+        }
     }
 
     function nextQ() {
@@ -242,12 +241,12 @@
         recognition.onresult = (e) => {
             const res = e.results[0][0].transcript.toLowerCase(); stopMic();
             if(res.includes(target.toLowerCase().replace(/[.,!]/g, ''))) { showPop("K.O.!", "Great Speaking Skill!", true); }
-            else showPop("BLOCK!", `You said: "${res}"`, false);
+            else showPop("BLOCK!", `You said: "${res}"<br>Try again!`, false);
         };
         recognition.onspeechend = stopMic; recognition.onerror = stopMic;
     }
 
-    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "ANSWER<br><small>錄音回答</small>" : "SPEAK<br><small>開始挑戰</small>"; if(recognition) recognition.stop(); }
+    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "CHALLENGE!<br><small>錄音回答</small>" : "SPEAKING FIGHT!<br><small>開始挑戰</small>"; if(recognition) recognition.stop(); }
 </script>
 </body>
 </html>
