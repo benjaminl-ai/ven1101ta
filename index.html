@@ -3,111 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VEN1101 TA Challenges - Pokemon Style</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&display=swap" rel="stylesheet">
+    <title>VEN1101 TA Challenges - Arcade Style</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@900&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --pk-white: #f8f8f8;
-            --pk-dark: #202020;
-            --pk-red: #ff1111;
-            --pk-gb-green: #9bbc0f;
+            --arc-red: #ff3e3e;
+            --arc-yellow: #f8e71c;
+            --arc-blue: #4a90e2;
+            --arc-dark: #121212;
         }
         body { 
-            font-family: 'Noto Sans TC', sans-serif; 
-            background-color: var(--pk-gb-green);
-            margin: 0; padding: 0; color: var(--pk-dark); overflow: hidden;
+            font-family: 'Oswald', 'Noto Sans TC', sans-serif; 
+            background: var(--arc-dark); margin: 0; padding: 0; color: #fff; overflow: hidden;
         }
 
-        .page { display: none; height: 100dvh; padding: 15px; flex-direction: column; box-sizing: border-box; }
+        /* Arcade Header with HP Bars */
+        .arcade-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 15px; background: #000; border-bottom: 4px solid var(--arc-yellow);
+        }
+        .hp-container { width: 40%; }
+        .hp-bar { height: 20px; background: #555; border: 2px solid #fff; position: relative; }
+        .hp-fill { height: 100%; width: 100%; background: linear-gradient(to bottom, #f8e71c, #d4af37); transition: 0.5s; }
+        .vs-text { font-size: 24px; color: var(--arc-red); font-style: italic; font-weight: 900; }
+
+        .page { display: none; height: 100dvh; padding: 10px; flex-direction: column; box-sizing: border-box; }
         .page.active { display: flex; }
 
-        /* Dialog Box */
-        .pk-dialog {
-            background: var(--pk-white);
-            border: 4px solid var(--pk-dark);
-            border-radius: 10px;
-            position: relative;
-            box-shadow: inset -4px -4px 0px #888;
-            padding: 15px;
-            cursor: pointer;
+        /* Menu Styles */
+        .menu-list { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 20px auto; }
+        .arc-btn {
+            background: linear-gradient(to right, #333, #000);
+            border: 3px solid #fff; color: #fff; padding: 15px;
+            cursor: pointer; text-align: left; position: relative; overflow: hidden;
+            font-size: 16px; transition: 0.2s;
         }
+        .arc-btn:active { background: var(--arc-red); transform: translateX(10px); }
+        .arc-btn small { display: block; font-size: 13px; color: var(--arc-yellow); }
 
-        /* Header */
-        .header { text-align: center; margin-bottom: 25px; }
-        .header h1 { font-size: 18px; background: var(--pk-dark); color: #fff; padding: 10px; display: inline-block; transform: skew(-5deg); margin: 0; }
+        /* Game Content */
+        .game-box { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .stage-img { width: 100%; height: 150px; border: 3px solid #fff; background: #333; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .stage-img img { max-width: 100%; max-height: 100%; }
 
-        /* Menu Buttons */
-        .menu-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; margin: 0 auto; }
-        .option-btn { display: flex; align-items: center; gap: 15px; transition: 0.1s; position: relative; }
-        .option-btn:active { transform: scale(0.98); }
-        .option-btn::before { content: "▶"; color: var(--pk-red); font-size: 18px; visibility: hidden; }
-        .option-btn:hover::before, .option-btn:active::before { visibility: visible; }
+        .word-bin { min-height: 60px; border: 2px solid var(--arc-blue); padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; background: rgba(0,0,0,0.6); }
+        .chip { background: var(--arc-yellow); color: #000; padding: 8px 12px; font-weight: bold; border-radius: 4px; cursor: pointer; box-shadow: 3px 3px 0 var(--arc-red); }
 
-        /* Practice UI */
-        .screen-box { background: #d0d0d0; border: 4px solid var(--pk-dark); height: 140px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 10px; }
-        .screen-box img { max-width: 100%; max-height: 100%; }
+        /* Control Buttons */
+        .ctrl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .main-btn {
+            background: var(--arc-red); border: 3px solid #fff; color: #fff; padding: 12px;
+            font-size: 14px; font-weight: bold; cursor: pointer; text-align: center;
+        }
+        .main-btn.hint { background: var(--arc-blue); }
+        .main-btn small { display: block; font-size: 11px; opacity: 0.8; }
 
-        .word-holder { min-height: 50px; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; background: rgba(255,255,255,0.4); border: 2px dashed var(--pk-dark); border-radius: 5px; margin-bottom: 10px; }
-        .pk-word { background: var(--pk-white); border: 2px solid var(--pk-dark); padding: 6px 10px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 2px 2px 0px #333; }
-
-        /* Progress Bar (HP Style) */
-        .hp-area { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 12px; margin-top: 10px; }
-        .hp-track { flex-grow: 1; height: 12px; background: #fff; border: 2px solid var(--pk-dark); border-radius: 6px; overflow: hidden; }
-        .hp-fill { height: 100%; width: 0%; background: #42f554; transition: 0.5s; }
-
-        /* Bilingual Buttons */
-        .btn-action { background: var(--pk-white); border: 3px solid var(--pk-dark); padding: 10px; font-weight: bold; font-size: 14px; cursor: pointer; text-align: center; margin-top: 5px; color: var(--pk-dark); text-decoration: none; display: block; }
-        .btn-action small { display: block; font-size: 11px; opacity: 0.7; }
+        /* Popups */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; }
+        .ko-box { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            z-index: 101; text-align: center; width: 90%;
+        }
+        .ko-text { font-size: 60px; font-weight: 900; color: var(--arc-yellow); text-shadow: 4px 4px var(--arc-red); font-style: italic; }
         
-        .btn-exit { width: auto; padding: 5px 15px; align-self: flex-start; margin-bottom: 10px; }
-
-        .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; z-index: 200; text-align: center; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 199; }
-        .ts-text { font-size: 12px; text-align: left; line-height: 1.8; color: #000; padding: 10px; background: #eee; border: 1px solid #999; }
+        .bilingual-box { background: #fff; color: #000; padding: 15px; border: 4px solid var(--arc-yellow); font-size: 16px; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="page-home" class="page active">
-    <div class="header"><h1>VEN1101 CHALLENGES</h1></div>
-    <div class="menu-container">
-        <div class="option-btn pk-dialog" onclick="selectTask(1)">
-            <div>REMOVING A LIGHT SWITCH<br><small style="font-size: 12px; color: #666;">第一階段：拆卸電燈開關</small></div>
+    <div style="text-align:center; padding: 20px;">
+        <h1 style="font-size: 32px; color: var(--arc-yellow); text-shadow: 3px 3px var(--arc-red);">ARCADE TA<br>CHALLENGE</h1>
+    </div>
+    <div class="menu-list">
+        <div class="arc-btn" onclick="selectTask(1)">
+            REMOVING A LIGHT SWITCH
+            <small>第一階段：拆卸電燈開關</small>
         </div>
-        <div class="option-btn pk-dialog" onclick="selectTask(2)">
-            <div>DRILLING HOLES ON STEEL BOX<br><small style="font-size: 12px; color: #666;">第二階段：在鋼箱鑽孔</small></div>
+        <div class="arc-btn" onclick="selectTask(2)">
+            DRILLING HOLES ON STEEL BOX
+            <small>第二階段：在鋼箱鑽孔</small>
         </div>
     </div>
-    <div style="text-align:center; margin-top: 30px; font-size: 30px;">🔴</div>
 </div>
 
 <div id="page-levels" class="page">
-    <div class="btn-action btn-exit" onclick="backToHome()">BACK<small>返回</small></div>
-    <div class="header"><h1 style="font-size:14px;">SELECT WORLD / 選擇世界</h1></div>
-    <div class="menu-container">
-        <div class="option-btn pk-dialog" onclick="startL(1)">WORLD 1: BUILDING<br><small style="font-size: 12px; color: #666;">SENTENCE BUILDING / 組句練習</small></div>
-        <div class="option-btn pk-dialog" onclick="startL(2)">WORLD 2: SPEAKING<br><small style="font-size: 12px; color: #666;">LISTEN & REPEAT / 聽說練習</small></div>
-        <div class="option-btn pk-dialog" onclick="startL(3)">WORLD 3: EXPERT<br><small style="font-size: 12px; color: #666;">TROUBLESHOOTING / 故障排除</small></div>
+    <div class="main-btn" style="width: 80px;" onclick="backToHome()">BACK<br><small>返回</small></div>
+    <h2 style="text-align:center; color: var(--arc-yellow);">SELECT STAGE</h2>
+    <div class="menu-list">
+        <div class="arc-btn" onclick="startL(1)">WORLD 1: BUILDING<small>組句訓練</small></div>
+        <div class="arc-btn" onclick="startL(2)">WORLD 2: SPEAKING<small>聽說挑戰</small></div>
+        <div class="arc-btn" onclick="startL(3)">WORLD 3: EXPERT<small>終極排解</small></div>
     </div>
 </div>
 
 <div id="page-practice" class="page">
-    <div style="display:flex; justify-content: space-between; align-items: flex-start;">
-        <div class="btn-action btn-exit" onclick="backToLevels()">EXIT<small>離開</small></div>
-        <div style="text-align:right;">
-            <div id="world-tag" style="font-weight:bold; font-size:12px;"></div>
-            <div class="hp-area">HP <div class="hp-track"><div id="progress-bar" class="hp-fill"></div></div></div>
+    <div class="arcade-header">
+        <div class="hp-container">
+            <div style="font-size:10px;">STUDENT HP</div>
+            <div class="hp-bar"><div id="hp-player" class="hp-fill"></div></div>
+        </div>
+        <div class="vs-text">VS</div>
+        <div class="hp-container">
+            <div style="font-size:10px; text-align:right;">TASK HP</div>
+            <div class="hp-bar"><div id="hp-enemy" class="hp-fill" style="background: var(--arc-red);"></div></div>
         </div>
     </div>
-    <div id="main-content" style="flex-grow:1; display:flex; flex-direction:column; margin-top:10px;"></div>
+    <div id="main-content" class="game-box"></div>
 </div>
 
-<div class="overlay" id="overlay" onclick="closePopup()"></div>
-<div id="popup" class="pk-dialog popup">
-    <div id="pop-icon" style="font-size:30px; margin-bottom:10px;"></div>
-    <div id="pop-text" style="font-size:14px; margin-bottom:20px; font-weight:bold;"></div>
-    <div class="btn-action" onclick="closePopup()">CONTINUE<small>繼續</small></div>
+<div class="overlay" id="overlay"></div>
+<div id="ko-box" class="ko-box">
+    <div id="ko-title" class="ko-text">K.O.</div>
+    <div id="ko-desc" class="bilingual-box"></div>
+    <div class="main-btn" onclick="closePopup()" style="margin-top:20px;">CONTINUE / 繼續</div>
 </div>
 
 <script>
@@ -118,9 +128,9 @@
         1: {
             title: "TASK 1: LIGHT SWITCH",
             steps: [
-                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "turn on", "connect"] },
+                { img: "lightswitch1.jpg", correct: "First, switch off the main power.", chi: "首先，關掉總電源。", pool: ["First,", "switch off", "the", "main power.", "turn on"] },
                 { img: "lightswitch2.jpg", correct: "Next, remove the screws with a screwdriver.", chi: "接著，用螺絲批拆除螺絲。", pool: ["Next,", "remove", "the screws", "with", "a screwdriver.", "install"] },
-                { img: "lightswitch3.jpg", correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall.", "put"] }
+                { img: "lightswitch3.jpg", correct: "Finally, remove the light switch from the wall.", chi: "最後，從牆上拆下電燈開關。", pool: ["Finally,", "remove", "the light switch", "from", "the wall."] }
             ],
             trouble: [
                 { q: "What should I do if the screwdriver is rusted?", a: "remove the rust", chi: "如果螺絲批生鏽了，用砂紙除鏽。" },
@@ -128,14 +138,14 @@
                 { q: "What should I do if the screws are bent?", a: "use new ones", chi: "如果螺絲彎曲了，使用新的螺絲。" },
                 { q: "What should I do if the light switch is damaged?", a: "replace it", chi: "如果電燈開關損壞了，更換它。" }
             ],
-            ts_note: "1. If the screwdriver is rusted, remove the rust with sandpaper.<br><br>2. If the screwdriver bit doesn't fit, use another one.<br><br>3. If the screws are bent, use new ones.<br><br>4. If the light switch is damaged, replace it."
+            ts_note: "1. If the screwdriver is rusted, use sandpaper.<br>2. If the bit doesn't fit, use another one.<br>3. If screws are bent, use new ones.<br>4. If switch is damaged, replace it."
         },
         2: {
             title: "TASK 2: STEEL BOX",
             steps: [
-                { img: "drill1.jpg", correct: "First, measure the steel box with a tape measure.", chi: "首先，用捲尺測量鋼箱。", pool: ["First,", "measure", "the steel box", "with", "a tape measure.", "cut"] },
-                { img: "drill2.jpg", correct: "Next, mark the spots with a marker.", chi: "接著，用標記筆標記位置。", pool: ["Next,", "mark", "the spots", "with", "a marker.", "drill"] },
-                { img: "drill3.jpg", correct: "Finally, drill holes with a power drill.", chi: "最後，用電鑽鑽孔。", pool: ["Finally,", "drill", "holes", "with", "a power drill.", "screw"] }
+                { img: "drill1.jpg", correct: "First, measure the steel box with a tape measure.", chi: "首先，用捲尺測量鋼箱。", pool: ["First,", "measure", "the steel box", "with", "a tape measure."] },
+                { img: "drill2.jpg", correct: "Next, mark the spots with a marker.", chi: "接著，用標記筆標記位置。", pool: ["Next,", "mark", "the spots", "with", "a marker."] },
+                { img: "drill3.jpg", correct: "Finally, drill holes with a power drill.", chi: "最後，用電鑽鑽孔。", pool: ["Finally,", "drill", "holes", "with", "a power drill."] }
             ],
             trouble: [
                 { q: "What should I do if the drill bit is broken?", a: "replace it", chi: "如果鑽頭斷了，更換它。" },
@@ -143,11 +153,11 @@
                 { q: "What should I do if the drill bit is rusted?", a: "clean it with sandpaper", chi: "如果鑽頭生鏽了，用砂紙清潔。" },
                 { q: "What should I do if the drill bit doesn't fit?", a: "choose another one", chi: "如果鑽頭不合適，選擇另一個使用。" }
             ],
-            ts_note: "1. If the drill bit is broken, replace it.<br><br>2. If the power drill doesn't work, check the battery.<br><br>3. If the drill bit is rusted, clean it with sandpaper.<br><br>4. If the drill bit doesn't fit, choose another one."
+            ts_note: "1. If bit is broken, replace it.<br>2. If drill fails, check battery.<br>3. If bit is rusted, clean it.<br>4. If bit doesn't fit, choose another one."
         }
     };
 
-    function selectTask(tid) { currentTask = tid; document.getElementById('world-tag').innerText = `TASK ${tid}`; document.getElementById('page-home').classList.remove('active'); document.getElementById('page-levels').classList.add('active'); }
+    function selectTask(tid) { currentTask = tid; document.getElementById('page-home').classList.remove('active'); document.getElementById('page-levels').classList.add('active'); }
     function backToHome() { document.getElementById('page-levels').classList.remove('active'); document.getElementById('page-home').classList.add('active'); }
     function backToLevels() { stopMic(); document.getElementById('page-practice').classList.remove('active'); document.getElementById('page-levels').classList.add('active'); }
 
@@ -162,44 +172,60 @@
     function render() {
         const m = document.getElementById('main-content');
         const data = tasksData[currentTask];
-        document.getElementById('world-tag').innerText = `WORLD ${currentL}`;
         shouldAutoNext = false;
+        updateHP(100);
 
         if (currentL === 1) {
-            updateProgress(currentStep / 3 * 100);
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="screen-box"><img src="${d.img}"></div><div class="word-holder" id="dz"></div><div class="word-holder" id="pool" style="border:none; background:none;"></div><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><div class="btn-action" onclick="showHint('${d.chi}')">HINT<small>提示</small></div><div class="btn-action" onclick="checkL1()">CHECK<small>檢查</small></div></div>`;
+            m.innerHTML = `<div class="stage-img"><img src="${d.img}"></div><div class="word-bin" id="dz"></div><div class="word-bin" id="pool" style="border:none;"></div><div class="ctrl-grid"><div class="main-btn hint" onclick="showHint('${d.chi}')">HINT<small>提示</small></div><div class="main-btn" onclick="checkL1()">CHECK<small>檢查</small></div></div>`;
             const dz = document.getElementById('dz'), pool = document.getElementById('pool');
             [...d.pool].sort(() => Math.random() - 0.5).forEach(w => {
-                const s = document.createElement('span'); s.className = 'pk-word'; s.innerText = w;
+                const s = document.createElement('span'); s.className = 'chip'; s.innerText = w;
                 s.onclick = () => { s.parentNode === pool ? dz.appendChild(s) : pool.appendChild(s); };
                 pool.appendChild(s);
             });
         } else if (currentL === 2) {
-            updateProgress(currentStep / 3 * 100);
             const d = data.steps[currentStep];
-            m.innerHTML = `<div class="screen-box"><img src="${d.img}"></div><div class="pk-dialog"><p style="color:var(--pk-red); margin:0; font-weight:bold;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px; color:#444;">${d.chi}</p></div><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;"><div class="btn-action" onclick="speak('${d.correct}')">LISTEN<small>聽示範</small></div><div id="rec-btn" class="btn-action" onclick="rec('${d.correct}', this)">SPEAK<small>錄音</small></div></div>`;
+            m.innerHTML = `<div class="stage-img"><img src="${d.img}"></div><div class="bilingual-box" style="background:#000; color:#fff; border-color:var(--arc-blue);"><p style="color:var(--arc-yellow); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px; opacity:0.8;">${d.chi}</p></div><div class="ctrl-grid"><div class="main-btn hint" onclick="speak('${d.correct}')">LISTEN<small>聽示範</small></div><div id="rec-btn" class="main-btn" onclick="rec('${d.correct}', this)">SPEAK<small>錄音</small></div></div>`;
         } else if (currentL === 3) {
-            updateProgress(qCount / 4 * 100);
             currentQ = shuffledL3[qCount];
-            m.innerHTML = `<div class="screen-box" onclick="speak(currentQ.q)" style="cursor:pointer; flex-direction:column;"><div>🔊 LISTEN QUESTION</div><small>聽客戶問題</small></div><div class="ts-text pk-dialog">${data.ts_note}</div><div id="rec-btn" class="btn-action" onclick="rec(currentQ.a, this)">ANSWER<small>錄音回答</small></div>`;
+            m.innerHTML = `<div class="stage-img" onclick="speak(currentQ.q)" style="cursor:pointer; flex-direction:column; background:var(--arc-red);"><div>🔊 ENEMY QUESTION</div><small>聽客戶問題</small></div><div class="bilingual-box" style="font-size:13px; max-height:120px; overflow-y:auto;">${data.ts_note}</div><div id="rec-btn" class="main-btn" onclick="rec(currentQ.a, this)">ANSWER<small>錄音回答</small></div>`;
         }
     }
 
-    function updateProgress(p) { document.getElementById('progress-bar').style.width = p + "%"; }
-    function showHint(txt) { showPop("HINT / 提示", "💡", txt); }
+    function updateHP(p) { 
+        let enemyHP = 100 - (currentL === 3 ? (qCount / 4 * 100) : (currentStep / 3 * 100));
+        document.getElementById('hp-enemy').style.width = enemyHP + "%"; 
+    }
+
+    function showHint(txt) { showKO("HINT", txt, false); }
 
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
-        const ans = Array.from(document.getElementById('dz').querySelectorAll('.pk-word')).map(e => e.innerText).join(" ");
+        const ans = Array.from(document.getElementById('dz').querySelectorAll('.chip')).map(e => e.innerText).join(" ");
         if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
             fireConfetti(); shouldAutoNext = true;
-            showPop("SUCCESS!", "✨", `${d.correct}<br><br>${d.chi}`);
-        } else { showPop("MISS!", "💢", "Try again / 再試一次"); }
+            showKO("PERFECT", `${d.correct}<br><br>${d.chi}`, true);
+        } else { showKO("MISS", "Wrong sequence! Try again.", false); }
     }
 
-    function nextStep() { currentStep++; if(currentStep > 2) { currentStep = 0; startL(3); } else render(); }
-    function randomQ() { qCount++; if(qCount >= 4) { fireConfetti(); showPop("VICTORY!", "🏆", "Mission Complete!"); backToHome(); } else render(); }
+    function showKO(title, desc, isSuccess) {
+        document.getElementById('ko-title').innerText = title;
+        document.getElementById('ko-desc').innerHTML = desc;
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('ko-box').style.display = 'block';
+    }
+
+    function closePopup() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('ko-box').style.display = 'none';
+        if(shouldAutoNext) {
+            if(currentL === 1) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; } render(); }
+            else if(currentL === 2) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 3; } render(); }
+            else if(currentL === 3) { qCount++; if(qCount >= 4) { fireConfetti(); showKO("WINNER", "All tasks cleared!", true); backToHome(); } else render(); }
+        }
+    }
+
     function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
@@ -208,29 +234,20 @@
 
     function rec(target, btn) {
         if(!recognition || isMicOn) return;
-        isMicOn = true; btn.innerHTML = "RECORDING...<small>錄音中</small>";
+        isMicOn = true; btn.innerHTML = "FIGHTING...<small>錄音中</small>";
         recognition.start();
         recognition.onresult = (e) => {
             const res = e.results[0][0].transcript.toLowerCase();
             stopMic();
             let isCorrect = res.includes(target.toLowerCase().replace(/[.,!]/g, ''));
-            if(isCorrect) { fireConfetti(); shouldAutoNext = true; }
-            showPop(isCorrect ? "PERFECT!" : "MISS!", isCorrect ? "🌟" : "💢", isCorrect ? "Great Job!" : `You said: "${res}"`);
+            if(isCorrect) { fireConfetti(); shouldAutoNext = true; showKO("K.O.", "Excellent Strike!", true); }
+            else { showKO("BLOCK", `You said: "${res}"`, false); }
         };
-        recognition.onspeechend = stopMic; recognition.onerror = stopMic;
+        recognition.onspeechend = stopMic;
     }
 
-    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "ANSWER<small>錄音回答</small>" : "SPEAK<small>錄音</small>"; if(recognition) recognition.stop(); }
-    function fireConfetti() { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); }
-    function showPop(title, icon, text) { document.getElementById('pop-icon').innerText = icon; document.getElementById('pop-text').innerHTML = `${title}<br><br>${text}`; document.getElementById('overlay').style.display = 'block'; document.getElementById('popup').style.display = 'block'; }
-    function closePopup() { 
-        document.getElementById('overlay').style.display = 'none'; document.getElementById('popup').style.display = 'none'; 
-        if(shouldAutoNext) { 
-            if(currentL === 1) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 2; } render(); } 
-            else if(currentL === 2) nextStep(); 
-            else if(currentL === 3) randomQ(); 
-        } 
-    }
+    function stopMic() { isMicOn = false; const btn = document.getElementById('rec-btn'); if (btn) btn.innerHTML = (currentL === 3) ? "ANSWER<small>回答</small>" : "SPEAK<small>錄音</small>"; if(recognition) recognition.stop(); }
+    function fireConfetti() { confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } }); }
 </script>
 </body>
 </html>
