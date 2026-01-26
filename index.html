@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VEN1101 TA - Select Your Trade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --arc-red: #ff1111; --arc-yellow: #f8e71c; --arc-blue: #0044cc;
+        }
+        body { 
+            font-family: 'Oswald', 'Noto Sans TC', sans-serif; background: #111; 
+            margin: 0; padding: 20px; color: #fff; text-align: center;
+            display: flex; flex-direction: column; align-items: center; min-height: 100dvh;
+        }
+
+        .header-box {
+            margin-top: 20px; margin-bottom: 40px; border: 4px solid var(--arc-red);
+            padding: 15px; background: #000; display: inline-block;
+        }
+        .header-box h1 { margin: 0; font-size: 24px; color: var(--arc-yellow); letter-spacing: 2px; }
+        .header-box p { margin: 5px 0 0; font-size: 14px; font-weight: bold; color: #fff; }
+
+        .grid-container {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 500px;
+        }
+
+        .menu-btn {
+            background: linear-gradient(135deg, #333 0%, #000 100%);
+            border: 3px solid #fff; padding: 20px 10px; cursor: pointer;
+            text-decoration: none; color: #fff; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .menu-btn:active { transform: scale(0.95); background: var(--arc-red); }
+
+        .dept-code { font-size: 28px; font-weight: 900; color: var(--arc-yellow); margin-bottom: 5px; }
+        .dept-name { font-size: 12px; font-weight: bold; opacity: 0.9; }
+
+        .footer { margin-top: auto; padding: 30px 0; color: #555; font-size: 11px; }
+
+        .flash-active { background: var(--arc-red) !important; border-color: var(--arc-yellow) !important; }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <h1>🥊 CHARACTER SELECT 🥊</h1>
+        <p>CHALLENGE VEN1101 TA</p>
+    </div>
+
+    <div class="grid-container">
+        <a href="https://benjaminl-ai.github.io/ven1101ta/au.html" class="menu-btn">
+            <div class="dept-code">AU</div>
+            <div class="dept-name">Automotive<br>汽車工程</div>
+        </a>
+
+        <a href="https://benjaminl-ai.github.io/ven1101ta/bse.html" class="menu-btn">
+            <div class="dept-code">BSE</div>
+            <div class="dept-name">Building Services<br>屋宇裝備工程</div>
+        </a>
+
+        <a href="https://benjaminl-ai.github.io/ven1101ta/ee.html" class="menu-btn">
+            <div class="dept-code">EE</div>
+            <div class="dept-name">Electrical<br>電機工程</div>
+        </a>
+
+        <a href="https://benjaminl-ai.github.io/ven1101ta/gas.html" class="menu-btn">
+            <div class="dept-code">GAS</div>
+            <div class="dept-name">Gas Services<br>氣體服務工程</div>
+        </a>
+
+        <a href="https://benjaminl-ai.github.io/ven1101ta/le.html" class="menu-btn">
+            <div class="dept-code">LE</div>
+            <div class="dept-name">Lift & Escalator<br>升降機及自動梯</div>
+        </a>
+
+        <a href="https://benjaminl-ai.github.io/ven1101ta/fashion.html" class="menu-btn">
+            <div class="dept-code">Fashion</div>
+            <div class="dept-name">Fashion<br>時裝</div>
+        </a>
+    </div>
+
+    <div class="footer">
+        © 2026 VEN1101 TA CHALLENGE SYSTEM
+    </div>
+
+    <script>
+        // 加入點擊閃爍效果
+        document.querySelectorAll('.menu-btn').forEach(btn => {
+            btn.addEventListener('touchstart', function() {
+                this.classList.add('flash-active');
+            });
+            btn.addEventListener('touchend', function() {
+                setTimeout(() => this.classList.remove('flash-active'), 100);
+            });
+        });
+    </script>
+</body>
+</html>
