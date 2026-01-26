@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VEN1101 TA - Arcade Portal</title>
+    <title>VEN1101 TA - Select Your Class</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --arc-red: #ff1111; --arc-yellow: #f8e71c; --arc-blue: #0044cc; --arc-purple: #9b59b6; --arc-green: #2ecc71; --arc-orange: #e67e22;
+            --arc-red: #ff1111; --arc-yellow: #f8e71c; --arc-blue: #0044cc;
         }
         body { 
             font-family: 'Oswald', 'Noto Sans TC', sans-serif; background: #0a0a0a; 
@@ -45,28 +45,20 @@
         }
 
         .menu-btn {
-            background: #111; border: 3px solid #fff; padding: 15px 5px; cursor: pointer;
+            background: #111; border: 3px solid var(--arc-red); padding: 18px 5px; cursor: pointer;
             text-decoration: none; color: #fff; transition: 0.1s;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: relative; overflow: hidden;
+            box-shadow: 0 0 5px rgba(255, 17, 17, 0.3);
         }
 
-        .menu-btn:active { transform: scale(0.92); filter: brightness(1.5); }
+        .menu-btn:active { transform: scale(0.92); background: var(--arc-red); }
+        .menu-btn:active .dept-code { color: #fff; }
 
-        /* 學系顏色設定 / Dept Colors */
-        .btn-au { border-color: var(--arc-red); } .btn-au .dept-code { color: var(--arc-red); }
-        .btn-bse { border-color: var(--arc-blue); } .btn-bse .dept-code { color: var(--arc-blue); }
-        .btn-ee { border-color: var(--arc-yellow); } .btn-ee .dept-code { color: var(--arc-yellow); }
-        .btn-gas { border-color: var(--arc-orange); } .btn-gas .dept-code { color: var(--arc-orange); }
-        .btn-le { border-color: var(--arc-green); } .btn-le .dept-code { color: var(--arc-green); }
-        .btn-fashion { border-color: #ff69b4; } .btn-fashion .dept-code { color: #ff69b4; }
-
-        .dept-code { font-size: 32px; font-weight: 900; margin-bottom: 2px; }
-        .dept-name { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .dept-code { font-size: 32px; font-weight: 900; color: var(--arc-yellow); margin-bottom: 2px; }
+        .dept-name { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #aaa; }
 
         .footer { margin-top: auto; padding: 30px 0; color: #444; font-size: 10px; letter-spacing: 2px; }
 
-        /* 點擊時的火花 / Flash on active */
         .flash-active { background: #fff !important; }
     </style>
 </head>
@@ -80,34 +72,34 @@
     </div>
 
     <div class="grid-container">
-        <a href="au.html" class="menu-btn btn-au">
+        <a href="au.html" class="menu-btn">
             <div class="dept-code">AU</div>
             <div class="dept-name">Automotive</div>
         </a>
 
-        <a href="bse.html" class="menu-btn btn-bse">
+        <a href="bse.html" class="menu-btn">
             <div class="dept-code">BSE</div>
             <div class="dept-name">Building Services</div>
         </a>
 
-        <a href="ee.html" class="menu-btn btn-ee">
+        <a href="ee.html" class="menu-btn">
             <div class="dept-code">EE</div>
             <div class="dept-name">Electrical</div>
         </a>
 
-        <a href="gas.html" class="menu-btn btn-gas">
+        <a href="gas.html" class="menu-btn">
             <div class="dept-code">GAS</div>
             <div class="dept-name">Gas Services</div>
         </a>
 
-        <a href="le.html" class="menu-btn btn-le">
+        <a href="le.html" class="menu-btn">
             <div class="dept-code">LE</div>
             <div class="dept-name">Lift & Escalator</div>
         </a>
 
-        <a href="fashion.html" class="menu-btn btn-fashion" style="grid-column: span 2;">
+        <a href="fashion.html" class="menu-btn">
             <div class="dept-code">FASHION</div>
-            <div class="dept-name">Design & Printer Task</div>
+            <div class="dept-name">Printer Task</div>
         </a>
     </div>
 
