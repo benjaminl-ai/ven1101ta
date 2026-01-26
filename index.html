@@ -3,97 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VEN1101 TA - Select Your Trade</title>
+    <title>VEN1101 TA - Arcade Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --arc-red: #ff1111; --arc-yellow: #f8e71c; --arc-blue: #0044cc;
+            --arc-red: #ff1111; --arc-yellow: #f8e71c; --arc-blue: #0044cc; --arc-purple: #9b59b6; --arc-green: #2ecc71; --arc-orange: #e67e22;
         }
         body { 
-            font-family: 'Oswald', 'Noto Sans TC', sans-serif; background: #111; 
+            font-family: 'Oswald', 'Noto Sans TC', sans-serif; background: #0a0a0a; 
             margin: 0; padding: 20px; color: #fff; text-align: center;
             display: flex; flex-direction: column; align-items: center; min-height: 100dvh;
+            background-image: radial-gradient(circle at center, #222 0%, #000 100%);
+        }
+
+        /* 掃描線效果 / Scanline Effect */
+        body::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none;
         }
 
         .header-box {
-            margin-top: 20px; margin-bottom: 40px; border: 4px solid var(--arc-red);
-            padding: 15px; background: #000; display: inline-block;
+            margin-top: 20px; margin-bottom: 30px; position: relative;
+            padding: 20px; background: #000; border: 4px solid #fff;
+            box-shadow: 0 0 15px var(--arc-red), inset 0 0 10px var(--arc-red);
         }
-        .header-box h1 { margin: 0; font-size: 24px; color: var(--arc-yellow); letter-spacing: 2px; }
-        .header-box p { margin: 5px 0 0; font-size: 14px; font-weight: bold; color: #fff; }
+        .header-box h1 { 
+            margin: 0; font-size: 28px; color: #fff; letter-spacing: 3px;
+            text-shadow: 2px 2px var(--arc-red), -2px -2px var(--arc-blue);
+            animation: glitch 1s infinite;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 2px var(--arc-red), -2px -2px var(--arc-blue); }
+            50% { text-shadow: -2px 2px var(--arc-red), 2px -2px var(--arc-blue); }
+            100% { text-shadow: 2px -2px var(--arc-red), -2px 2px var(--arc-blue); }
+        }
 
         .grid-container {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 500px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 500px; z-index: 3;
         }
 
         .menu-btn {
-            background: linear-gradient(135deg, #333 0%, #000 100%);
-            border: 3px solid #fff; padding: 20px 10px; cursor: pointer;
-            text-decoration: none; color: #fff; transition: 0.2s;
+            background: #111; border: 3px solid #fff; padding: 15px 5px; cursor: pointer;
+            text-decoration: none; color: #fff; transition: 0.1s;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
         }
 
-        .menu-btn:active { transform: scale(0.95); background: var(--arc-red); }
+        .menu-btn:active { transform: scale(0.92); filter: brightness(1.5); }
 
-        .dept-code { font-size: 28px; font-weight: 900; color: var(--arc-yellow); margin-bottom: 5px; }
-        .dept-name { font-size: 12px; font-weight: bold; opacity: 0.9; }
+        /* 學系顏色設定 / Dept Colors */
+        .btn-au { border-color: var(--arc-red); } .btn-au .dept-code { color: var(--arc-red); }
+        .btn-bse { border-color: var(--arc-blue); } .btn-bse .dept-code { color: var(--arc-blue); }
+        .btn-ee { border-color: var(--arc-yellow); } .btn-ee .dept-code { color: var(--arc-yellow); }
+        .btn-gas { border-color: var(--arc-orange); } .btn-gas .dept-code { color: var(--arc-orange); }
+        .btn-le { border-color: var(--arc-green); } .btn-le .dept-code { color: var(--arc-green); }
+        .btn-ms { border-color: var(--arc-purple); } .btn-ms .dept-code { color: var(--arc-purple); }
+        .btn-fashion { border-color: #ff69b4; } .btn-fashion .dept-code { color: #ff69b4; }
 
-        .footer { margin-top: auto; padding: 30px 0; color: #555; font-size: 11px; }
+        .dept-code { font-size: 32px; font-weight: 900; margin-bottom: 2px; }
+        .dept-name { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
-        .flash-active { background: var(--arc-red) !important; border-color: var(--arc-yellow) !important; }
+        .footer { margin-top: auto; padding: 30px 0; color: #444; font-size: 10px; letter-spacing: 2px; }
+
+        /* 點擊時的火花 / Flash on active */
+        .flash-active { background: #fff !important; }
     </style>
 </head>
 <body>
 
     <div class="header-box">
-        <h1>🥊 CHARACTER SELECT 🥊</h1>
-        <p>CHALLENGE VEN1101 TA</p>
+        <h1>SELECT PLAYER</h1>
+        <div style="font-size: 12px; margin-top: 8px; color: var(--arc-yellow); font-weight: bold;">
+            VEN1101 TA CHALLENGE MODE
+        </div>
     </div>
 
     <div class="grid-container">
-        <a href="https://benjaminl-ai.github.io/ven1101ta/au.html" class="menu-btn">
+        <a href="au.html" class="menu-btn btn-au">
             <div class="dept-code">AU</div>
-            <div class="dept-name">Automotive<br>汽車工程</div>
+            <div class="dept-name">Automotive</div>
         </a>
 
-        <a href="https://benjaminl-ai.github.io/ven1101ta/bse.html" class="menu-btn">
+        <a href="bse.html" class="menu-btn btn-bse">
             <div class="dept-code">BSE</div>
-            <div class="dept-name">Building Services<br>屋宇裝備工程</div>
+            <div class="dept-name">Building Services</div>
         </a>
 
-        <a href="https://benjaminl-ai.github.io/ven1101ta/ee.html" class="menu-btn">
+        <a href="ee.html" class="menu-btn btn-ee">
             <div class="dept-code">EE</div>
-            <div class="dept-name">Electrical<br>電機工程</div>
+            <div class="dept-name">Electrical</div>
         </a>
 
-        <a href="https://benjaminl-ai.github.io/ven1101ta/gas.html" class="menu-btn">
+        <a href="gas.html" class="menu-btn btn-gas">
             <div class="dept-code">GAS</div>
-            <div class="dept-name">Gas Services<br>氣體服務工程</div>
+            <div class="dept-name">Gas Services</div>
         </a>
 
-        <a href="https://benjaminl-ai.github.io/ven1101ta/le.html" class="menu-btn">
+        <a href="le.html" class="menu-btn btn-le">
             <div class="dept-code">LE</div>
-            <div class="dept-name">Lift & Escalator<br>升降機及自動梯</div>
+            <div class="dept-name">Lift & Escalator</div>
         </a>
 
-        <a href="https://benjaminl-ai.github.io/ven1101ta/fa.html" class="menu-btn">
-            <div class="dept-code">FA</div>
-            <div class="dept-name">Fashion<br>時裝</div>
+        <a href="ms.html" class="menu-btn btn-ms">
+            <div class="dept-code">MS</div>
+            <div class="dept-name">Mechanical</div>
+        </a>
+
+        <a href="fashion.html" class="menu-btn btn-fashion" style="grid-column: span 2;">
+            <div class="dept-code">FASHION</div>
+            <div class="dept-name">Design & Printer Task</div>
         </a>
     </div>
 
     <div class="footer">
-        © 2026 VEN1101 TA CHALLENGE SYSTEM
+        INSERT COIN TO CONTINUE • 2026
     </div>
 
     <script>
-        // 加入點擊閃爍效果
         document.querySelectorAll('.menu-btn').forEach(btn => {
             btn.addEventListener('touchstart', function() {
                 this.classList.add('flash-active');
-            });
-            btn.addEventListener('touchend', function() {
-                setTimeout(() => this.classList.remove('flash-active'), 100);
+                setTimeout(() => this.classList.remove('flash-active'), 50);
             });
         });
     </script>
