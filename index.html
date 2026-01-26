@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VEN1101 TA - Arcade Cabinet</title>
+    <title>VEN1101 TA - Arcade Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,105 +12,143 @@
         body { 
             font-family: 'Oswald', 'Noto Sans TC', sans-serif; background: #000; 
             margin: 0; padding: 10px; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100dvh;
-            overflow-x: hidden;
+            overflow: hidden;
+            background: radial-gradient(circle, #222 0%, #000 100%);
         }
 
-        /* 語音解鎖遮罩 / Voice Unlock Overlay */
-        #voice-unlock {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; cursor: pointer;
-        }
-        #voice-unlock h2 { color: var(--arc-yellow); font-size: 30px; animation: blink 0.8s infinite; }
-
-        .cabinet-frame {
+        /* 街機外殼 / Arcade Cabinet Frame */
+        .cabinet-outer {
             width: 100%; max-width: 450px; background: var(--wood);
-            border: 8px solid #222; border-radius: 10px; position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px #000;
-            padding-bottom: 40px; display: none; /* 初始隱藏，解鎖後顯示 */
+            border: 8px solid #222; border-radius: 15px 15px 5px 5px; position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.9), inset 0 0 30px #000;
+            display: flex; flex-direction: column; padding-bottom: 20px;
         }
 
-        .marquee { background: #000; border-bottom: 6px solid #222; padding: 20px 10px; text-align: center; }
-        .marquee h1 { margin: 0; font-size: 24px; color: #fff; text-shadow: 0 0 10px var(--arc-red); }
-
-        .screen-container {
-            background: #111; margin: 15px; padding: 20px;
-            border: 15px solid #1a1a1a; border-radius: 30px;
-            position: relative; box-shadow: inset 0 0 40px #000;
+        /* 頂部燈箱 / Top Marquee */
+        .marquee {
+            background: #000; border-bottom: 6px solid #222; padding: 25px 10px;
+            text-align: center; position: relative; overflow: hidden;
         }
+        .marquee h1 {
+            margin: 0; font-size: 26px; color: #fff; text-transform: uppercase;
+            text-shadow: 0 0 10px var(--arc-red), 0 0 20px var(--arc-red);
+            letter-spacing: 3px;
+        }
+
+        /* 螢幕區域 / Screen Area */
+        .screen-frame {
+            background: #1a1a1a; margin: 15px; padding: 15px;
+            border: 12px solid #111; border-radius: 30px;
+            position: relative; box-shadow: inset 0 0 50px #000;
+            min-height: 350px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+
+        /* 初始投幣畫面 / Insert Coin Overlay */
+        #insert-coin-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #111; border-radius: 20px; z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer;
+        }
+        #insert-coin-layer h2 { color: var(--arc-yellow); font-size: 32px; animation: blink 0.8s infinite; }
         
-        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        /* 實際選單內容 (初始隱藏) / Real Menu Content */
+        #menu-content { display: none; width: 100%; z-index: 10; }
+
+        .grid-container {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;
+        }
 
         .menu-btn {
             background: #000; border: 3px solid var(--arc-red); padding: 15px 5px; cursor: pointer;
             text-decoration: none; color: #fff; display: flex; flex-direction: column; align-items: center;
         }
-
+        .menu-btn:active { background: var(--arc-red); transform: scale(0.95); }
         .dept-code { font-size: 28px; font-weight: 900; color: var(--arc-yellow); }
-        .dept-name { font-size: 10px; color: #aaa; }
+        .dept-name { font-size: 10px; color: #aaa; text-transform: uppercase; }
 
-        .control-panel { padding: 10px; display: flex; justify-content: space-around; align-items: center; }
-        .joystick { width: 40px; height: 40px; background: #900; border-radius: 50%; border: 4px solid #400; }
-        .button-group { display: flex; gap: 5px; }
-        .btn-round { width: 25px; height: 25px; border-radius: 50%; border: 3px solid #222; }
-        .r { background: var(--arc-red); } .y { background: var(--arc-yellow); } .b { background: var(--arc-blue); }
+        /* 底部控制台 / Control Panel */
+        .controls {
+            padding: 15px; display: flex; justify-content: space-around; align-items: center;
+            background: #2a1504; border-top: 5px solid #222; margin: 0 5px;
+        }
+        .joystick {
+            width: 45px; height: 45px; background: #a00; border-radius: 50%;
+            border: 4px solid #500; position: relative;
+        }
+        .joystick::after { content: ""; position: absolute; top: -15px; left: 18px; width: 10px; height: 25px; background: #222; }
+        
+        .btn-group { display: flex; gap: 8px; }
+        .btn-arc { width: 30px; height: 30px; border-radius: 50%; border: 3px solid #111; }
+        .b-r { background: var(--arc-red); } .b-y { background: var(--arc-yellow); } .b-b { background: var(--arc-blue); }
 
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        
+        /* 螢幕掃描線 / Scanlines */
+        .scanlines {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px; z-index: 20; pointer-events: none; border-radius: 20px;
+        }
     </style>
 </head>
 <body>
 
-    <div id="voice-unlock" onclick="unlockGame()">
-        <div style="font-size: 60px; margin-bottom: 20px;">🪙</div>
-        <h2>INSERT COIN</h2>
-        <p style="color: #aaa; margin-top: 10px;">TAP TO START GAME</p>
-    </div>
-
-    <div class="cabinet-frame" id="main-cabinet">
+    <div class="cabinet-outer">
         <div class="marquee">
             <h1>VEN1101 TA</h1>
-            <div style="font-size: 10px; color: var(--arc-yellow);">CHALLENGE MODE</div>
+            <div style="font-size: 11px; color: var(--arc-yellow); font-weight: bold; letter-spacing: 1px;">CHALLENGE PORTAL</div>
         </div>
 
-        <div class="screen-container">
-            <div style="color: #fff; font-size: 14px; margin-bottom: 15px; letter-spacing: 2px;">SELECT YOUR PLAYER</div>
-            
-            <div class="grid-container">
-                <a href="au.html" class="menu-btn"><div class="dept-code">AU</div><div class="dept-name">Automotive</div></a>
-                <a href="bse.html" class="menu-btn"><div class="dept-code">BSE</div><div class="dept-name">Building</div></a>
-                <a href="ee.html" class="menu-btn"><div class="dept-code">EE</div><div class="dept-name">Electrical</div></a>
-                <a href="gas.html" class="menu-btn"><div class="dept-code">GAS</div><div class="dept-name">Gas</div></a>
-                <a href="le.html" class="menu-btn"><div class="dept-code">LE</div><div class="dept-name">Lifts</div></a>
-                <a href="fashion.html" class="menu-btn"><div class="dept-code">FA</div><div class="dept-name">Fashion</div></a>
+        <div class="screen-frame">
+            <div class="scanlines"></div>
+
+            <div id="insert-coin-layer" onclick="insertCoin()">
+                <div style="font-size: 60px; margin-bottom: 15px;">🪙</div>
+                <h2>INSERT COIN</h2>
+                <p style="color: #666; font-size: 14px;">(TAP SCREEN TO START)</p>
+            </div>
+
+            <div id="menu-content">
+                <div style="font-size: 14px; margin-bottom: 15px; color: #fff; letter-spacing: 1px;">SELECT YOUR PLAYER</div>
+                <div class="grid-container">
+                    <a href="au.html" class="menu-btn"><div class="dept-code">AU</div><div class="dept-name">Automotive</div></a>
+                    <a href="bse.html" class="menu-btn"><div class="dept-code">BSE</div><div class="dept-name">Building</div></a>
+                    <a href="ee.html" class="menu-btn"><div class="dept-code">EE</div><div class="dept-name">Electrical</div></a>
+                    <a href="gas.html" class="menu-btn"><div class="dept-code">GAS</div><div class="dept-name">Gas</div></a>
+                    <a href="le.html" class="menu-btn"><div class="dept-code">LE</div><div class="dept-name">Lifts</div></a>
+                    <a href="fa.html" class="menu-btn"><div class="dept-code">FA</div><div class="dept-name">Fashion</div></a>
+                </div>
             </div>
         </div>
 
-        <div class="control-panel">
+        <div class="controls">
             <div class="joystick"></div>
-            <div class="button-group">
-                <div class="btn-round r"></div>
-                <div class="btn-round y"></div>
-                <div class="btn-round b"></div>
+            <div class="btn-group">
+                <div class="btn-arc b-r"></div>
+                <div class="btn-arc b-y"></div>
+                <div class="btn-arc b-b"></div>
             </div>
         </div>
     </div>
 
     <script>
-        function unlockGame() {
-            // 1. 立即啟動語音引擎 / Immediately start speech engine
+        function insertCoin() {
+            // 1. 播放解鎖音效 (靜音播放以獲得 Chrome 權限)
             window.speechSynthesis.cancel();
-            const welcome = new SpeechSynthesisUtterance("Welcome to the challenge. Select your class.");
-            welcome.volume = 0; // 靜音播放，僅為了解鎖 / Muted just to unlock
-            window.speechSynthesis.speak(welcome);
+            const u = new SpeechSynthesisUtterance("System Start");
+            u.volume = 0;
+            window.speechSynthesis.speak(u);
 
-            // 2. 隱藏啟動畫，顯示街機 / Hide startup, show cabinet
-            document.getElementById('voice-unlock').style.display = 'none';
-            document.getElementById('main-cabinet').style.display = 'block';
+            // 2. 切換畫面
+            document.getElementById('insert-coin-layer').style.display = 'none';
+            document.getElementById('menu-content').style.display = 'block';
             
-            console.log("Speech engine activated via user interaction.");
+            console.log("Speech engine unlocked via Insert Coin.");
         }
 
-        // 點擊效果 / Click effect
+        // 觸控閃動效果
         document.querySelectorAll('.menu-btn').forEach(btn => {
             btn.addEventListener('touchstart', function() {
                 this.style.backgroundColor = 'white';
