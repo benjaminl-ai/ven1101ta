@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AU Challengers - Automotive Tech</title>
+    <title>AU Challengers - Automotive</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -39,7 +39,7 @@
         .hp-bar { height: 14px; width: 100px; background: #333; border: 2px solid #fff; }
         .hp-fill { height: 100%; width: 100%; background: #00ff00; transition: 0.4s; }
 
-        .btn-small { background: #444; border: 2px solid #fff; color: #fff; padding: 4px 10px; font-size: 11px; cursor: pointer; width: fit-content; }
+        .btn-small { background: #444; border: 2px solid #fff; color: #fff; padding: 4px 10px; font-size: 11px; cursor: pointer; width: fit-content; text-decoration: none; }
 
         .btn-box {
             background: linear-gradient(to right, #222, #000); border: 3px solid #fff;
@@ -77,22 +77,24 @@
 <div id="flash"></div>
 
 <div id="page-home" class="page active">
-    <div style="text-align:center; padding-top: 35px;">
+    <div style="text-align:center; padding-top: 25px;">
+        <a href="index.html" class="btn-small" style="margin-bottom:15px; display:inline-block;">⬅ BACK TO PORTAL / 返回總目錄</a>
+
         <h2 style="font-size: 19px; color:var(--arc-yellow); margin:0; letter-spacing: 0.5px;">
-            🥊 AU STUDENTS <span style="color:var(--arc-red); font-style:italic;">VS</span> VEN1101 TA 🧤
+            🥊 AU STUDENTS <span style="color:var(--arc-red); font-style:italic;">VS</span> VEN1101 TA 🥊
         </h2>
-        <div style="margin-top: 25px; padding: 5px 15px; background: #fff; color: #000; display: inline-block; font-weight: bold; font-size: 14px; border: 2px solid var(--arc-red);">
+        <div style="margin-top: 20px; padding: 5px 15px; background: #fff; color: #000; display: inline-block; font-weight: bold; font-size: 14px; border: 2px solid var(--arc-red);">
             AU CHALLENGE | 汽車工程
         </div>
     </div>
-    <div style="margin-top: 45px;">
+    <div style="margin-top: 35px;">
         <div class="btn-box" onclick="selectTask(1)">
             <div style="font-size: 28px;">🥊</div>
-            <div class="btn-text">STRIKE 1: Measuring brake pads<span>第一階段：測量煞車片</span></div>
+            <div class="btn-text">STRIKE 1: Measuring brake pads<span>第一階段：量度煞車皮</span></div>
         </div>
         <div class="btn-box" onclick="selectTask(2)">
             <div style="font-size: 28px;">🥊</div>
-            <div class="btn-text">STRIKE 2: Getting an oil dipstick<span>第二階段：取回油尺</span></div>
+            <div class="btn-text">STRIKE 2: Getting an oil dipstick<span>第二階段：取出機油尺</span></div>
         </div>
     </div>
 </div>
@@ -140,33 +142,52 @@
     const tasksData = {
         1: {
             steps: [
-                { img: "brake1.jpg", correct: "First, remove the brake caliper.", chi: "首先，拆卸煞車鉗。", pool: ["First,", "remove", "the", "brake caliper.", "open", "tighten", "loosen"] },
-                { img: "brake2.jpg", correct: "Next, take out the brake pad from the disc brake.", chi: "接著，從碟式煞車中取出煞車片。", pool: ["Next,", "take out", "the brake pad", "from", "the disc brake.", "push", "clean", "put"] },
-                { img: "brake3.jpg", correct: "Finally, measure the thickness of the brake pad with vernier callipers.", chi: "最後，用游標卡尺測量煞車片的厚度。", pool: ["Finally,", "measure", "the thickness of the brake pad", "with", "vernier callipers.", "remove", "adjust"] }
+                { img: "au1.jpg", correct: "First, remove the brake caliper.", chi: "首先，移開煞車鉗。", pool: ["First,", "remove", "the", "brake caliper.", "tighten", "clean", "put"] },
+                { img: "au2.jpg", correct: "Next, take out the brake pad.", chi: "接著，取出煞車皮。", pool: ["Next,", "take out", "the", "brake pad.", "push", "adjust", "fix"] },
+                { img: "au3.jpg", correct: "Finally, measure the thickness of brake pad with vernier calipers.", chi: "最後，用游標卡尺量度煞車皮的厚度。", pool: ["Finally,", "measure", "the thickness", "of brake pad", "with", "vernier calipers.", "clean", "apply"] }
             ],
             trouble: [
-                { q: "What should I do if the jaws are too tight?", a: "add some WD-40", chi: "如果卡鉗爪太緊，加一些 WD-40。" },
+                { q: "What should I do if the jaws are too tight?", a: "add some WD-40", chi: "如果夾鉗太緊，加入一些 WD-40。" },
                 { q: "What should I do if the reading is wrong?", a: "repeat the steps", chi: "如果讀數錯誤，重複步驟。" },
-                { q: "What should I do if the vernier calliper is faulty?", a: "use another one", chi: "如果游標卡尺故障，換另一個使用。" },
-                { q: "What should I do if the brake pad is damaged?", a: "replace it", chi: "如果煞車片損壞，更換它。" }
+                { q: "What should I do if the vernier caliper is faulty?", a: "use another one", chi: "如果游標卡尺有故障，使用另一個。" },
+                { q: "What should I do if the brake pad is damaged?", a: "replace it", chi: "如果煞車皮損壞，更換它。" }
             ],
-            ts_note: "1. If the jaws are too tight, add some WD-40.<br>2. If the reading is wrong, repeat the steps.<br>3. If the vernier calliper is faulty, use another one.<br>4. If the brake pad is damaged, replace it."
+            ts_note: "1. If the jaws are too tight, add some WD-40.<br>2. If the reading is wrong, repeat the steps.<br>3. If the vernier caliper is faulty, use another one.<br>4. If the brake pad is damaged, replace it."
         },
         2: {
             steps: [
-                { img: "oil1.jpg", correct: "First, open the car hood.", chi: "首先，打開車頭蓋。", pool: ["First,", "open", "the car hood.", "down", "close", "push"] },
-                { img: "oil2.jpg", correct: "Next, find the oil dipstick in the engine bay.", chi: "接著，在引擎室找到油尺。", pool: ["Next,", "find", "the oil dipstick", "in", "the engine bay.", "clean", "oil", "remove"] },
-                { img: "oil3.jpg", correct: "Finally, pull out the oil dipstick from the pipe.", chi: "最後，從油管中拉出油尺。", pool: ["Finally,", "pull out", "the oil dipstick", "from the pipe.", "measure", "check", "fill"] }
+                { img: "au4.jpg", correct: "First, open the car hood.", chi: "首先，打開車頭蓋。", pool: ["First,", "open", "the", "car hood.", "close", "clean", "lock"] },
+                { img: "au5.jpg", correct: "Next, find the oil dipstick in the engine bay.", chi: "接著，在引擎室找到機油尺。", pool: ["Next,", "find", "the", "oil dipstick", "in the", "engine bay.", "pipe", "tray"] },
+                { img: "au6.jpg", correct: "Finally, pull the oil dipstick out of the pipe.", chi: "最後，將機油尺從管中拔出。", pool: ["Finally,", "pull", "the oil dipstick", "out of", "the pipe.", "push", "insert"] }
             ],
             trouble: [
-                { q: "What should I do if the car hood is stuck?", a: "check the latch", chi: "如果車頭蓋卡住，檢查鎖扣。" },
-                { q: "What should I do if the oil dipstick is broken?", a: "replace it", chi: "如果油尺斷裂，更換它。" },
-                { q: "What should I do if the engine bay is too hot?", a: "wait for it to cool down", chi: "如果引擎室太燙，等它冷卻。" },
-                { q: "What should I do if the oil level is too low?", a: "add more oil", chi: "如果油位太低，加入更多機油。" }
+                { q: "What should I do if the car hood is stuck?", a: "pull the lever again", chi: "如果車頭蓋卡住，再次拉動拉桿。" },
+                { q: "What should I do if the oil dipstick is dirty?", a: "wipe it with a cloth", chi: "如果機油尺髒了，用布擦拭。" },
+                { q: "What should I do if there is no oil?", a: "refill the oil", chi: "如果沒有油，重新加滿機油。" },
+                { q: "What should I do if the engine is too hot?", a: "wait for it to cool down", chi: "如果引擎太燙，等待它冷卻。" }
             ],
-            ts_note: "1. If the car hood is stuck, check the latch.<br>2. If the oil dipstick is broken, replace it.<br>3. If the engine bay is too hot, wait for it to cool down.<br>4. If the oil level is too low, add more oil."
+            ts_note: "1. If the car hood is stuck, pull the lever again.<br>2. If the dipstick is dirty, wipe it with a cloth.<br>3. If no oil, refill the oil.<br>4. If the engine is hot, wait for it to cool down."
         }
     };
+
+    // Voice Initialization Fix
+    function initSpeech() {
+        try {
+            window.speechSynthesis.getVoices();
+            const unlock = new SpeechSynthesisUtterance('');
+            window.speechSynthesis.speak(unlock);
+        } catch(e) {}
+    }
+    document.addEventListener('touchstart', initSpeech, { once: true });
+    document.addEventListener('click', initSpeech, { once: true });
+
+    function speak(t) {
+        window.speechSynthesis.cancel(); 
+        const m = new SpeechSynthesisUtterance(t);
+        m.lang = 'en-US';
+        m.rate = 0.9;
+        setTimeout(() => { window.speechSynthesis.speak(m); }, 50);
+    }
 
     ['mousedown', 'touchstart'].forEach(evtType => {
         document.addEventListener(evtType, (e) => {
@@ -207,7 +228,7 @@
             m.innerHTML = `<div class="img-screen"><img src="${d.img}"></div><div style="background:#fff; color:#000; padding:12px; font-weight:bold; border:4px solid var(--arc-yellow);"><p style="color:var(--arc-red); margin:0;">${d.correct}</p><p style="margin:5px 0 0 0; font-size:14px;">${d.chi}</p></div><div class="action-grid" style="margin-top:10px;"><div class="arc-btn blue" onclick="speak('${d.correct}')">LISTEN<br><small>聽示範</small></div><div id="rec-btn" class="arc-btn red" onclick="rec('${d.correct}', this)">SPEAKING FIGHT!<br><small>開始挑戰</small></div></div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP ROUND / 跳過</div>`;
         } else if (currentL === 3) {
             currentQ = shuffledL3[qCount];
-            m.innerHTML = `<div class="arc-btn blue" onclick="speak(currentQ.q)" style="padding:15px; margin-bottom:10px;">🔊 LISTEN TO CLIENT<br><small>聽取客戶問題</small></div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:13px; flex-grow:1; overflow-y:auto;">${data.ts_note}</div><div id="rec-btn" class="arc-btn red" style="margin-top:10px;" onclick="rec(currentQ.a, this)">CHALLENGE!<br><small>錄音回答</small></div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP QUESTION / 跳過</div>`;
+            m.innerHTML = `<div class="arc-btn blue" onclick="speak(currentQ.q)" style="padding:15px; margin-bottom:10px;">🔊 LISTEN TO TEACHER<br><small>聽取老師問題</small></div><div style="background:#000; border:2px solid #fff; padding:10px; font-size:13px; flex-grow:1; overflow-y:auto;">${data.ts_note}</div><div id="rec-btn" class="arc-btn red" style="margin-top:10px;" onclick="rec(currentQ.a, this)">CHALLENGE!<br><small>錄音回答</small></div><div class="arc-btn grey" style="margin-top:8px;" onclick="nextQ()">SKIP QUESTION / 跳過</div>`;
         }
     }
 
@@ -264,49 +285,6 @@
         }
         render();
     }
-
-    <div id="page-home" class="page active">
-<div style="text-align:center; padding-top: 25px;">
-<a href="index.html" class="btn-small" style="text-decoration:none; margin-bottom:15px; display:inline-block;">⬅ BACK TO PORTAL / 返回總目錄</a>
-<h2 style="font-size: 19px; color:var(--arc-yellow); margin:0; letter-spacing: 0.5px;">
-🥊 CHALLENGERS <span style="color:var(--arc-red); font-style:italic;">VS</span> VEN1101 TA 🥊
-</h2>
-</div>
-</div>
-    
-    // 1. 新增：初始化語音引擎，防止靜音模式限制
-// 1. NEW: Initialize speech engine to bypass silent mode restrictions
-function initSpeech() {
-window.speechSynthesis.getVoices();
-// 播放一個空的語音來「解鎖」系統
-// Play an empty utterance to "unlock" the system
-const unlock = new SpeechSynthesisUtterance('');
-window.speechSynthesis.speak(unlock);
-}
-
-// 2. 修改後的 speak 函數
-// 2. Modified speak function
-function speak(t) {
-// 先停止所有正在播放或排隊的語音
-// Cancel all current/queued speech first
-window.speechSynthesis.cancel();
-
-const m = new SpeechSynthesisUtterance(t);
-m.lang = 'en-US';
-m.rate = 0.9; // 稍微放慢一點點，聽得更清楚 (Slightly slower for clarity)
-m.pitch = 1.0;
-
-// 某些瀏覽器需要延遲一點點再播放才會有聲
-// Small delay helps some browsers trigger the audio correctly
-setTimeout(() => {
-window.speechSynthesis.speak(m);
-}, 50);
-}
-
-// 3. 確保用戶第一次點擊畫面時就激活語音系統
-// 3. Ensure the speech system activates on the first user tap
-document.addEventListener('touchstart', initSpeech, { once: true });
-document.addEventListener('click', initSpeech, { once: true });
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
