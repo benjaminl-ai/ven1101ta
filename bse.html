@@ -81,6 +81,8 @@
 
 <div id="page-home" class="page active">
     <div style="text-align:center; padding-top: 35px;">
+        <a href="index.html" class="btn-small" style="margin-bottom:15px; display:inline-block;">⬅ BACK TO PORTAL / 返回總目錄</a>
+        
         <h2 style="font-size: 19px; color:var(--arc-yellow); margin:0; letter-spacing: 0.5px;">
             🥊 BSE STUDENTS <span style="color:var(--arc-red); font-style:italic;">VS</span> VEN1101 TA 🧤
         </h2>
@@ -170,6 +172,18 @@
         }
     };
 
+// Voice Initialization Fix - 加入這兩段
+    function initSpeech() {
+        try {
+            window.speechSynthesis.getVoices();
+            const unlock = new SpeechSynthesisUtterance('');
+            window.speechSynthesis.speak(unlock);
+        } catch(e) {}
+    }
+    // 當用戶第一次點擊畫面時觸發
+    document.addEventListener('touchstart', initSpeech, { once: true });
+    document.addEventListener('click', initSpeech, { once: true });
+    
     ['mousedown', 'touchstart'].forEach(evtType => {
         document.addEventListener(evtType, (e) => {
             const el = e.target.closest('.btn-box, .arc-btn, .btn-small, .chip, .pop-btn-small');
@@ -267,7 +281,14 @@
         render();
     }
 
-    function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
+    function speak(t) {
+        window.speechSynthesis.cancel(); // 先清空排隊，防止卡死
+        const m = new SpeechSynthesisUtterance(t);
+        m.lang = 'en-US';
+        m.rate = 0.9; // 語速稍微放慢
+        // 延遲 50 毫秒播放，提高成功率
+        setTimeout(() => { window.speechSynthesis.speak(m); }, 50);
+    }
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
