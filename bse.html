@@ -172,7 +172,7 @@
         }
     };
 
-// Voice Initialization Fix - 加入這兩段
+    // Voice Initialization Fix
     function initSpeech() {
         try {
             window.speechSynthesis.getVoices();
@@ -180,9 +180,16 @@
             window.speechSynthesis.speak(unlock);
         } catch(e) {}
     }
-    // 當用戶第一次點擊畫面時觸發
     document.addEventListener('touchstart', initSpeech, { once: true });
     document.addEventListener('click', initSpeech, { once: true });
+
+    function speak(t) {
+        window.speechSynthesis.cancel(); 
+        const m = new SpeechSynthesisUtterance(t);
+        m.lang = 'en-US';
+        m.rate = 0.9;
+        setTimeout(() => { window.speechSynthesis.speak(m); }, 50);
+    }
     
     ['mousedown', 'touchstart'].forEach(evtType => {
         document.addEventListener(evtType, (e) => {
@@ -279,15 +286,6 @@
             if(qCount >= 4) { isVictoryState = true; showPop("VICTORY!", "ALL ROUNDS COMPLETED!", true); return; } 
         }
         render();
-    }
-
-    function speak(t) {
-        window.speechSynthesis.cancel(); // 先清空排隊，防止卡死
-        const m = new SpeechSynthesisUtterance(t);
-        m.lang = 'en-US';
-        m.rate = 0.9; // 語速稍微放慢
-        // 延遲 50 毫秒播放，提高成功率
-        setTimeout(() => { window.speechSynthesis.speak(m); }, 50);
     }
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
