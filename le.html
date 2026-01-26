@@ -168,6 +168,25 @@
         }
     };
 
+    // Voice Initialization Fix
+    function initSpeech() {
+        try {
+            window.speechSynthesis.getVoices();
+            const unlock = new SpeechSynthesisUtterance('');
+            window.speechSynthesis.speak(unlock);
+        } catch(e) {}
+    }
+    document.addEventListener('touchstart', initSpeech, { once: true });
+    document.addEventListener('click', initSpeech, { once: true });
+
+    function speak(t) {
+        window.speechSynthesis.cancel(); 
+        const m = new SpeechSynthesisUtterance(t);
+        m.lang = 'en-US';
+        m.rate = 0.9;
+        setTimeout(() => { window.speechSynthesis.speak(m); }, 50);
+    }
+
     ['mousedown', 'touchstart'].forEach(evtType => {
         document.addEventListener(evtType, (e) => {
             const el = e.target.closest('.btn-box, .arc-btn, .btn-small, .chip, .pop-btn-small');
@@ -264,8 +283,6 @@
         }
         render();
     }
-
-    function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
