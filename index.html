@@ -15,6 +15,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* Flash & Shake Effects */
         .shake { animation: shake 0.3s; }
         @keyframes shake { 
             0%, 100% { transform: translate(0, 0); }
@@ -49,8 +50,9 @@
         .btn-box .btn-text { flex-grow: 1; }
         .btn-box span { color: var(--arc-yellow); font-size: 13px; display: block; margin-top: 4px; }
 
-        .img-screen { width: 100%; height: 125px; border: 3px solid #fff; background: #222; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
-        .img-screen img { max-width: 100%; max-height: 100%; }
+        /* 🖼️ 放大圖片容器高度 (Enlarged Image Screen) */
+        .img-screen { width: 100%; height: 180px; border: 3px solid #fff; background: #222; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+        .img-screen img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
         .drop-zone { min-height: 45px; border: 2px dashed #777; padding: 8px; display: flex; flex-wrap: wrap; gap: 5px; background: rgba(0,0,0,0.7); margin-bottom: 8px; }
         .chip { background: var(--arc-yellow); color: #000; padding: 6px 10px; font-weight: bold; font-size: 13px; border: 1px solid #000; cursor: pointer; }
@@ -223,7 +225,7 @@
     }
 
     function showPop(title, mainText, success) {
-        stopMic(); // 🔴 修正：彈窗出現即時停錄音
+        stopMic();
         document.getElementById('pop-title').innerText = title;
         let chiLine = "";
         if (title === "VICTORY!") { chiLine = "做得好！你已經完成所有挑戰！"; }
@@ -245,21 +247,14 @@
     function closePopup() {
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('popup').style.display = 'none';
-        if(isVictoryState) { 
-            backToHome(); 
-        } else if(shouldAutoNext) { 
-            nextQ(); 
-        }
+        if(isVictoryState) backToHome(); else if(shouldAutoNext) nextQ();
     }
 
     function checkL1() {
         const d = tasksData[currentTask].steps[currentStep];
         const ans = Array.from(document.getElementById('dz').querySelectorAll('.chip')).map(e => e.innerText).join(" ");
-        if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) {
-            showPop("PERFECT!", d.correct, true);
-        } else {
-            showPop("MISS!", "Sequence or Verb error!", false);
-        }
+        if (ans.toLowerCase().replace(/[ ,.]/g,'') === d.correct.toLowerCase().replace(/[ ,.]/g,'')) showPop("PERFECT!", d.correct, true);
+        else showPop("MISS!", "Sequence or Verb error!", false);
     }
 
     function nextQ() {
@@ -267,11 +262,7 @@
         else if(currentL === 2) { currentStep++; if(currentStep > 2) { currentStep = 0; currentL = 3; } }
         else if(currentL === 3) { 
             qCount++; 
-            if(qCount >= 4) { 
-                isVictoryState = true;
-                showPop("VICTORY!", "ALL ROUNDS COMPLETED!", true); 
-                return; 
-            } 
+            if(qCount >= 4) { isVictoryState = true; showPop("VICTORY!", "ALL ROUNDS COMPLETED!", true); return; } 
         }
         render();
     }
@@ -288,7 +279,7 @@
         recognition.start();
         recognition.onresult = (e) => {
             const res = e.results[0][0].transcript.toLowerCase(); stopMic();
-            if(res.includes(target.toLowerCase().replace(/[.,!]/g, ''))) { showPop("K.O.!", "Great Skill!", true); }
+            if(res.includes(target.toLowerCase().replace(/[.,!]/g, ''))) showPop("K.O.!", "Great Skill!", true);
             else showPop("BLOCK!", `You said: "${res}"`, false);
         };
         recognition.onspeechend = stopMic; recognition.onerror = stopMic;
@@ -298,9 +289,7 @@
         isMicOn = false; 
         const btn = document.getElementById('rec-btn'); 
         if (btn) btn.innerHTML = (currentL === 3) ? "CHALLENGE!<br><small>錄音回答</small>" : "SPEAKING FIGHT!<br><small>開始挑戰</small>"; 
-        if(recognition) {
-            try { recognition.stop(); } catch(e) {}
-        } 
+        if(recognition) try { recognition.stop(); } catch(e) {}
     }
 </script>
 </body>
