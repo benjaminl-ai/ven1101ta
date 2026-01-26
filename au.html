@@ -265,7 +265,39 @@
         render();
     }
 
-    function speak(t) { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(t); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
+    // 1. 新增：初始化語音引擎，防止靜音模式限制
+// 1. NEW: Initialize speech engine to bypass silent mode restrictions
+function initSpeech() {
+window.speechSynthesis.getVoices();
+// 播放一個空的語音來「解鎖」系統
+// Play an empty utterance to "unlock" the system
+const unlock = new SpeechSynthesisUtterance('');
+window.speechSynthesis.speak(unlock);
+}
+
+// 2. 修改後的 speak 函數
+// 2. Modified speak function
+function speak(t) {
+// 先停止所有正在播放或排隊的語音
+// Cancel all current/queued speech first
+window.speechSynthesis.cancel();
+
+const m = new SpeechSynthesisUtterance(t);
+m.lang = 'en-US';
+m.rate = 0.9; // 稍微放慢一點點，聽得更清楚 (Slightly slower for clarity)
+m.pitch = 1.0;
+
+// 某些瀏覽器需要延遲一點點再播放才會有聲
+// Small delay helps some browsers trigger the audio correctly
+setTimeout(() => {
+window.speechSynthesis.speak(m);
+}, 50);
+}
+
+// 3. 確保用戶第一次點擊畫面時就激活語音系統
+// 3. Ensure the speech system activates on the first user tap
+document.addEventListener('touchstart', initSpeech, { once: true });
+document.addEventListener('click', initSpeech, { once: true });
 
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     const recognition = (SpeechRecognition) ? new SpeechRecognition() : null;
